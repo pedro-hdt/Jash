@@ -52,7 +52,7 @@ public final class StringUtils {
             return true;
         }
 
-        for (int i = 0; i < str.length(); ) {
+        for (int i = 0; i < str.length(); i++) {
             if (Character.isWhitespace(str.charAt(i))) {
                 return false;
             }

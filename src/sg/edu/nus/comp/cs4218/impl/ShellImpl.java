@@ -27,12 +27,14 @@ public class ShellImpl implements Shell {
         Shell shell = new ShellImpl();
 
         try {
+            // TODO pass this on to the commend builder somehow
             String currentDirectory = Environment.currentDirectory;
             String commandString;
             try {
                 commandString = reader.readLine();
             } catch (IOException e) {
-                break; // Streams are closed, terminate process
+                return; // Streams are closed, terminate process
+                // Pedro: should we do System.exit(0); instead?
             }
 
             if (!StringUtils.isBlank(commandString)) {

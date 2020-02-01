@@ -3,7 +3,7 @@
   <component name="PDMPlugin">
     <option name="customRuleSets">
       <list>
-        <option value="$PROJECT_DIR$/../PMD.Rules.xml" />
+        <option value="$PROJECT_DIR$/PMD.Rules.xml" />
       </list>
     </option>
     <option name="options">
