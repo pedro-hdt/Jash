@@ -50,7 +50,7 @@ public final class IOUtils {
 
         File file = new File(resolvedFileName);
 
-        try {
+        try { // TODO Not tested
             // Pedro: currently ignoring boolean return values, would appreciate second opinion
             file.getParentFile().mkdirs(); // create all necessary parent directories
             file.createNewFile(); // creates file only if it does not exist

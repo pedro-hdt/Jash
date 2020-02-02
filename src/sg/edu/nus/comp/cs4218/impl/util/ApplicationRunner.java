@@ -55,7 +55,8 @@ public class ApplicationRunner {
 
             // Basic Functionality - BF - TODO: rm, paste
             case APP_RM:
-                throw new ShellException(app + ": " + ERR_NOT_SUPPORTED); // TODO implement RmApplication
+                application = new RmApplication();
+                break;
             case APP_ECHO:
                 application = new EchoApplication();
                 break;

@@ -27,7 +27,7 @@ public class ShellImpl implements Shell {
         Shell shell = new ShellImpl();
 
         try {
-            // TODO pass this on to the commend builder somehow
+            // TODO pass this on to the command builder somehow
             String currentDirectory = Environment.currentDirectory;
             String commandString;
             try {
