@@ -29,15 +29,19 @@ public class RmApplication implements RmInterface {
 
             // if any of the arguments is invalid, the operation fails at that point without recovery @assumption
             if (!file.exists())
-                throw new RmException(ERR_FILE_NOT_FOUND);
+                throw new RmException(file.getName() + ": " + ERR_FILE_NOT_FOUND);
 
             if (file.isDirectory()) {
 
-                if (isRecursive) { // if it is recursive we don't care
+                String[] contents = file.list();
+
+                if (isRecursive && contents.length != 0) { // if recursive and not empty go ahead
                     Environment.currentDirectory = file.getAbsolutePath(); // go into the directory
-                    remove(isEmptyFolder, true, file.list()); // remove recursively
-                    Environment.currentDirectory = file.getParent(); // come out
-                } else if (!isEmptyFolder || file.list().length != 0) { // otherwise check if directory is empty
+                    remove(isEmptyFolder, true, contents);       // remove recursively
+                    Environment.currentDirectory = file.getParent();       // come out
+                } else if (!isRecursive && (contents.length != 0 || !isEmptyFolder)) {
+                    // if not recursive, then the only way this could possibly work:
+                    // -d was specified, and the directory is empty
                     throw new RmException(String.format("cannot remove %s: %s", file.toString(), ERR_IS_DIR));
                 }
 
