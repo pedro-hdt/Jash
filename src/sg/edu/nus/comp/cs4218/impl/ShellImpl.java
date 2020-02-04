@@ -26,21 +26,27 @@ public class ShellImpl implements Shell {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Shell shell = new ShellImpl();
 
-        try {
-            String currentDirectory = Environment.currentDirectory;
-            String commandString;
+        while (true) {
             try {
-                commandString = reader.readLine();
-            } catch (IOException e) {
-                break; // Streams are closed, terminate process
-            }
+                // TODO pass this on to the command builder somehow
+                String currentDirectory = Environment.currentDirectory;
+                String commandString;
+                try {
+                    commandString = reader.readLine();
+                } catch (IOException e) {
+                    return; // Streams are closed, terminate process
+                    // Pedro: should we do System.exit(0); instead?
+                }
 
-            if (!StringUtils.isBlank(commandString)) {
-                shell.parseAndEvaluate(commandString, System.out);
+                if (!StringUtils.isBlank(commandString)) {
+                    shell.parseAndEvaluate(commandString, System.out);
+                    System.out.println();
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
+
     }
 
     @Override

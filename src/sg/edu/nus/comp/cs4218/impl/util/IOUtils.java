@@ -9,8 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 @SuppressWarnings("PMD.PreserveStackTrace")
 public final class IOUtils {
@@ -49,7 +48,17 @@ public final class IOUtils {
 
         FileOutputStream fileOutputStream;
 
-        fileOutputStream = new FileOutputStream(new File(resolvedFileName));
+        File file = new File(resolvedFileName);
+
+        try { // TODO Not tested
+            // Pedro: currently ignoring boolean return values, would appreciate second opinion
+            file.getParentFile().mkdirs(); // create all necessary parent directories
+            file.createNewFile(); // creates file only if it does not exist
+            fileOutputStream = new FileOutputStream(file);
+        } catch (IOException e) {
+            throw new ShellException(ERR_IO_EXCEPTION);
+            // Pedro: How do we want to handle this? I think the only plausible way to get here is if no permission?
+        }
 
         return fileOutputStream;
     }

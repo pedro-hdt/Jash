@@ -1,0 +1,27 @@
+# CS4218 Team Project: Shell - QA Report
+
+## Injected bugs
+
+Here is a list of all the bugs that we believe have been injected in the code provided:
+
+### Commit [bb84252](https://github.com/nus-cs4218/cs4218-project-ay1920-s2-2020-team03/commit/bb84252d532ffae18a2cf674bc045e46198af2f2)
+
+* `break` outside loop or switch statement in `ShellImpl` main function, causing a build error. This has been fixed, but no tests were written as the build error will no longer occur
+
+* Inverted boolean logic in `CallComand.evaluate()`
+
+* Missing `break` statements in `ApplicationRunner`
+
+* Uncaught and undeclared exception in `IOUtils.openOutputStream()`
+
+* Missing increment causing infinite loop in `StringUtils.isBlank()`
+
+### Commit [dd06ee3](https://github.com/nus-cs4218/cs4218-project-ay1920-s2-2020-team03/commit/dd06ee3a0de623e63c01c7700206085937ed66cb)
+
+* Inverted boolean logic in `StringUtils.isBlank()`
+
+### Commit []()
+
+* Prevent Shell from exiting after just one command
+
+So far no tests have been written for these
