@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
-public class RmTest {
+public class RmApplicationTest {
 
     // TODO Pedro: is there any problem with having a single rm app instance
     public static RmApplication rm = new RmApplication();
@@ -88,11 +88,13 @@ public class RmTest {
     @Test
     public void rmNonEmptyFolderAttempt() throws IOException {
 
+        final String testSignature = "rmNonEmptyFolderAttempt";
+
         // create a temporary directory and make sure it exists
-        Path testDir = Files.createTempDirectory("rmNonEmptyFolderAttempt");
+        Path testDir = Files.createTempDirectory(testSignature);
 
         // create a file inside the temporary directory
-        File testFile = File.createTempFile("rmNonEmptyFolderAttempt", "testfile", testDir.toFile());
+        File testFile = File.createTempFile(testSignature, "testfile", testDir.toFile());
 
         // assemble args and call rm expecting an exception
         String[] args1 = {testDir.toString()};
@@ -150,23 +152,42 @@ public class RmTest {
     }
 
     /**
+     * Remove an empty folder recursively
+     */
+    @Test
+    public void rmEmptyFolderRecursive() throws IOException, RmException {
+
+        // create a temporary directory
+        Path testDir = Files.createTempDirectory("rmNonEmptyFolderAttempt");
+
+        // assemble args and call rm to delete the directory recursively
+        String[] args = {"-r", testDir.toString()};
+        rm.run(args, System.in, System.out);
+
+        // make sure directory no longer exists afterwards
+        Assertions.assertFalse(testDir.toFile().exists());
+
+    }
+
+    /**
      * Remove a list of files and folders empty or non empty with -r flag
      */
     @Test
     public void rmMultFilesAndDirsRD() throws IOException, RmException {
 
         List<File> filesAndDirs = new LinkedList<>();
+        final String testSignature = "rmMultFilesAndDirs";
 
         // populate list of files
-        filesAndDirs.add(Files.createTempDirectory("rmMultFilesAndDirs").toFile());
-        filesAndDirs.add(File.createTempFile("rmMultFilesAndDirs", ""));
-        filesAndDirs.add(Files.createTempDirectory("rmMultFilesAndDirs").toFile());
-        filesAndDirs.add(Files.createTempDirectory("rmMultFilesAndDirs").toFile());
-        filesAndDirs.add(File.createTempFile("rmMultFilesAndDirs", ""));
+        filesAndDirs.add(Files.createTempDirectory(testSignature).toFile());
+        filesAndDirs.add(File.createTempFile(testSignature, ""));
+        filesAndDirs.add(Files.createTempDirectory(testSignature).toFile());
+        filesAndDirs.add(Files.createTempDirectory(testSignature).toFile());
+        filesAndDirs.add(File.createTempFile(testSignature, ""));
 
         // put some files inside the directories to be deleted
-        File.createTempFile("rmMultFilesAndDirs", "", filesAndDirs.get(2));
-        File.createTempFile("rmMultFilesAndDirs", "", filesAndDirs.get(3));
+        File.createTempFile(testSignature, "", filesAndDirs.get(2));
+        File.createTempFile(testSignature, "", filesAndDirs.get(3));
 
         // assemble args and call rm to delete all recursively
         List<String> args = new LinkedList<>();

@@ -19,17 +19,14 @@ public class RmApplication implements RmInterface {
     @Override
     public void remove(Boolean isEmptyFolder, Boolean isRecursive, String... fileName) throws RmException {
 
-        // For clarification 'rm -d' will delete directories iff they are empty
-        // 'rm -r' will recursively delete stuff so no matter if it is empty
-        // Therefore, 'rm -r -d' == 'rm -r' @assumption
-
         for (String f : fileName) {
 
             File file = IOUtils.resolveFilePath(f).toFile();
 
             // if any of the arguments is invalid, the operation fails at that point without recovery @assumption
-            if (!file.exists())
+            if (!file.exists()) {
                 throw new RmException(file.getName() + ": " + ERR_FILE_NOT_FOUND);
+            }
 
             if (file.isDirectory()) {
 
@@ -71,10 +68,11 @@ public class RmApplication implements RmInterface {
         Boolean emptyFolder = parser.isEmptyFolder();
         List<String> fileList = parser.getFileList();
 
-        if (fileList.isEmpty())
+        if (fileList.isEmpty()) {
             throw new RmException(ERR_NO_FILE_ARGS);
+        }
 
-        String[] files = fileList.toArray(new String[parser.getFileList().size()]);
+        String[] files = fileList.toArray(new String[0]);
 
         remove(emptyFolder, recursive, files);
 

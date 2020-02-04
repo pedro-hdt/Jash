@@ -26,14 +26,9 @@ public class EchoApplication implements EchoInterface {
             throw new EchoException(ERR_NULL_ARGS);
         }
 
-        String result;
-        if (args.length == 0) {
-            result = STRING_NEWLINE;
-        } else {
-            result = String.join(" ", args);
-        }
+        // Pedro: for consistency, new lines at the end of output are added in the run function instead
+        return String.join(" ", args);
 
-        return result;
     }
 
     /**
@@ -53,6 +48,7 @@ public class EchoApplication implements EchoInterface {
         String result = constructResult(args);
         try {
             stdout.write(result.getBytes());
+            stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
             throw new EchoException(ERR_IO_EXCEPTION);
         }

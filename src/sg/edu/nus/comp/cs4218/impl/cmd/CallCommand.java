@@ -56,6 +56,7 @@ public class CallCommand implements Command {
     @Override
     public void terminate() {
         // Unused for now
+        // TODO close resources here? See PMD recommendations
     }
 
     public List<String> getArgsList() {

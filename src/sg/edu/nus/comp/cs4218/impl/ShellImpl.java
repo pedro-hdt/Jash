@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl;
 
 import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
@@ -27,20 +26,17 @@ public class ShellImpl implements Shell {
         Shell shell = new ShellImpl();
 
         while (true) {
+            System.out.print("$ ");
             try {
-                // TODO pass this on to the command builder somehow
-                String currentDirectory = Environment.currentDirectory;
                 String commandString;
                 try {
                     commandString = reader.readLine();
                 } catch (IOException e) {
                     return; // Streams are closed, terminate process
-                    // Pedro: should we do System.exit(0); instead?
-                }
+                } // TODO double check this is correct behavior
 
                 if (!StringUtils.isBlank(commandString)) {
                     shell.parseAndEvaluate(commandString, System.out);
-                    System.out.println();
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());

@@ -20,8 +20,18 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Inverted boolean logic in `StringUtils.isBlank()`
 
-### Commit []()
+### Commit [bfe24a0](https://github.com/nus-cs4218/cs4218-project-ay1920-s2-2020-team03/pull/1/commits/bfe24a05f971d3a0a185ab2b7d7a0e2199e0ce45)
 
 * Prevent Shell from exiting after just one command
+
+### Commit []()
+
+* Removed unused variable `currentDirecgory` in `ShellImpl`
+
+* Fixed missing shell prompt
+
+* Broken null check in `IORedirectionHandler`. Found using the PMD rule set.
+
+* Inconsistent new lines at the end of echo command
 
 So far no tests have been written for these
