@@ -8,32 +8,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" scope="TEST">
-      <library name="JUnit5.2">
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.6.0-RC1/junit-jupiter-api-5.6.0-RC1.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.1.0/apiguardian-api-1.1.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.6.0-RC1/junit-platform-commons-1.6.0-RC1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/mockito-core-2.24.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="apiguardian-api-1.0.0" level="project" />
     <orderEntry type="library" name="junit-jupiter-api-5.4.0" level="project" />
     <orderEntry type="library" name="junit-platform-commons-1.4.0" level="project" />
     <orderEntry type="library" name="mockito-core-2.24.0" level="project" />
     <orderEntry type="library" name="opentest4j-1.1.1" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
