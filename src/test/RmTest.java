@@ -1,5 +1,3 @@
-package sg.edu.nus.comp.cs4218.test;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import sg.edu.nus.comp.cs4218.exception.RmException;
@@ -12,7 +10,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
@@ -74,8 +71,7 @@ public class RmTest {
         });
 
         // verify it was the correct exception
-        String expectedMsg = ERR_IS_DIR;
-        Assertions.assertTrue(e.getMessage().contains(expectedMsg));
+        Assertions.assertTrue(e.getMessage().contains(ERR_IS_DIR));
 
         // make sure directory still exists afterwards
         Assertions.assertTrue(testDir.toFile().exists());
@@ -175,11 +171,11 @@ public class RmTest {
         // assemble args and call rm to delete all recursively
         List<String> args = new LinkedList<>();
         args.add("-r");
-        args.addAll(filesAndDirs.stream().map(f -> f.getPath()).collect(Collectors.toList()));
+        args.addAll(filesAndDirs.stream().map(File::getPath).collect(Collectors.toList()));
         rm.run(args.toArray(new String[0]), System.in, System.out);
 
         // check all files are gone
-        Boolean allGone = filesAndDirs.stream().noneMatch((File f) -> f.exists());
+        Boolean allGone = filesAndDirs.stream().noneMatch(File::exists);
         Assertions.assertTrue(allGone);
 
     }

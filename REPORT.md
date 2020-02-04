@@ -20,4 +20,8 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Inverted boolean logic in `StringUtils.isBlank()`
 
+### Commit []()
+
+* Prevent Shell from exiting after just one command
+
 So far no tests have been written for these
