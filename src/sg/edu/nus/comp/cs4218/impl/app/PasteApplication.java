@@ -24,6 +24,6 @@ public class PasteApplication implements PasteInterface { // TODO implement me
 
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
-
+        // TODO: Implement me
     }
 }

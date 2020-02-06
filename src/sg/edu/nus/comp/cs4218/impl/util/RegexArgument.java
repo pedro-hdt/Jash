@@ -132,7 +132,7 @@ public final class RegexArgument {
         return matches;
     }
 
-    public boolean isRegex() {
+    public boolean getIsRegex() {
         return isRegex;
     }
 
