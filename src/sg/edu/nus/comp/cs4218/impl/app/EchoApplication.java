@@ -50,7 +50,7 @@ public class EchoApplication implements EchoInterface {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw new EchoException(ERR_IO_EXCEPTION);
+            throw (EchoException)new EchoException(ERR_IO_EXCEPTION).initCause(e);
         }
     }
 }
