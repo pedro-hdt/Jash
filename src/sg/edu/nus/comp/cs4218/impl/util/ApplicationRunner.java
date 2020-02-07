@@ -61,7 +61,8 @@ public class ApplicationRunner {
                 application = new EchoApplication();
                 break;
             case APP_PASTE:
-                throw new ShellException(app + ": " + ERR_NOT_SUPPORTED); // TODO implement PasteApplication
+                application = new PasteApplication();
+                break;
             case APP_SED:
                 application = new SedApplication();
                 break;
