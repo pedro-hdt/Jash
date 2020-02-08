@@ -1,4 +1,4 @@
-package sg.edu.nus.comp.cs4218.impl.exception;
+package sg.edu.nus.comp.cs4218.exception;
 
 public class MvException extends AbstractApplicationException {
 
