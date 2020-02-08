@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
@@ -107,21 +108,27 @@ public class LsApplication implements LsInterface {
         for (Path path : paths) {
             try {
                 List<Path> contents = getContents(path, isFoldersOnly);
-                String formatted = formatContents(contents);
                 String relativePath = getRelativeToCwd(path).toString();
                 result.append(StringUtils.isBlank(relativePath) ? PATH_CURR_DIR : relativePath);
-                result.append(":\n");
-                result.append(formatted);
 
-                if (!formatted.isEmpty()) {
-                    // Empty directories should not have an additional new line
-                    result.append(StringUtils.STRING_NEWLINE);
+                if (Files.isDirectory(path)) {
+                    String formatted = formatContents(contents);
+                    result.append(":\n");
+                    result.append(formatted);
+
+                    if (!formatted.isEmpty()) {
+                        // Empty directories should not have an additional new line
+                        result.append(StringUtils.STRING_NEWLINE);
+                    }
                 }
+
                 result.append(StringUtils.STRING_NEWLINE);
 
                 // RECURSE!
-                if (isRecursive) {
-                    result.append(buildResult(contents, isFoldersOnly, isRecursive));
+                if (isRecursive && Files.isDirectory(path)) {
+                    result.append(buildResult(contents.stream()
+                            .filter(p -> Files.isDirectory(p))
+                            .collect(Collectors.toList()), isFoldersOnly, isRecursive));
                 }
             } catch (InvalidDirectoryException e) {
                 // NOTE: This is pretty hackish IMO - we should find a way to change this
@@ -130,6 +137,9 @@ public class LsApplication implements LsInterface {
                 //
                 // However the user might have written a command like `ls invalid1 valid1 -R`, what
                 // do we do then?
+
+                // Shradheya: Effort has been put into solving the above issue however certain weird bugs
+                // may still remain due to earlier design decisions
                 if (!isRecursive) {
                     result.append(e.getMessage());
                     result.append('\n');
@@ -173,12 +183,18 @@ public class LsApplication implements LsInterface {
             throw new InvalidDirectoryException(getRelativeToCwd(directory).toString());
         }
 
-        if (!Files.isDirectory(directory)) {
-            throw new InvalidDirectoryException(getRelativeToCwd(directory).toString());
+        if (!isFoldersOnly && !Files.isDirectory(directory)) {
+            return new ArrayList<>(Collections.singleton(directory));
+//            throw new InvalidDirectoryException(getRelativeToCwd(directory).toString());
         }
 
         List<Path> result = new ArrayList<>();
         File pwd = directory.toFile();
+
+        if (pwd == null || pwd.listFiles() == null) {
+            return result;
+        }
+
         for (File f : pwd.listFiles()) {
             if (isFoldersOnly && !f.isDirectory()) {
                 continue;
