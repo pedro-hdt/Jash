@@ -31,7 +31,6 @@ public class MvApplication implements MvInterface {
 
     @Override
     public String mvFilesToFolder(String destFolder, String... fileName) throws Exception {
-        System.out.println(IOUtils.resolveFilePath(destFolder));
         for (String srcPath: fileName){
             if (shouldOverwrite) {
                 Files.move(IOUtils.resolveFilePath(srcPath),
@@ -67,19 +66,16 @@ public class MvApplication implements MvInterface {
             throw new MvException(ERR_NO_FILE_ARGS);
         }
 
-        if (Files.exists(IOUtils.resolveFilePath(targetOperand))) {
-            try {
+        try {
+            if (Files.exists(IOUtils.resolveFilePath(targetOperand))) {
                 mvFilesToFolder(targetOperand, sourceOperands.toArray(new String[sourceOperands.size()]));
-            } catch (Exception e) {
-                throw (MvException) new MvException(ERR_FILE_NOT_FOUND).initCause(e);
-            }
-        } else {
-            try {
+            } else {
                 mvSrcFileToDestFile(sourceOperands.get(0), targetOperand);
-            } catch (Exception e) {
-                throw (MvException) new MvException(ERR_FILE_NOT_FOUND).initCause(e);
             }
+        }  catch (Exception e) {
+            throw (MvException) new MvException(ERR_FILE_NOT_FOUND).initCause(e);
         }
+
 
 
     }
