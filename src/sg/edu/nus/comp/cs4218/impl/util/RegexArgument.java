@@ -73,13 +73,13 @@ public final class RegexArgument {
 
         if (isRegex) {
             Pattern regexPattern = Pattern.compile(regex.toString());
-            String dir = "";
+            StringBuilder dir = new StringBuilder();
             String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
             for (int i = 0; i < tokens.length - 1; i++) {
-                dir += tokens[i] + File.separator;
+                dir.append(tokens[i]).append(File.separator);
             }
 
-            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir).toFile();
+            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir.toString()).toFile();
 
             for (String candidate : currentDir.list()) {
                 if (regexPattern.matcher(candidate).matches()) {
@@ -132,7 +132,7 @@ public final class RegexArgument {
         return matches;
     }
 
-    public boolean getIsRegex() {
+    public boolean isRegex() {
         return isRegex;
     }
 

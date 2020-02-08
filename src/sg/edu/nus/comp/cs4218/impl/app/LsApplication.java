@@ -250,7 +250,7 @@ public class LsApplication implements LsInterface {
         return Paths.get(Environment.currentDirectory).relativize(path);
     }
 
-    private class InvalidDirectoryException extends Exception {
+    private static class InvalidDirectoryException extends Exception {
         InvalidDirectoryException(String directory) {
             super(String.format("ls: cannot access '%s': No such file or directory", directory));
         }

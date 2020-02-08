@@ -62,13 +62,13 @@ public class MvApplication implements MvInterface {
         String targetOperand = parser.getTargetOperand();
 
 
-        if (sourceOperands.size() == 0 || targetOperand == null) {
+        if (sourceOperands.isEmpty() || targetOperand == null) {
             throw new MvException(ERR_NO_FILE_ARGS);
         }
 
         try {
             if (Files.exists(IOUtils.resolveFilePath(targetOperand))) {
-                mvFilesToFolder(targetOperand, sourceOperands.toArray(new String[sourceOperands.size()]));
+                mvFilesToFolder(targetOperand, sourceOperands.toArray(new String[0]));
             } else {
                 mvSrcFileToDestFile(sourceOperands.get(0), targetOperand);
             }

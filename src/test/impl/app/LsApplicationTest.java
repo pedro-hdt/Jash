@@ -1,3 +1,4 @@
+package impl.app;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,13 +18,13 @@ import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
 
 class LsApplicationTest {
 
-    private static LsApplication ls;
+    private static LsApplication lsApp;
     private static ByteArrayOutputStream out;
 
 
     @BeforeEach
     void setUp() {
-        ls = new LsApplication();
+        lsApp = new LsApplication();
         out = new ByteArrayOutputStream();
     }
 
@@ -38,7 +39,7 @@ class LsApplicationTest {
      */
     @Test
     void testLsWithNoArgs() throws LsException {
-        ls.run(new String[0], System.in, out);
+        lsApp.run(new String[0], System.in, out);
         assertNotNull(out.toString());
     }
 
@@ -51,7 +52,7 @@ class LsApplicationTest {
 
         Path directoryFolder = Files.createTempDirectory("directoryFolder");
 
-        ls.run(new String[]{directoryFolder.toString(), "-d"}, System.in, out);
+        lsApp.run(new String[]{directoryFolder.toString(), "-d"}, System.in, out);
 
         assertTrue(out.toString().contains(directoryFolder.toString()));
     }
@@ -67,7 +68,7 @@ class LsApplicationTest {
         File tempFile = File.createTempFile("directoryFolder", "tempFile", directoryFolder.toFile());
 
 
-        ls.run(new String[]{directoryFolder.toString(), "-R"}, System.in, out);
+        lsApp.run(new String[]{directoryFolder.toString(), "-R"}, System.in, out);
 
         assertTrue(out.toString().contains(directoryFolder.toString()));
         assertTrue(out.toString().contains(tempFile.getName()));
