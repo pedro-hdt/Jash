@@ -140,10 +140,8 @@ public class LsApplication implements LsInterface {
 
                 // Shradheya: Effort has been put into solving the above issue however certain weird bugs
                 // may still remain due to earlier design decisions
-                if (!isRecursive) {
-                    result.append(e.getMessage());
-                    result.append('\n');
-                }
+                result.append(e.getMessage());
+                result.append('\n');
             }
         }
 
