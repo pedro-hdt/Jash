@@ -1,11 +1,8 @@
-package impl.app;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,29 +10,109 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
+/* *
+ * Provides unit tests for the RmApplication class
+ * A number of utility/wrapper methods are used to facilitate file and directory creation
+ * Negative test cases are suffixed with the word "Attempt"
+ *
+ * Positive test cases:
+ *  - removing a single file
+ *  - removing an empty directory with the -d flag
+ *  - removing a non-empty directory with the -r flag
+ *  - removing an empty directory with the -r flag
+ *  - removing a list of files and both empty and non-empty directories
+ *
+ * Negative test cases:
+ *  - removing an empty directory without any flags
+ *  - removing a non-empty directory without any flags
+ *  - removing a non-empty directory with the -d flag
+ *
+ * */
 public class RmApplicationTest {
 
-    // TODO Pedro: is there any problem with having a single rm app instance
-    public static RmApplication rm = new RmApplication();
+    private static RmApplication rm;
+
+    @BeforeEach
+    public void setRm() {
+        rm = new RmApplication();
+    }
+
+    // we keep this string as suffix in the filenames created
+    private static final String rmTestClass = "RmApplicationTest";
 
     /**
-     * Remove a single simple file
+     * Utility method to create a temporary file
+     */
+    public Path mkFile() throws IOException {
+        return Files.createTempFile(rmTestClass, "");
+    }
+
+    /**
+     * Utility method to create a temporary file in a specific directory
+     */
+    public Path mkFile(Path dir) throws IOException {
+        return Files.createTempFile(dir, rmTestClass, "");
+    }
+
+    /**
+     * Utility method to create an empty temporary directory
+     */
+    public Path mkEmptyDir() throws IOException {
+        return Files.createTempDirectory(rmTestClass);
+    }
+
+    /**
+     * Utility method to create a temporary directory with a file inside it
+     * The reference to such file is lost so this must be used carefully
+     */
+    public Path mkDirWithFile() throws IOException {
+        Path dir = mkEmptyDir();
+        mkFile(dir);
+        return dir;
+    }
+
+    /**
+     * Utility method to create a populated directory tree
+     * Used to test recursive removal
+     */
+    public Path mkTree() throws IOException {
+        Path[] testDirs = new Path[4];
+        testDirs[0] = Files.createTempDirectory(rmTestClass);
+        Files.createTempFile(testDirs[0], rmTestClass, "");
+        for (int i = 1; i < 4; i++) {
+            testDirs[i] = Files.createTempDirectory(testDirs[i - 1], rmTestClass);
+            Files.createTempFile(testDirs[i], rmTestClass, "");
+        }
+        return testDirs[0];
+    }
+
+    /**
+     * Asserts that the given RmException is that rm fails to delete a directory
+     * since it is not empty and the -r flag is not provided
+     */
+    public void verifyExceptionIsDir(RmException e) {
+        assertTrue(e.getMessage().contains(ERR_IS_DIR));
+    }
+
+
+    /**
+     * Remove a single file
      */
     @Test
-    public void rmFile() throws IOException, RmException { // TODO how to handle exceptions in the tests?
+    public void rmFile() throws IOException, RmException {
 
-        // create a temporary file and make sure it exists
-        File testFile = File.createTempFile("rmFile", "test");
-        Assertions.assertTrue(testFile.exists()); // TODO is this necessary?
+        // create a temporary file
+        Path testFile = mkFile();
 
         // assemble args and call rm
-        String[] args = {testFile.getPath()};
+        String[] args = {testFile.toString()};
         rm.run(args, System.in, System.out);
 
         // make sure file no longer exists afterwards
-        Assertions.assertFalse(testFile.exists());
+        assertFalse(Files.exists(testFile));
     }
 
 
@@ -43,86 +120,17 @@ public class RmApplicationTest {
      * Remove an empty folder with the -d flag
      */
     @Test
-    public void rmEmptyFolderDirectory() throws IOException, RmException {
+    public void rmEmptyFolderDFlag() throws IOException, RmException {
 
-        // create a temporary directory and make sure it exists
-        Path testDir = Files.createTempDirectory("rmEmptyFolderDirectory");
+        // create a temporary directory
+        Path testDir = mkEmptyDir();
 
         // assemble args and call rm
         String[] args = {"-d", testDir.toString()};
         rm.run(args, System.in, System.out);
 
         // make sure directory no longer exists afterwards
-        Assertions.assertFalse(testDir.toFile().exists());
-    }
-
-    /**
-     * Attempt to remove an empty folder <b>without</b> the -d flag
-     * Should not remove folder
-     */
-    @Test
-    public void rmEmptyFolderAttempt() throws IOException {
-
-        // create a temporary directory
-        Path testDir = Files.createTempDirectory("rmEmptyFolderAttempt");
-
-        // assemble args and call rm expecting an exception
-        String[] args = {testDir.toString()};
-        Exception e = Assertions.assertThrows(RmException.class, () -> {
-            rm.run(args, System.in, System.out);
-        });
-
-        // verify it was the correct exception
-        Assertions.assertTrue(e.getMessage().contains(ERR_IS_DIR));
-
-        // make sure directory still exists afterwards
-        Assertions.assertTrue(testDir.toFile().exists());
-
-        // cleanup
-        testDir.toFile().delete();
-
-    }
-
-    /**
-     * Attempt to remove a non-empty folder <b>with without the -d flag</b>, but no -r flag
-     * Should not remove the folder
-     */
-    @Test
-    public void rmNonEmptyFolderAttempt() throws IOException {
-
-        final String testSignature = "rmNonEmptyFolderAttempt";
-
-        // create a temporary directory and make sure it exists
-        Path testDir = Files.createTempDirectory(testSignature);
-
-        // create a file inside the temporary directory
-        File testFile = File.createTempFile(testSignature, "testfile", testDir.toFile());
-
-        // assemble args and call rm expecting an exception
-        String[] args1 = {testDir.toString()};
-        Exception e1 = Assertions.assertThrows(RmException.class, () -> {
-            rm.run(args1, System.in, System.out);
-        });
-
-        // assemble args again, this time with the -d flag and call rm expecting an exception
-        String[] args2 = {"-d", testDir.toString()};
-        Exception e2 = Assertions.assertThrows(RmException.class, () -> {
-            rm.run(args2, System.in, System.out);
-        });
-
-        // verify the correct exceptions were thrown
-        String expectedMsg = ERR_IS_DIR;
-        Assertions.assertTrue(e1.getMessage().contains(expectedMsg));
-        Assertions.assertTrue(e2.getMessage().contains(expectedMsg));
-
-        // make sure directory and file still exist afterwards
-        Assertions.assertTrue(testFile.exists());
-        Assertions.assertTrue(testDir.toFile().exists());
-
-        // cleanup
-        testFile.delete();
-        testDir.toFile().delete();
-
+        assertFalse(testDir.toFile().exists());
     }
 
 
@@ -132,26 +140,19 @@ public class RmApplicationTest {
     @Test
     public void rmNonEmptyFolderRecursive() throws IOException, RmException {
 
-        // create 4 levels of nested temporary directories
-        Path l1TestDir = Files.createTempDirectory("rmNonEmptyFolderAttempt");
-        Path l2TestDir = Files.createTempDirectory(l1TestDir, "rmNonEmptyFolderAttempt");
-        Path l3TestDir = Files.createTempDirectory(l2TestDir, "rmNonEmptyFolderAttempt");
-        Path l4TestDir = Files.createTempDirectory(l3TestDir, "rmNonEmptyFolderAttempt");
-
-        // create files at each level in the tree
-        File.createTempFile("rmNonEmptyFolderAttempt", "testfile", l4TestDir.toFile());
-        File.createTempFile("rmNonEmptyFolderAttempt", "testfile", l3TestDir.toFile());
-        File.createTempFile("rmNonEmptyFolderAttempt", "testfile", l2TestDir.toFile());
-        File.createTempFile("rmNonEmptyFolderAttempt", "testfile", l1TestDir.toFile());
+        // create 4 levels of nested temporary directories with a temp file at each level
+        // can afford to ignore refs to files because they will be deleted by rm
+        Path testTree = mkTree();
 
         // assemble args and call rm to delete the outer directory recursively
-        String[] args = {"-r", l1TestDir.toString()};
+        String[] args = {"-r", testTree.toString()};
         rm.run(args, System.in, System.out);
 
         // make sure directory no longer exists afterwards
-        Assertions.assertFalse(l1TestDir.toFile().exists());
+        assertFalse(Files.exists(testTree));
 
     }
+
 
     /**
      * Remove an empty folder recursively
@@ -160,14 +161,14 @@ public class RmApplicationTest {
     public void rmEmptyFolderRecursive() throws IOException, RmException {
 
         // create a temporary directory
-        Path testDir = Files.createTempDirectory("rmNonEmptyFolderAttempt");
+        Path testDir = mkEmptyDir();
 
         // assemble args and call rm to delete the directory recursively
         String[] args = {"-r", testDir.toString()};
         rm.run(args, System.in, System.out);
 
         // make sure directory no longer exists afterwards
-        Assertions.assertFalse(testDir.toFile().exists());
+        assertFalse(Files.exists(testDir));
 
     }
 
@@ -175,31 +176,114 @@ public class RmApplicationTest {
      * Remove a list of files and folders empty or non empty with -r flag
      */
     @Test
-    public void rmMultFilesAndDirsRD() throws IOException, RmException {
+    public void rmMultFilesAndDirsRecursive() throws IOException, RmException {
 
-        List<File> filesAndDirs = new LinkedList<>();
-        final String testSignature = "rmMultFilesAndDirs";
+        List<Path> filesAndDirs = new LinkedList<>();
 
         // populate list of files
-        filesAndDirs.add(Files.createTempDirectory(testSignature).toFile());
-        filesAndDirs.add(File.createTempFile(testSignature, ""));
-        filesAndDirs.add(Files.createTempDirectory(testSignature).toFile());
-        filesAndDirs.add(Files.createTempDirectory(testSignature).toFile());
-        filesAndDirs.add(File.createTempFile(testSignature, ""));
-
-        // put some files inside the directories to be deleted
-        File.createTempFile(testSignature, "", filesAndDirs.get(2));
-        File.createTempFile(testSignature, "", filesAndDirs.get(3));
+        filesAndDirs.add(mkEmptyDir());
+        filesAndDirs.add(mkFile());
+        filesAndDirs.add(mkDirWithFile());
+        filesAndDirs.add(mkTree());
 
         // assemble args and call rm to delete all recursively
         List<String> args = new LinkedList<>();
         args.add("-r");
-        args.addAll(filesAndDirs.stream().map(File::getPath).collect(Collectors.toList()));
+        args.addAll(filesAndDirs.stream().map(Path::toString).collect(Collectors.toList()));
         rm.run(args.toArray(new String[0]), System.in, System.out);
 
         // check all files are gone
-        Boolean allGone = filesAndDirs.stream().noneMatch(File::exists);
-        Assertions.assertTrue(allGone);
+        assertTrue(filesAndDirs.stream().noneMatch(Files::exists));
+
+    }
+
+
+    /**
+     * Attempt to remove an empty folder <b>without any flags</b>
+     * Should not remove folder
+     */
+    @Test
+    public void rmEmptyFolderNoFlagsAttempt() throws IOException {
+
+        // create a temporary directory
+        Path testDir = mkEmptyDir();
+
+        // assemble args and call rm expecting an exception
+        String[] args = {testDir.toString()};
+        RmException e = assertThrows(RmException.class, () -> {
+            rm.run(args, System.in, System.out);
+        });
+
+        // verify it was the correct exception
+        verifyExceptionIsDir(e);
+
+        // make sure directory still exists afterwards
+        assertTrue(Files.exists(testDir));
+
+        // cleanup
+        Files.delete(testDir);
+
+    }
+
+
+    /**
+     * Attempt to remove a non-empty folder <b>with the -d flag</b>, but no -r flag
+     * Should <b>not</b> remove the folder
+     */
+    @Test
+    public void rmNonEmptyFolderDFlagAttempt() throws IOException {
+
+        // create a temporary directory and make sure it exists
+        Path testDir = mkEmptyDir();
+
+        // create a file inside the temporary directory
+        Path testFile = mkFile(testDir);
+
+        // assemble args again, this time with the -d flag and call rm expecting an exception
+        String[] args = {"-d", testDir.toString()};
+        RmException e = assertThrows(RmException.class, () -> {
+            rm.run(args, System.in, System.out);
+        });
+        verifyExceptionIsDir(e); // verify the correct exceptions is thrown
+
+        // make sure directory AND file still exist afterwards
+        assertTrue(Files.exists(testFile));
+        assertTrue(Files.exists(testDir));
+
+        // cleanup
+        Files.delete(testFile);
+        Files.delete(testDir);
+
+    }
+
+
+    /**
+     * Attempt to remove a non-empty folder <b>without any flags</b>
+     * Should <b>not</b> remove the folder
+     */
+    @Test
+    public void rmNonEmptyFolderNoFlagsAttempt() throws IOException {
+
+        // create a temporary directory with a file inside
+        Path testDir = mkEmptyDir();
+
+        // create a file inside the temporary directory
+        Path testFile = mkFile(testDir);
+
+        // assemble args and call rm expecting an exception
+        String[] args = {testDir.toString()};
+        RmException e = assertThrows(RmException.class, () -> {
+            rm.run(args, System.in, System.out);
+        });
+        verifyExceptionIsDir(e); // verify the correct exceptions is thrown
+
+        // make sure directory and file still exist afterwards
+        assertTrue(Files.exists(testFile));
+        assertTrue(Files.exists(testDir));
+
+        // cleanup
+        Files.delete(testFile);
+        Files.delete(testDir);
 
     }
 
