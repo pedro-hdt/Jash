@@ -43,4 +43,6 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Performance improvement by using `StringBuilder` in `RegexArgument#globFiles()`
 
-So far no tests have been written for these
+### Commit []()
+
+* ArrayIndexOutOfBounds exception when calling cd without args. Error message printed is just 0. Created a test case for this but not up to us to fix.
