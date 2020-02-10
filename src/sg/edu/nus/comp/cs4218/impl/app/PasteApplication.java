@@ -17,13 +17,60 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplication implements PasteInterface {
 
     @Override
     public String mergeStdin(InputStream stdin) throws PasteException {
-        return null;
+
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+
+        try {
+            String line = reader.readLine();
+            while (line != null) {
+                sb.append(line);
+                sb.append(CHAR_TAB);
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
+        }
+
+//        try {
+//
+//            int c = stdin.read();
+//
+//            // as long as we dont see a carriage return (used to submit commands in shell)
+//            while (c != -1) {
+//
+//                // here we actually want a \n and not STRING_NEWLINE (see next comment)
+//                while ((char)c != '\r' && (char)c != '\n') {
+//                    sb.append((char) c);
+//                    c = stdin.read();
+//                    if (c == -1) {
+//                        return sb.toString();
+//                    }
+//                }
+//
+//                // If this is windows with CRLF then we consumed the CR but the LF was left
+//                // for the next call, so we need to clean it up.
+//                if ((char)c == '\r') {
+//                    stdin.skip(1);
+//                }
+//
+//                sb.append(CHAR_TAB);
+//                c = (char) stdin.read();
+//            }
+//
+//        } catch (IOException e) {
+//            throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
+//        }
+
+        return sb.toString();
+
     }
 
     @Override
@@ -54,9 +101,9 @@ public class PasteApplication implements PasteInterface {
                 if (currLine < file.size()) {
                     sb.append(file.get(currLine));
                 }
-                sb.append('\t');
+                sb.append(CHAR_TAB);
             }
-            sb.append('\n');
+            sb.append(STRING_NEWLINE);
             currLine++;
         }
 
@@ -67,14 +114,45 @@ public class PasteApplication implements PasteInterface {
     @Override
     public String mergeFileAndStdin(InputStream stdin, String... fileName) throws PasteException {
 
-        BufferedReader stdinReader = new BufferedReader(new InputStreamReader(stdin));
-        List<BufferedReader> readers = new ArrayList<>(fileName.length + 1);
-        readers.add(stdinReader);
+        StringBuilder sb = new StringBuilder();
 
-        // TODO finish implementation
-        // TODO cannot figure out the difference between paste - - and paste - - - when nothing in piped in
+        // obtain list of files, where a file is a list of its lines as strings
+        List<List<String>> files = new ArrayList<>(fileName.length);
+        for (String f : fileName) {
+            if (!f.equals("-")) {
+                try {
+                    files.add(Files.readAllLines(IOUtils.resolveFilePath(f)));
+                } catch (IOException e) {
+                    throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
+                }
+            } else {
+                files.add(new ArrayList<>());
+            }
+        }
 
-        return null;
+        int largestFileLines = Collections.max(files.stream().map(List::size).collect(Collectors.toList()));
+        int currLine = 0;
+        while (currLine < largestFileLines) {
+
+            for (int i = 0; i < fileName.length; i++) {
+
+                if (fileName[i].equals("-")) {
+                    sb.append(mergeStdin(stdin));
+                } else {
+                    List<String> file = files.get(i);
+                    if (currLine < file.size()) {
+                        sb.append(file.get(currLine));
+                    }
+                }
+
+                sb.append(CHAR_TAB);
+
+            }
+            sb.append(STRING_NEWLINE);
+            currLine++;
+        }
+
+        return sb.toString();
     }
 
     @Override
@@ -104,7 +182,7 @@ public class PasteApplication implements PasteInterface {
             stdout.write(result.getBytes());
             // stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw new PasteException(ERR_IO_EXCEPTION);
+            throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
         }
 
     }
