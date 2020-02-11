@@ -30,7 +30,7 @@ public class PasteApplication implements PasteInterface {
 
         try {
             String line = reader.readLine();
-            while (line != null) {
+            while (!line.isEmpty()) {
                 sb.append(line);
                 sb.append(CHAR_TAB);
                 line = reader.readLine();
@@ -38,36 +38,6 @@ public class PasteApplication implements PasteInterface {
         } catch (IOException e) {
             throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
         }
-
-//        try {
-//
-//            int c = stdin.read();
-//
-//            // as long as we dont see a carriage return (used to submit commands in shell)
-//            while (c != -1) {
-//
-//                // here we actually want a \n and not STRING_NEWLINE (see next comment)
-//                while ((char)c != '\r' && (char)c != '\n') {
-//                    sb.append((char) c);
-//                    c = stdin.read();
-//                    if (c == -1) {
-//                        return sb.toString();
-//                    }
-//                }
-//
-//                // If this is windows with CRLF then we consumed the CR but the LF was left
-//                // for the next call, so we need to clean it up.
-//                if ((char)c == '\r') {
-//                    stdin.skip(1);
-//                }
-//
-//                sb.append(CHAR_TAB);
-//                c = (char) stdin.read();
-//            }
-//
-//        } catch (IOException e) {
-//            throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
-//        }
 
         return sb.toString();
 
@@ -130,6 +100,8 @@ public class PasteApplication implements PasteInterface {
             }
         }
 
+        // TODO remove duplicated code
+
         int largestFileLines = Collections.max(files.stream().map(List::size).collect(Collectors.toList()));
         int currLine = 0;
         while (currLine < largestFileLines) {
@@ -173,9 +145,28 @@ public class PasteApplication implements PasteInterface {
         if (!hasStdin) {
             result = mergeFile(args);
         } else if (!hasFiles) {
-            result = mergeStdin(System.in);
+
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+
+            try {
+                String line = reader.readLine();
+                while (!line.isEmpty()) {
+                    for (int i = 0; i < args.length && !line.isEmpty(); i++) {
+                        sb.append(line);
+                        sb.append(CHAR_TAB);
+                        line = reader.readLine();
+                    }
+                    sb.append(STRING_NEWLINE);
+                }
+            } catch (IOException e) {
+                throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
+            }
+
+            result = sb.toString();
+
         } else {
-            result = mergeFileAndStdin(System.in, args);
+            result = mergeFileAndStdin(stdin, args);
         }
 
         try {
