@@ -50,6 +50,10 @@ public class MvApplication implements MvInterface {
             throw new MvException(ERR_NULL_ARGS);
         }
 
+        if (args.length < 2) {
+            throw new MvException(ERR_NO_FILE_ARGS);
+        }
+
         MvArgsParser parser = new MvArgsParser();
         try {
             parser.parse(args);
