@@ -39,8 +39,6 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Fixed implementation of LS command. The implementation bug was mentioned in comment in `sg.edu.nus.comp.cs4218.impl.app.LsApplication#buildResult()`
 
-* Corrected use of String.format in `CdApplication.java`
-
 * Performance improvement by using `StringBuilder` in `RegexArgument#globFiles()`
 
 So far no tests have been written for these
