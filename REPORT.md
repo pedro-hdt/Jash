@@ -43,6 +43,12 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 ### Commit []()
 
+* Fixed ignored `<` for input redirection in `CommandBuilder`
+
+* Fixed broken check in `IORedirectionHandler.isRedirOperator()`
+
+### Commit []()
+
 * ArrayIndexOutOfBounds exception when calling cd without args. Error message printed is just 0. Created a test case for this but not up to us to fix.
 
 * Fixed sequence commands: tokens of previous commands were being used for the ones following because the tokens list was not cleaned in `CommandBuilder`
