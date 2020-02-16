@@ -171,6 +171,5 @@ public class PasteApplication implements PasteInterface {
         } catch (IOException e) {
             throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
         }
-
     }
 }

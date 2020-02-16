@@ -53,7 +53,7 @@ public class ApplicationRunner {
 
         switch (app) {
 
-            // Basic Functionality - BF - TODO: rm, paste
+            // Basic Functionality - BF - TODO: paste
             case APP_RM:
                 application = new RmApplication();
                 break;
@@ -85,7 +85,7 @@ public class ApplicationRunner {
             case APP_CP:
                 throw new ShellException(app + ": " + ERR_NOT_SUPPORTED);
 
-                // Extended Functionality 2 - EF2 - TODO: cut, mv
+                // Extended Functionality 2 - EF2 - TODO: cut
             case APP_CUT:
                 throw new ShellException(app + ": " + ERR_NOT_SUPPORTED); // TODO implement CutApplication
             case APP_LS:
@@ -98,7 +98,8 @@ public class ApplicationRunner {
                 application = new FindApplication();
                 break;
             case APP_MV:
-                throw new ShellException(app + ": " + ERR_NOT_SUPPORTED); // TODO implement MvApplication
+                application = new MvApplication();
+                break;
 
             default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
