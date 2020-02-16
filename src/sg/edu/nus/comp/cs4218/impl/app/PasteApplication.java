@@ -92,7 +92,7 @@ public class PasteApplication implements PasteInterface {
         for (String f : fileName) {
             try {
                 if (f.equals("-")) {
-                    fileReaders.add(stdinReader);
+                    fileReaders.add(null);
                 } else {
                     fileReaders.add(new BufferedReader(new FileReader(IOUtils.resolveFilePath(f).toString())));
                 }
@@ -108,13 +108,12 @@ public class PasteApplication implements PasteInterface {
             String line = "";
             while (stdinLines.hasNext() || line != null) {
 
-                if (fileName[i % columns].equals("-") && stdinLines.hasNext()) {
-                    sb.append(stdinLines.next());
-                } else {
-                    line = fileReaders.get(i % columns).readLine();
-                    if (line != null) {
-                        sb.append(line);
+                if (fileName[i % columns].equals("-")) {
+                    if (stdinLines.hasNext()) {
+                        sb.append(stdinLines.next());
                     }
+                } else if ((line = fileReaders.get(i % columns).readLine()) != null) {
+                    sb.append(line);
                 }
                 sb.append(CHAR_TAB);
 
