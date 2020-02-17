@@ -86,8 +86,8 @@ public class CutApplication implements CutInterface { // TODO implement me
 
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException {
-        if (args == null) {
-            throw new CutException(ERR_NULL_ARGS);
+        if (args.length < 1) {
+            throw new CutException(ERR_NO_ARGS);
         }
 
         CutArgsParser parser = new CutArgsParser();
