@@ -21,6 +21,38 @@ public class CutApplication implements CutInterface { // TODO implement me
     private int endIdx = 0;
     private String result = null;
 
+    /**
+     *
+     * Processes the input stream and return a string.
+     *
+     * @param stdin An InputStream
+     * @throws Exception If an I/O exception occurs.
+     */
+    public String processInput(InputStream stdin, Boolean isRange, int startIdx, int endIdx) throws Exception {
+        StringBuilder output = new StringBuilder();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+        int charCount = 0;
+        int r;
+
+        // Read 1 char at a time from the input stream
+        while ((r = reader.read()) != -1) {
+            char ch = (char) r;
+            if (isRange) {
+                if (charCount >= startIdx && charCount <= endIdx) {
+                    output.append(ch);
+                }
+            } else {
+                if (charCount == startIdx || charCount == endIdx) {
+                    output.append(ch);
+                }
+            }
+            charCount++; // keeps track of the number of characters that have been read
+        }
+
+        return output.toString();
+    }
+
     @Override
     public String cutFromFiles(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, String... fileName) throws Exception {
         StringBuilder output = new StringBuilder();
@@ -37,22 +69,8 @@ public class CutApplication implements CutInterface { // TODO implement me
                 throw new Exception(ERR_NO_PERM);
             }
             if (isCharPo) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtils.openInputStream(srcPath)));
-                int charCount = 0;
-                int r;
-                while ((r = reader.read()) != -1) {
-                    char ch = (char) r;
-                    if (isRange) {
-                        if (charCount >= startIdx && charCount <= endIdx) {
-                            output.append(ch);
-                        }
-                    } else {
-                        if (charCount == startIdx || charCount == endIdx) {
-                            output.append(ch);
-                        }
-                    }
-                    charCount++;
-                }
+                output.append(processInput(IOUtils.openInputStream(srcPath), isRange, startIdx, endIdx));
+                output.append('\n'); // carriage return for each file
             } else if (isBytePo) {
                 // TODO: FIND OUT HOW TO HANDLE BYTES IN JAVA FILES
             }
@@ -63,7 +81,7 @@ public class CutApplication implements CutInterface { // TODO implement me
 
     @Override
     public String cutFromStdin(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, InputStream stdin) throws Exception {
-        return null;
+        return processInput(stdin, isRange, startIdx, endIdx);
     }
 
     @Override

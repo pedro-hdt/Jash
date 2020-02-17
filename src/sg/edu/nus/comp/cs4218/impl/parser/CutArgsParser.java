@@ -1,7 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
-import java.util.List;
-
 public class CutArgsParser extends ArgsParser {
     private final static char FLAG_CUT_BY_CHAR_POS = 'c';
     private final static char FLAG_CUT_BY_BYTE_POS = 'b';
