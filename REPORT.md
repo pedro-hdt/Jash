@@ -48,3 +48,10 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 * Fixed broken check in `IORedirectionHandler.isRedirOperator()`
 
 So far no tests have been written for these
+
+
+### Commit []()
+
+* SedApplication fix indexing and matching to replace the expected match
+
+* SedApplication write the result by replacing the file's content with result

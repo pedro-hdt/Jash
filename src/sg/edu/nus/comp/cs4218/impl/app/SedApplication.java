@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +49,9 @@ public class SedApplication implements SedInterface {
                 output.append(replaceSubstringInStdin(sedArgs.getRegex(), sedArgs.getReplacement(), sedArgs.getReplacementIndex(), stdin));
             } else {
                 for (String file : sedArgs.getFiles()) {
-                    output.append(replaceSubstringInFile(sedArgs.getRegex(), sedArgs.getReplacement(), sedArgs.getReplacementIndex(), file));
+                    String result = replaceSubstringInFile(sedArgs.getRegex(), sedArgs.getReplacement(), sedArgs.getReplacementIndex(), file);
+                    output.append(result);
+                    Files.write(IOUtils.resolveFilePath(file), result.getBytes());
                 }
             }
         } catch (Exception e) {
@@ -123,12 +126,15 @@ public class SedApplication implements SedInterface {
             Matcher matcher = pattern.matcher(line);
             StringBuilder builder = new StringBuilder();
             int index = 0;
+            int counterOfMatches = 1;
             while (matcher.find()) {
-                if (index == replacementIndex) {
+                if (counterOfMatches == replacementIndex) {
                     builder.append(line, index, matcher.start());
                     builder.append(replacement);
+                    index = matcher.end();
                     break;
                 }
+                counterOfMatches++;
             }
             builder.append(line,index,line.length());
             output.append(builder.toString()).append(STRING_NEWLINE);
