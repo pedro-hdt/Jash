@@ -61,7 +61,7 @@ public class RmApplication implements RmInterface {
         try {
             parser.parse(args);
         } catch (InvalidArgsException e) {
-            throw new RmException(e.getMessage());
+            throw (RmException)new RmException(e.getMessage()).initCause(e);
         }
 
         Boolean recursive = parser.isRecursive();

@@ -108,3 +108,5 @@ hs_err_pid*
 .DS_Store
 .idea/workspace.xml
 .idea/codeStyles
+.idea/libraries/lib.xml
+src/.DS_Store
