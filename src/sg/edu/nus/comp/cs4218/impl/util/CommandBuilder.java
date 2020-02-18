@@ -77,6 +77,8 @@ public final class CommandBuilder {
 
             switch (firstChar) {
                 case CHAR_REDIR_INPUT:
+                    // add as a separate token on its own
+                    tokens.add(String.valueOf(firstChar));
                     break;
                 case CHAR_REDIR_OUTPUT:
                     // add as a separate token on its own
@@ -101,14 +103,17 @@ public final class CommandBuilder {
                     } else if (callCmdsForPipe.isEmpty()) {
                         // add CallCommand as part of a SequenceCommand
                         cmdsForSequence.add(new CallCommand(tokens, appRunner, argumentResolver));
+                        tokens = new LinkedList<>();
                     } else {
                         // add CallCommand as part of ongoing PipeCommand
                         callCmdsForPipe.add(new CallCommand(tokens, appRunner, argumentResolver));
+                        tokens = new LinkedList<>();
 
                         // add PipeCommand as part of a SequenceCommand
                         cmdsForSequence.add(new PipeCommand(callCmdsForPipe));
                         callCmdsForPipe = new LinkedList<>();
                     }
+
                     break;
 
                 default:
