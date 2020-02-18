@@ -1,18 +1,46 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.ByteArrayOutputStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+/**
+ * Provides unit tests for the EchoApplication class
+ * Output is received through a ByteArrayOutputStream
+ * <p>
+ * Positive test cases:
+ * - no arguments
+ * - single argument
+ * - two arguments
+ */
 public class EchoApplicationTest {
 
-    private static EchoApplication echo = new EchoApplication();
-    private static ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private static EchoApplication echo;
+    private static ByteArrayOutputStream out;
+
+    @BeforeAll
+    public static void setOut() {
+        out = new ByteArrayOutputStream();
+    }
+
+    @BeforeEach
+    public void setEcho() {
+        echo = new EchoApplication();
+    }
+
+    @AfterEach
+    public void resetOut() {
+        out.reset();
+    }
 
     /**
      * Call echo without any arguments
@@ -20,11 +48,10 @@ public class EchoApplicationTest {
     @Test
     public void emptyArgs() throws EchoException {
 
-        out.reset();
         echo.run(new String[0], System.in, out);
 
         // empty args should print a new line
-        Assertions.assertEquals(STRING_NEWLINE, out.toString());
+        assertEquals(STRING_NEWLINE, out.toString());
 
     }
 
@@ -35,11 +62,9 @@ public class EchoApplicationTest {
     @Test
     public void singleArg() throws EchoException {
 
-        out.reset();
         echo.run(new String[]{"hello"}, System.in, out);
 
-        // empty args should print a new line
-        Assertions.assertEquals("hello" + STRING_NEWLINE, out.toString());
+        assertEquals("hello" + STRING_NEWLINE, out.toString());
 
     }
 
@@ -49,11 +74,9 @@ public class EchoApplicationTest {
     @Test
     public void twoArgs() throws EchoException {
 
-        out.reset();
         echo.run(new String[]{"hello", "world"}, System.in, out);
 
-        // empty args should print a new line
-        Assertions.assertEquals("hello world" + STRING_NEWLINE, out.toString());
+        assertEquals("hello world" + STRING_NEWLINE, out.toString());
 
     }
 
