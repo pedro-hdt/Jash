@@ -12,47 +12,97 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-public class CutApplication implements CutInterface { // TODO implement me
-
-    private Boolean isCutByCharPos = false;
-    private Boolean isCutByBytePos = false;
-    private Boolean isRange = false;
-    private int startIdx = 0;
-    private int endIdx = 0;
-    private String result = null;
+/**
+ * The cut command Cuts out selected portions of each line (as specified by list) from each file and writes them to the standard output.
+ * If no file arguments are specified, cut from the standard input. Column numbering starts from 1.
+ *
+ * <p>
+ * <b>Command format:</b> <code>cut [Option] [LIST] FILES...</code>
+ * </p>
+ */
+public class CutApplication implements CutInterface {
 
     /**
+     * Builds the output read from the current data processed.
      *
-     * Processes the input stream and return a string.
-     *
-     * @param stdin An InputStream
-     * @throws Exception If an I/O exception occurs.
+     * @param data     Data read from the input stream
+     * @param isRange  Boolean option to perform range-based cut
+     * @param startIdx index to begin cut
+     * @param endIdx   index to end cut
+     * @param count    Current char/byte position
+     * @return
      */
-    public String processInput(InputStream stdin, Boolean isRange, int startIdx, int endIdx) throws Exception {
+    public String buildOutput(int data, Boolean isRange, int startIdx, int endIdx, int count) {
         StringBuilder output = new StringBuilder();
+        char currData = (char) data;
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-        int charCount = 0;
-        int r;
-
-        // Read 1 char at a time from the input stream
-        while ((r = reader.read()) != -1) {
-            char ch = (char) r;
-            if (isRange) {
-                if (charCount >= startIdx && charCount <= endIdx) {
-                    output.append(ch);
-                }
-            } else {
-                if (charCount == startIdx || charCount == endIdx) {
-                    output.append(ch);
-                }
+        if (isRange) {
+            if (count >= startIdx && count <= endIdx) {
+                output.append(currData);
             }
-            charCount++; // keeps track of the number of characters that have been read
+        } else {
+            if (count == startIdx || count == endIdx) {
+                output.append(currData);
+            }
         }
 
         return output.toString();
     }
 
+    /**
+     * Processes the input stream and return a string.
+     *
+     * Process byte: http://tutorials.jenkov.com/java-io/inputstream.html
+     * Process chars: https://stackoverflow.com/questions/811851/how-do-i-read-input-character-by-character-in-java
+     *
+     * @param isCharPo Boolean option to cut by character position
+     * @param isBytePo Boolean option to cut by byte position
+     * @param stdin    InputStream containing arguments from Stdin
+     * @param isRange  Boolean option to perform range-based cut
+     * @param startIdx index to begin cut
+     * @param endIdx   index to end cut
+     * @return
+     * @throws Exception If an I/O exception occurs.
+     */
+    public String processInput(Boolean isCharPo, Boolean isBytePo, InputStream stdin, Boolean isRange, int startIdx, int endIdx) throws Exception {
+        StringBuilder output = new StringBuilder();
+
+        int data;
+        if (isBytePo) {
+            int byteCount = 0; // to determine byte position
+
+            // Read 1 byte at a time from the input stream
+            while ((data = stdin.read()) != -1) {
+                output.append(buildOutput(data, isRange, startIdx, endIdx, byteCount));
+                byteCount++; // keeps track of the number of bytes that have been read
+            }
+        } else if (isCharPo) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+            int charCount = 0;
+
+            // Read 1 char at a time from the input stream
+            while ((data = reader.read()) != -1) {
+                output.append(buildOutput(data, isRange, startIdx, endIdx, charCount));
+                charCount++; // keeps track of the number of chars that have been read
+            }
+        }
+
+        stdin.close();
+        return output.toString();
+    }
+
+    /**
+     * Cut selected portions from each file and returns a string as output.
+     *
+     * @param isCharPo Boolean option to cut by character position
+     * @param isBytePo Boolean option to cut by byte position
+     * @param isRange  Boolean option to perform range-based cut
+     * @param startIdx index to begin cut
+     * @param endIdx   index to end cut
+     * @param fileName Array of String of file names
+     * @return
+     * @throws Exception If an I/O exception occurs.
+     */
     @Override
     public String cutFromFiles(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, String... fileName) throws Exception {
         StringBuilder output = new StringBuilder();
@@ -68,24 +118,55 @@ public class CutApplication implements CutInterface { // TODO implement me
             if (!node.canRead()) {
                 throw new Exception(ERR_NO_PERM);
             }
-            if (isCharPo) {
-                output.append(processInput(IOUtils.openInputStream(srcPath), isRange, startIdx, endIdx));
-                output.append('\n'); // carriage return for each file
-            } else if (isBytePo) {
-                // TODO: FIND OUT HOW TO HANDLE BYTES IN JAVA FILES
-            }
+            output.append(processInput(isCharPo, isBytePo, IOUtils.openInputStream(srcPath), isRange, startIdx, endIdx));
+            output.append('\n'); // carriage return for each file
         }
 
         return output.toString();
     }
 
+    /**
+     * Cut selected portions from stdin and return a string as output.
+     *
+     * @param isCharPo Boolean option to cut by character position
+     * @param isBytePo Boolean option to cut by byte position
+     * @param isRange  Boolean option to perform range-based cut
+     * @param startIdx index to begin cut
+     * @param endIdx   index to end cut
+     * @param stdin    InputStream containing arguments from Stdin
+     * @return
+     * @throws Exception If an I/O exception occurs.
+     */
     @Override
     public String cutFromStdin(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, InputStream stdin) throws Exception {
-        return processInput(stdin, isRange, startIdx, endIdx);
+        return processInput(isCharPo, isBytePo, stdin, isRange, startIdx, endIdx);
     }
 
+    /**
+     * Runs the cut application with the specified arguments.
+     *
+     * ASSUMPTION 1: Input can ONLY be a list of comma separated numbers, a range of numbers or a single number
+     * ASSUMPTION 2: Input can ONLY allow up to 2 comma separated numbers as the interface's method can't accept multiple positions
+     *
+     * @param args   Array of arguments for the application.
+     * @param stdin  An InputStream, not used.
+     * @param stdout An OutputStream. Elements of args will be output to stdout, separated by a
+     *               space character.
+     * @throws CutException If an I/O exception occurs.
+     */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException {
+         Boolean isCutByCharPos;
+         Boolean isCutByBytePos;
+         Boolean isRange;
+         int startIdx;
+         int endIdx;
+         String result;
+
+        if (args == null) {
+            throw new CutException(ERR_NULL_ARGS);
+        }
+
         if (args.length < 1) {
             throw new CutException(ERR_NO_ARGS);
         }
@@ -112,8 +193,6 @@ public class CutApplication implements CutInterface { // TODO implement me
                 startIdx = Integer.parseInt(list);
                 endIdx = Integer.parseInt(list);
             } else {
-                // ASSUMPTION 1: Input can ONLY be a list of comma separated numbers, a range of numbers or a single number
-                // ASSUMPTION 2: Input can ONLY allow up to 2 comma separated numbers as the interface's method can't accept multiple positions
                 String[] rangeParams = list.split(",");
                 startIdx = Integer.parseInt(rangeParams[0]);
                 endIdx = Integer.parseInt(rangeParams[1]);
