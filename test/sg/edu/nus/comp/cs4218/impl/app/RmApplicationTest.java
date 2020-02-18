@@ -1,4 +1,4 @@
-package impl.app;
+package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;

@@ -10,13 +10,16 @@ import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-import java.io.File;
+import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class MvApplication implements MvInterface {
 
@@ -33,12 +36,40 @@ public class MvApplication implements MvInterface {
     public String mvFilesToFolder(String destFolder, String... fileName) throws Exception {
         for (String srcPath: fileName){
             if (shouldOverwrite) {
+                // Can avoid this with assumption that target operand is always a directory
+                if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
+                    try (Stream<String> lineStream = Files.lines(IOUtils.resolveFilePath(srcPath));
+                         BufferedWriter writer = Files.newBufferedWriter(IOUtils.resolveFilePath(destFolder))) {
+                            lineStream
+                                .filter(line -> !"pattern".equals(line.trim()))
+                                .forEach(line -> {
+                                    try {
+                                        writer.append(line);
+                                        writer.newLine();
+                                    } catch (Exception e) {
+                                        // Do nothing
+                                    }
+                                });
+                    }
+                    Files.delete(IOUtils.resolveFilePath(srcPath));
+                    return null;
+                }
+                // Assumption: Replacement doesn't work when a directory is being replaced and target directory is non-empty
                 Files.move(IOUtils.resolveFilePath(srcPath),
-                        IOUtils.resolveFilePath(destFolder + File.separator + srcPath),
+                        Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
+                                IOUtils.resolveFilePath(srcPath).getFileName().toString()),
                         StandardCopyOption.REPLACE_EXISTING);
             } else {
-                Files.move(IOUtils.resolveFilePath(srcPath),
-                        IOUtils.resolveFilePath(destFolder + File.separator + srcPath));
+                // if overwriting is not allowed then only allow possibility of moving if its directory
+                if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
+                    try {
+                        Files.move(IOUtils.resolveFilePath(srcPath),
+                                Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
+                    } catch(FileAlreadyExistsException faee) {
+                        // Do nothing and fail silently as expected cause overwriting is not allowed with the flag
+                    }
+
+                }
             }
         }
         return null;
@@ -48,6 +79,11 @@ public class MvApplication implements MvInterface {
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws MvException {
         if (args == null) {
             throw new MvException(ERR_NULL_ARGS);
+        }
+
+        // Assumption: Will assume multiple args passed when regex is used with only first arg passed
+        if (args.length < 2) {
+            throw new MvException(ERR_NO_FILE_ARGS);
         }
 
         MvArgsParser parser = new MvArgsParser();
@@ -75,8 +111,6 @@ public class MvApplication implements MvInterface {
         }  catch (Exception e) {
             throw (MvException) new MvException(ERR_FILE_NOT_FOUND).initCause(e);
         }
-
-
 
     }
 }
