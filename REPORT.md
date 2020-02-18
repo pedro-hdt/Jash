@@ -43,4 +43,6 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Performance improvement by using `StringBuilder` in `RegexArgument#globFiles()`
 
+* Fixed sequence commands: tokens of previous commands were being used for the ones following because the tokens list was not cleaned in `CommandBuilder`
+
 So far no tests have been written for these
