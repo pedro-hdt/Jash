@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -10,8 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -90,13 +89,11 @@ class LsApplicationTest {
      * @throws LsException
      */
     @Test
-    void testLsOnlyFolders() throws LsException, IOException {
+    void testLsOnlyFolders() throws LsException {
 
-        Path directoryFolder = Files.createTempDirectory("directoryFolder");
+        lsApp.run(new String[]{"-d"}, System.in, stdout);
 
-        lsApp.run(new String[]{directoryFolder.toString(), "-d"}, System.in, stdout);
-
-        assertTrue(stdout.toString().contains(directoryFolder.toString()));
+        assertTrue(stdout.toString().contains("folder1\nfolder2"));
     }
 
     /**
@@ -104,14 +101,38 @@ class LsApplicationTest {
      * @throws LsException
      */
     @Test
-    void testLsRecursiveDirectory() throws LsException, IOException {
-        Path directoryFolder = Files.createTempDirectory("directoryFolder");
-        File tempFile = File.createTempFile("directoryFolder", "tempFile", directoryFolder.toFile());
+    void testLsRecursiveDirectory() throws LsException {
 
-        lsApp.run(new String[]{directoryFolder.toString(), "-R"}, System.in, stdout);
+        lsApp.run(new String[]{"-R"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains(directoryFolder.toString()));
-        assertTrue(stdout.toString().contains(tempFile.getName()));
+        assertTrue(stdout.toString().contains("folder2:\nfile1Folder2.txt"));
+        assertTrue(stdout.toString().contains("folder1"));
     }
+
+    /**
+     * LS command with -R and -d argument showing all recursive directory and files of only folders
+     * @throws LsException
+     */
+    @Test
+    void testLsRecursiveFolderOnlyDirectory() throws LsException {
+
+        lsApp.run(new String[]{"-R", "-d"}, System.in, stdout);
+
+        assertTrue(stdout.toString().contains("folder1\nfolder2"));
+        assertFalse(stdout.toString().contains("file1Folder2.txt"));
+    }
+
+    /**
+     * LS command with directory specified
+     * @throws LsException
+     */
+    @Test
+    void testLsAtAnotherDirectory() throws LsException {
+
+        lsApp.run(new String[]{"folder2"}, System.in, stdout);
+
+        assertTrue(stdout.toString().contains("file1Folder2.txt"));
+    }
+
 
 }
