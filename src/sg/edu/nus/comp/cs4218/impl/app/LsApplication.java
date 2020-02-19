@@ -66,7 +66,7 @@ public class LsApplication implements LsInterface {
         Boolean foldersOnly = parser.isFoldersOnly();
         Boolean recursive = parser.isRecursive();
         String[] directories = parser.getDirectories()
-                .toArray(new String[parser.getDirectories().size()]);
+                .toArray(new String[0]);
         String result = listFolderContent(foldersOnly, recursive, directories);
 
         try {
