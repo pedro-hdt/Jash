@@ -38,6 +38,8 @@ public class ShellImpl implements Shell {
                 if (!StringUtils.isBlank(commandString)) {
                     shell.parseAndEvaluate(commandString, System.out);
                 }
+            } catch (ExitException e) {
+                System.exit(0);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
