@@ -1,36 +1,148 @@
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
 
-    private static PasteApplication paste = new PasteApplication();
+    private static final String PASTE_FILE1 = "src/test/assets/pasteFile1.txt";
+    private static final String PASTE_FILE2 = "src/test/assets/pasteFile2.txt";
+    private static final String PASTE_FILES1AND2 = "src/test/assets/pasteFiles1and2.txt";
+    private static final String PASTE_FILE1_2COLS = "src/test/assets/pasteFile1-2cols.txt";
+    private static final String PASTE_FILE1_2COLSAND2 = "src/test/assets/pasteFile1-2colsand2.txt";
 
-    @Test // TODO temporary
-    public void pasteOutputTest() throws IOException, PasteException {
 
-        Path f1 = Files.createTempFile("paste", "");
-        Path f2 = Files.createTempFile("paste", "");
+    private static PasteApplication paste;
+    private static ByteArrayInputStream stdin;
+    private static ByteArrayOutputStream stdout;
 
-        List<String> lines1 = Arrays.asList("1", "2", "3", "4");
-        List<String> lines2 = Arrays.asList("A", "B", "C", "D", "E", "F");
+    @BeforeAll
+    public static void setUp() {
+        stdout = new ByteArrayOutputStream();
+    }
 
-        Files.write(f1, lines1);
-        Files.write(f2, lines2);
+    @BeforeEach
+    public void init() throws IOException {
+        paste = new PasteApplication();
+        stdout.reset();
+    }
 
-        String expected = "1\tA\t\n2\tB\t\n3\tC\t\n4\tD\t\n\tE\t\n\tF\t\n";
+    @AfterAll
+    public static void tearDown() throws IOException {
+        stdout.close();
+    }
 
-        String actual = paste.mergeFile(f1.toString(), f2.toString());
-        System.out.println(actual);
+    /**
+     * Call paste without any arguments
+     */
+    @Test
+    public void pasteNoArgs() {
 
-        Assertions.assertEquals(expected, actual);
+        PasteException expectedException =
+                assertThrows(PasteException.class, () -> paste.run(new String[0], System.in, stdout));
+
+        assertTrue(expectedException.getMessage().contains(ERR_NO_ARGS));
 
     }
+
+    /**
+     * Call paste with single file arg
+     * Should print the file followed by a new line
+     */
+    @Test
+    public void pasteSingleFileArg() throws PasteException, IOException {
+
+        paste.run(new String[]{PASTE_FILE1}, System.in, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
+
+    /**
+     * Call paste with two file args
+     * Should behave like GNU paste
+     */
+    @Test
+    public void pasteTwoFileArgs() throws PasteException, IOException {
+
+        paste.run(new String[]{PASTE_FILE1, PASTE_FILE2}, System.in, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILES1AND2))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
+
+    /**
+     * Call paste with single stdin (-) arg
+     */
+    @Test
+    public void pasteSingleStdinArgs() throws PasteException, IOException {
+
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1)));
+
+        paste.run(new String[]{"-"}, stdin, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
+
+    /**
+     * Call paste with two stdin (-) args
+     */
+    @Test
+    public void pasteTwoStdinArgs() throws PasteException, IOException {
+
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1)));
+
+        paste.run(new String[]{"-", "-"}, stdin, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1_2COLS))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
+
+    /**
+     * Call paste with 1 stdin (-) arg and one file arg
+     */
+    @Test
+    public void pasteOneFileOneStdinArgs() throws PasteException, IOException {
+
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE2)));
+
+        paste.run(new String[]{PASTE_FILE1, "-"}, stdin, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILES1AND2))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
+
+    /**
+     * Call paste with 2 stdin (-) args and one file arg
+     */
+    @Test
+    public void pasteOneFileTwoStdinArgs() throws PasteException, IOException {
+
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1)));
+
+        paste.run(new String[]{"-", "-", PASTE_FILE2}, stdin, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1_2COLSAND2))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
+
 }

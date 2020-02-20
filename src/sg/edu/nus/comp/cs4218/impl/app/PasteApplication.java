@@ -30,7 +30,7 @@ public class PasteApplication implements PasteInterface {
         String line;
         try {
             line = reader.readLine();
-            while (!line.isEmpty()) {
+            while (line != null && !line.isEmpty()) {
                 sb.append(line);
                 sb.append(STRING_NEWLINE);
                 line = reader.readLine();
@@ -71,6 +71,7 @@ public class PasteApplication implements PasteInterface {
                     }
                     sb.append(CHAR_TAB);
                 }
+                sb.deleteCharAt(sb.length() - 1);
                 sb.append(STRING_NEWLINE);
             }
 
@@ -86,7 +87,6 @@ public class PasteApplication implements PasteInterface {
     public String mergeFileAndStdin(InputStream stdin, String... fileName) throws PasteException {
 
         List<BufferedReader> fileReaders = new ArrayList<>();
-        BufferedReader stdinReader = new BufferedReader(new InputStreamReader(stdin));
         StringBuilder sb = new StringBuilder();
 
         for (String f : fileName) {
@@ -102,7 +102,7 @@ public class PasteApplication implements PasteInterface {
         }
 
         try {
-            ListIterator<String> stdinLines = Arrays.asList(mergeStdin(stdin).split("\n")).listIterator();
+            ListIterator<String> stdinLines = Arrays.asList(mergeStdin(stdin).split(STRING_NEWLINE)).listIterator();
             int columns = fileName.length;
             int i = 0;
             String line = "";
@@ -118,6 +118,7 @@ public class PasteApplication implements PasteInterface {
                 sb.append(CHAR_TAB);
 
                 if (i % columns == columns - 1) {
+                    sb.deleteCharAt(sb.length() - 1);
                     sb.append(STRING_NEWLINE);
                 }
 
@@ -140,7 +141,7 @@ public class PasteApplication implements PasteInterface {
         }
 
         if (args.length == 0) {
-            throw new PasteException(ERR_NO_FILE_ARGS);
+            throw new PasteException(ERR_NO_ARGS);
         }
 
         boolean hasStdin = Arrays.stream(args).anyMatch((x) -> x.equals("-"));
@@ -157,6 +158,7 @@ public class PasteApplication implements PasteInterface {
                 sb.append(lines[i]);
                 sb.append(CHAR_TAB);
                 if (i % columns == columns - 1) {
+                    sb.deleteCharAt(sb.length() - 1);
                     sb.append(STRING_NEWLINE);
                 }
             }
