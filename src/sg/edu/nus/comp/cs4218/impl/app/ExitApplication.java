@@ -29,6 +29,6 @@ public class ExitApplication implements ExitInterface {
      */
     @Override
     public void terminateExecution() throws ExitException {
-        System.exit(0);
+        throw new ExitException("terminating execution");
     }
 }
