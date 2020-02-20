@@ -1,7 +1,8 @@
+package sg.edu.nus.comp.cs4218.impl.app;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.RmException;
-import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
-/* *
+/**
  * Provides unit tests for the RmApplication class
  * A number of utility/wrapper methods are used to facilitate file and directory creation
  * Negative test cases are suffixed with the word "Attempt"
@@ -30,18 +31,18 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
  *  - removing a non-empty directory without any flags
  *  - removing a non-empty directory with the -d flag
  *
- * */
+ */
 public class RmApplicationTest {
 
     private static RmApplication rm;
+
+    // we keep this string as suffix in the filenames created
+    private static final String rmTestClass = "RmApplicationTest";
 
     @BeforeEach
     public void setRm() {
         rm = new RmApplication();
     }
-
-    // we keep this string as suffix in the filenames created
-    private static final String rmTestClass = "RmApplicationTest";
 
     /**
      * Utility method to create a temporary file
