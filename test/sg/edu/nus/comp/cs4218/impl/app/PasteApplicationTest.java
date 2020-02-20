@@ -1,9 +1,10 @@
+package sg.edu.nus.comp.cs4218.impl.app;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -17,11 +18,11 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
 
-    private static final String PASTE_FILE1 = "src/test/assets/pasteFile1.txt";
-    private static final String PASTE_FILE2 = "src/test/assets/pasteFile2.txt";
-    private static final String PASTE_FILES1AND2 = "src/test/assets/pasteFiles1and2.txt";
-    private static final String PASTE_FILE1_2COLS = "src/test/assets/pasteFile1-2cols.txt";
-    private static final String PASTE_FILE1_2COLSAND2 = "src/test/assets/pasteFile1-2colsand2.txt";
+    private static final String PASTE_FILE1 = "test/assets/pasteFile1.txt";
+    private static final String PASTE_FILE2 = "test/assets/pasteFile2.txt";
+    private static final String PASTE_FILES1AND2 = "test/assets/pasteFiles1and2.txt";
+    private static final String PASTE_FILE1_2COLS = "test/assets/pasteFile1-2cols.txt";
+    private static final String PASTE_FILE1_2COLSAND2 = "test/assets/pasteFile1-2colsand2.txt";
 
 
     private static PasteApplication paste;
@@ -34,7 +35,7 @@ public class PasteApplicationTest {
     }
 
     @BeforeEach
-    public void init() throws IOException {
+    public void init() {
         paste = new PasteApplication();
         stdout.reset();
     }
