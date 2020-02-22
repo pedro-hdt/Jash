@@ -1,4 +1,4 @@
-package impl.app;
+package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,7 +112,7 @@ class CdApplicationTest {
      */
     @Test
     public void cdNoArgs() {
-        CdException e = assertThrows(CdException.class, () -> cd.run(new String[0], System.in, System.out));
+        CdException e = assertThrows(CdException.class, () -> cd.run(new String[]{}, System.in, System.out));
         assertTrue(e.getMessage().contains(ERR_NO_ARGS));
     }
 
