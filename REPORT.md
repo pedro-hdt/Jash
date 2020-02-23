@@ -73,15 +73,16 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 * When sub command is evaluated, in the result the new line is removed and replaced by "" instead of space
 
 
-
-# Notes
-- So far no tests have been written for these
-- Files with spaces in it have to be quoted
-
-
-
 ### Commit []()
 
 * SedApplication fix indexing and matching to replace the expected match
 
 * SedApplication write the result by replacing the file's content with result
+
+
+
+
+# Notes
+- So far no tests have been written for these
+- Files with spaces in it have to be quoted
+
