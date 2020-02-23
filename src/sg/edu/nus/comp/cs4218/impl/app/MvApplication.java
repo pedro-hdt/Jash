@@ -1,6 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
@@ -28,6 +30,9 @@ public class MvApplication implements MvInterface {
     @Override
     public String mvSrcFileToDestFile(String srcFile, String destFile) throws Exception {
         Path source = IOUtils.resolveFilePath(srcFile);
+        if (!Files.exists(source)) {
+            throw new MvException(ERR_NO_FILE_ARGS);
+        }
         Files.move(source, source.resolveSibling(destFile));
         return null;
     }
@@ -54,7 +59,7 @@ public class MvApplication implements MvInterface {
                     Files.delete(IOUtils.resolveFilePath(srcPath));
                     return null;
                 }
-                // Assumption: Replacement doesn't work when a directory is being replaced and target directory is non-empty
+                // Assumption: Replacement doesn't work when a directory is being moved and target directory is non-empty
                 Files.move(IOUtils.resolveFilePath(srcPath),
                         Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
                                 IOUtils.resolveFilePath(srcPath).getFileName().toString()),
@@ -69,6 +74,8 @@ public class MvApplication implements MvInterface {
                         // Do nothing and fail silently as expected cause overwriting is not allowed with the flag
                     }
 
+                } else {
+                    throw new MvException(ERR_IS_NOT_DIR);
                 }
             }
         }
