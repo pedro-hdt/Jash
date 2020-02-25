@@ -97,7 +97,7 @@ public class GrepApplicationTest {
 
     @Test
     public void testGrepWithNonExistentFile() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"pattern", "Test-folder-10"}, null, stdout);
+        grepApplication.run(new String[] {"pattern", "Test-folder-1\\text.txt"}, null, stdout);
         assertTrue(stdout.toString().contains(ERR_FILE_NOT_FOUND));
 
     }
