@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.EMPTY_PATTERN;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
+import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
@@ -56,8 +57,7 @@ public class GrepApplicationTest {
 
     @Test
     public void testGrepWithNoInputOrFileStream() {
-        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"-i"}
-        , null, stdout));
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"ff"}, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NO_INPUT));
     }
 
