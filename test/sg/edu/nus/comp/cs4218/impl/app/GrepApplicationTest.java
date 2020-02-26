@@ -5,14 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.EMPTY_PATTERN;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
-import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -57,14 +58,15 @@ public class GrepApplicationTest {
 
     @Test
     public void testGrepWithNoInputOrFileStream() {
-        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"ff"}, null, stdout));
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"ff"}
+        , null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NO_INPUT));
     }
 
     @Test
     public void testGrepWithNullPattern() {
         Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"-i"}
-        , System.in, stdout));
+            , System.in, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_SYNTAX));
     }
 
@@ -78,7 +80,7 @@ public class GrepApplicationTest {
     @Test
     public void testGrepsWithIncorrectOption() {
         Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"-z"}
-        , System.in, stdout));
+            , System.in, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_SYNTAX));
     }
 
@@ -151,5 +153,74 @@ public class GrepApplicationTest {
     public void testGrepWithInsensitivePathAndCountLines() throws AbstractApplicationException {
         grepApplication.run(new String[] {"-i", "-c", "Pattern", "Test-folder-1\\textfile.txt"}, null, stdout);
         assertEquals("1\n", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithNoMatchingPattern() throws AbstractApplicationException {
+        String content = "Patience is the key to success";
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"patience"}, inputstream, stdout);
+        assertEquals("", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithCaseSensitiveMatchingPattern() throws AbstractApplicationException {
+        String content = "Patience is the key to success";
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"Patience"}, inputstream, stdout);
+        assertEquals("Patience is the key to success\n", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithCaseInsensitiveMatchingPattern() throws AbstractApplicationException {
+        String content = "Patience is the key to success";
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"-i", "patience"}, inputstream, stdout);
+        assertEquals("Patience is the key to success\n", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithCountLines() throws AbstractApplicationException {
+        String content = "Patience is the key to success";
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"-c", "Patience"}, inputstream, stdout);
+        assertEquals("1\n", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithMultipleLines() throws AbstractApplicationException {
+        String content1 = "Patience is the key to success\n";
+        String content2 = "No success without hard work\n";
+        String content = content1 + content2;
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"-c", "Patience"}, inputstream, stdout);
+        assertEquals("1\n", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithMultipleMatchingLines() throws AbstractApplicationException {
+        String content1 = "Patience is the key to success\n";
+        String content2 = "No success without hard work\n";
+        String content = content1 + content2;
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"-c", "success"}, inputstream, stdout);
+        assertEquals("2\n", stdout.toString());
+    }
+
+    @Test
+    public void testGrepFromStdinWithAllOptions() throws AbstractApplicationException {
+        String content1 = "Patience is the key to Success\n";
+        String content2 = "No success without hard work\n";
+        String content = content1 + content2;
+        InputStream inputstream = new ByteArrayInputStream(content.getBytes());
+        String out = "";
+        grepApplication.run(new String[] {"-i", "-c", "success"}, inputstream, stdout);
+        assertEquals("2\n", stdout.toString());
     }
 }
