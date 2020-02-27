@@ -54,6 +54,8 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
  * -    Complex regex replacement (2)
  * -    Replace with Different separators
  * -    Replace with empty string
+ * -    Query empty file
+ * -    Replace across multiple lines
  *
  *
  */
@@ -90,6 +92,14 @@ public class SedApplicationTest {
         strToBytes = "2file content".getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
+
+
+        // Reset for multipleLines.txt
+        outputStream = new FileOutputStream(IOUtils.resolveFilePath("multipleLines.txt").toFile());
+        strToBytes = "hello boy\ngirl hello hello".getBytes();
+        outputStream.write(strToBytes);
+        outputStream.close();
+
 
 
         Environment.setCurrentDirectory(originalDir);
@@ -220,7 +230,7 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubstringNoMatches() throws IOException {
+    public void testReplaceSubstringNoMatches() {
         String stdInString = "hello";
 
         String[] args = new String[] {"s/notFound/random/"};
@@ -235,7 +245,7 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubstringSecondMatch() throws IOException {
+    public void testReplaceSubstringSecondMatch() {
         String stdInString = "hello hello";
 
         String[] args = new String[] {"s/hello/boy/2"};
@@ -250,7 +260,7 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubstringComplexRegex1() throws IOException {
+    public void testReplaceSubstringComplexRegex1() {
         String stdInString = "hello";
 
         String[] args = new String[] {"s/^/> /"};
@@ -265,7 +275,7 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubstringComplexRegex2() throws IOException {
+    public void testReplaceSubstringComplexRegex2(){
         String stdInString = "$16.32";
 
         String[] args = new String[] {"s|\\p{Sc}*(\\s?\\d+[.,]?\\d*)\\p{Sc}*|4|"};
@@ -280,7 +290,7 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubstringWithDiffSeparators() throws IOException {
+    public void testReplaceSubstringWithDiffSeparators() {
         String stdInString = "hello";
 
         String[] args = new String[] {"s|he|ye|"};
@@ -295,7 +305,7 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubstringClear() throws IOException {
+    public void testReplaceSubstringClear() {
         String stdInString = "hello";
 
         String[] args = new String[] {"s/hello//"};
@@ -304,6 +314,30 @@ public class SedApplicationTest {
         try {
             sed.run(args, stdin, stdout);
             assertTrue(stdout.toString().contains(""));
+        } catch (SedException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReplaceNoContentInInput() {
+        String[] args = new String[] {"s/hello//", "emptyFile.txt"};
+
+        try {
+            sed.run(args, null, stdout);
+            assertTrue(stdout.toString().contains(""));
+        } catch (SedException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReplaceAcrossMultipleLines() {
+        String[] args = new String[] {"s/hello/hell/", "multipleLines.txt"};
+
+        try {
+            sed.run(args, null, stdout);
+            assertTrue(stdout.toString().contains("hell boy\ngirl hell hello"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
