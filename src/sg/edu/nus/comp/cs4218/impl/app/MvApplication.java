@@ -74,8 +74,6 @@ public class MvApplication implements MvInterface {
                         // Do nothing and fail silently as expected cause overwriting is not allowed with the flag
                     }
 
-                } else {
-                    throw new MvException(ERR_IS_NOT_DIR);
                 }
             }
         }
