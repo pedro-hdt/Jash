@@ -26,7 +26,7 @@ class LsApplicationTest {
     private static LsApplication lsApp;
     private static OutputStream stdout;
 
-    static final String originalDir = Environment.getCurrentDirectory();
+    private static final String originalDir = Environment.getCurrentDirectory();
 
 
     @BeforeAll
