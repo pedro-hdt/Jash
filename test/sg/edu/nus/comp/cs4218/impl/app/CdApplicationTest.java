@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CdException;
-import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,12 +28,12 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
  * <p>
  * Negative test cases:
  * - cd without any arguments (should throw no args exception)
- * - cd with inexistent directory (should throw no such dir exception)
+ * - cdwith inexistent directory (should throw no such dir exception)
  */
 class CdApplicationTest {
 
-    public static CdApplication cd;
-    public static final String initDir = Environment.currentDirectory; // TODO is this problematic in any way?
+    public static CdApplication cdApp;
+    public static final String INIT_DIR = Environment.currentDirectory; // TODO is this problematic in any way?
 
     /**
      * Creates a directory inside the given one and schedules it to be deleted one exit
@@ -50,12 +49,12 @@ class CdApplicationTest {
 
     @BeforeEach
     public void setCd() {
-        cd = new CdApplication();
+        cdApp = new CdApplication();
     }
 
     @AfterEach
     public void resetCurrentDirectory() {
-        Environment.currentDirectory = initDir;
+        Environment.currentDirectory = INIT_DIR;
     }
 
     /**
@@ -68,7 +67,7 @@ class CdApplicationTest {
         Path testDir = mkdir(Paths.get(Environment.currentDirectory));
 
         // change to newly created dir
-        cd.run(new String[]{testDir.toString()}, System.in, System.out);
+        cdApp.run(new String[]{testDir.toString()}, System.in, System.out);
 
         // verify effect of change
         assertEquals(testDir.toString(), Environment.currentDirectory);
@@ -86,7 +85,7 @@ class CdApplicationTest {
         Path testDir1 = mkdir(Paths.get(Environment.currentDirectory));
         Path testDir2 = mkdir(Paths.get(Environment.currentDirectory));
 
-        cd.run(new String[]{testDir1.toString(), testDir2.toString()}, System.in, System.out);
+        cdApp.run(new String[]{testDir1.toString(), testDir2.toString()}, System.in, System.out);
         assertEquals(testDir1.toString(), Environment.currentDirectory);
 
     }
@@ -102,7 +101,7 @@ class CdApplicationTest {
         Path outer = mkdir(Paths.get(Environment.currentDirectory));
         Path inner = mkdir(outer);
 
-        cd.run(new String[]{inner.toString()}, System.in, System.out);
+        cdApp.run(new String[]{inner.toString()}, System.in, System.out);
         assertEquals(inner.toString(), Environment.currentDirectory);
     }
 
@@ -112,8 +111,8 @@ class CdApplicationTest {
      */
     @Test
     public void cdNoArgs() {
-        CdException e = assertThrows(CdException.class, () -> cd.run(new String[]{}, System.in, System.out));
-        assertTrue(e.getMessage().contains(ERR_NO_ARGS));
+        CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, System.in, System.out));
+        assertTrue(exception.getMessage().contains(ERR_NO_ARGS));
     }
 
     /**
@@ -128,8 +127,8 @@ class CdApplicationTest {
         String dirName = testDir.toString();
         Files.delete(testDir);
 
-        CdException e = assertThrows(CdException.class, () -> cd.run(new String[]{dirName}, System.in, System.out));
-        assertTrue(e.getMessage().contains(ERR_FILE_NOT_FOUND));
+        CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{dirName}, System.in, System.out));
+        assertTrue(exception.getMessage().contains(ERR_FILE_NOT_FOUND));
     }
 
 }
