@@ -169,7 +169,7 @@ public class MvApplicationTest {
 
             assertTrue(Files.exists(IOUtils.resolveFilePath(NEW_NAME_FILE)));
         } catch (MvException e) {
-            fail("should not fail:" + e);//NOPMD
+            fail("should not fail:" + e);//NOPMD -  Suppressed as its fine to have similar fail with different exception msg
         }
     }
 

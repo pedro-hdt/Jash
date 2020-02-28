@@ -208,7 +208,7 @@ public class SedApplicationTest {
             String result = sed.replaceSubstringInStdin(regex, replacement,1, stdin);
             assertTrue(result.contains("woman 1"));
         } catch (Exception e) {
-            fail("should not fail: " + e.getMessage());//NOPMD
+            fail("should not fail: " + e.getMessage());//NOPMD - Suppressed as its fine to have similar fail with different exception msg
         }
     }
 
