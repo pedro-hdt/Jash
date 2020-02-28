@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
@@ -60,49 +61,53 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
  *
  */
 public class SedApplicationTest {
+    public static final String REPLACING_FILE = "replacingSubstring.txt";
+    public static final String FILE1_TXT = "file1.txt";
+    public static final String FILE2_TXT = "file2.txt";
+    public static final String MULTIPLE_LINES = "multipleLines.txt";
     private static SedApplication sed;
     private static InputStream stdin;
     private static OutputStream stdout;
 
-    private static final String originalDir = Environment.getCurrentDirectory();
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(originalDir + File.separator + "dummyTestFolder" + File.separator + "SedTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "SedTestFolder");
     }
 
     @AfterAll
     static void reset() throws IOException {
 
         // Reset file content after replaced
-        FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath("replacingSubstring.txt").toFile());
+        FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(REPLACING_FILE).toFile());
         byte[] strToBytes = "before".getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
 
 
         // Reset after updating content of multiple files
-        outputStream = new FileOutputStream(IOUtils.resolveFilePath("file1.txt").toFile());
+        outputStream = new FileOutputStream(IOUtils.resolveFilePath(FILE1_TXT).toFile());
         strToBytes = "1file content".getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
 
-        outputStream = new FileOutputStream(IOUtils.resolveFilePath("file2.txt").toFile());
+        outputStream = new FileOutputStream(IOUtils.resolveFilePath(FILE2_TXT).toFile());
         strToBytes = "2file content".getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
 
 
         // Reset for multipleLines.txt
-        outputStream = new FileOutputStream(IOUtils.resolveFilePath("multipleLines.txt").toFile());
+        outputStream = new FileOutputStream(IOUtils.resolveFilePath(MULTIPLE_LINES).toFile());
         strToBytes = "hello boy\ngirl hello hello".getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
 
 
 
-        Environment.setCurrentDirectory(originalDir);
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     @BeforeEach
@@ -135,10 +140,9 @@ public class SedApplicationTest {
 
     @Test
     public void testInvalidRuleLessLimiters() {
-        String stdInString = "hello";
 
         String[] args = new String[] {"s|he|ye"};
-        stdin = new ByteArrayInputStream(stdInString.getBytes());
+        stdin = new ByteArrayInputStream("random".getBytes());
 
         Exception exception = assertThrows(SedException.class, () -> sed.run(args, stdin, stdout));
         assertTrue(exception.getMessage().contains(ERR_INVALID_REP_RULE));
@@ -157,10 +161,9 @@ public class SedApplicationTest {
 
     @Test
     public void testInvalidRuleEmptyRegex() {
-        String stdInString = "hello";
 
         String[] args = new String[] {"s||ye|"};
-        stdin = new ByteArrayInputStream(stdInString.getBytes());
+        stdin = new ByteArrayInputStream("invalid".getBytes());
 
         Exception exception = assertThrows(SedException.class, () -> sed.run(args, stdin, stdout));
         assertTrue(exception.getMessage().contains(ERR_EMPTY_REGEX));
@@ -183,18 +186,14 @@ public class SedApplicationTest {
     }
 
     @Test
-    public void testReplaceSubStringFromStdin() {
+    public void testReplaceSubStringFromStdin() throws SedException {
         String stdInString = "hello toBeReplaced";
 
         String[] args = new String[] {"s/toBeReplaced/replacedWord/"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("replacedWord"));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        assertTrue(stdout.toString().contains("replacedWord"));
     }
 
     @Test
@@ -209,21 +208,21 @@ public class SedApplicationTest {
             String result = sed.replaceSubstringInStdin(regex, replacement,1, stdin);
             assertTrue(result.contains("woman 1"));
         } catch (Exception e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage());//NOPMD - Suppressed as its fine to have similar fail with different exception msg
         }
     }
 
     @Test
     public void testSuccessfulReplaceInFileContent() throws IOException {
-        String[] args = new String[] {"s/before/after/", "replacingSubstring.txt"};
+        String[] args = new String[] {"s/before/after/", REPLACING_FILE};
 
         try {
-            String s = new String(Files.readAllBytes(IOUtils.resolveFilePath("replacingSubstring.txt")));
-            assertTrue(s.contains("before"));
+            String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
+            assertTrue(str.contains("before"));
 
             sed.run(args, stdin, stdout);
-            s = new String(Files.readAllBytes(IOUtils.resolveFilePath("replacingSubstring.txt")));
-            assertTrue(s.contains("after"));
+            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
+            assertTrue(str.contains("after"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -261,14 +260,14 @@ public class SedApplicationTest {
 
     @Test
     public void testReplaceSubstringComplexRegex1() {
-        String stdInString = "hello";
+        String stdInString = "bullet";
 
         String[] args = new String[] {"s/^/> /"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
         try {
             sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("> hello"));
+            assertTrue(stdout.toString().contains("> bullet"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -291,14 +290,14 @@ public class SedApplicationTest {
 
     @Test
     public void testReplaceSubstringWithDiffSeparators() {
-        String stdInString = "hello";
+        String stdInString = "cat";
 
-        String[] args = new String[] {"s|he|ye|"};
+        String[] args = new String[] {"s|c|m|"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
         try {
             sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("yello"));
+            assertTrue(stdout.toString().contains("mat"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -306,9 +305,9 @@ public class SedApplicationTest {
 
     @Test
     public void testReplaceSubstringClear() {
-        String stdInString = "hello";
+        String stdInString = "clear";
 
-        String[] args = new String[] {"s/hello//"};
+        String[] args = new String[] {"s/clear//"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
         try {
@@ -333,7 +332,7 @@ public class SedApplicationTest {
 
     @Test
     public void testReplaceAcrossMultipleLines() {
-        String[] args = new String[] {"s/hello/hell/", "multipleLines.txt"};
+        String[] args = new String[] {"s/hello/hell/", MULTIPLE_LINES};
 
         try {
             sed.run(args, null, stdout);
@@ -345,21 +344,21 @@ public class SedApplicationTest {
 
     @Test
     public void testReplaceSubstringMultipleFiles() throws IOException {
-        String[] args = new String[] {"s/file/updatedFile/", "file1.txt", "file2.txt"};
+        String[] args = new String[] {"s/file/updatedFile/", FILE1_TXT, FILE2_TXT};
 
         try {
-            String s = new String(Files.readAllBytes(IOUtils.resolveFilePath("file1.txt")));
-            assertTrue(s.contains("1file content"));
+            String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1_TXT)));
+            assertTrue(str.contains("1file content"));
 
-            s = new String(Files.readAllBytes(IOUtils.resolveFilePath("file2.txt")));
-            assertTrue(s.contains("2file content"));
+            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE2_TXT)));
+            assertTrue(str.contains("2file content"));
 
             sed.run(args, stdin, stdout);
-            s = new String(Files.readAllBytes(IOUtils.resolveFilePath("file1.txt")));
-            assertTrue(s.contains("1updatedFile content"));
+            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1_TXT)));
+            assertTrue(str.contains("1updatedFile content"));
 
-            s = new String(Files.readAllBytes(IOUtils.resolveFilePath("file2.txt")));
-            assertTrue(s.contains("2updatedFile content"));
+            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE2_TXT)));
+            assertTrue(str.contains("2updatedFile content"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
