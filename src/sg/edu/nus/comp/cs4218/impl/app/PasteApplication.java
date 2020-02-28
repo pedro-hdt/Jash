@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.PasteInterface;
+import sg.edu.nus.comp.cs4218.exception.LsException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
@@ -142,6 +143,10 @@ public class PasteApplication implements PasteInterface {
 
         if (args.length == 0) {
             throw new PasteException(ERR_NO_ARGS);
+        }
+
+        if (stdout == null) {
+            throw new PasteException(ERR_NO_OSTREAM);
         }
 
         boolean hasStdin = Arrays.stream(args).anyMatch((x) -> x.equals("-"));
