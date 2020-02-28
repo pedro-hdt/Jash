@@ -48,6 +48,9 @@ public class PipeOperatorTest {
         stdout.flush();
     }
 
+    /**
+     * Test to filter out only files which have filtered in their name
+     */
     @Test
     public void testLsWithGrepUsingPipe() {
         try {
