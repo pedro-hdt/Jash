@@ -60,6 +60,9 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * SedApplication write the result by replacing the file's content with result
 
+* Fixed indexing bug in `PipeCommand`
+ 
+* Fixed negation to add result of subCommand
 
 
 
