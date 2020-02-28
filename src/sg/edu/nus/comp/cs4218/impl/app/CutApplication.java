@@ -10,7 +10,6 @@ import java.io.*;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * The cut command Cuts out selected portions of each line (as specified by list) from each file and writes them to the standard output.
@@ -69,7 +68,7 @@ public class CutApplication implements CutInterface {
 
         int data;
         if (isBytePo) {
-            int byteCount = 0; // to determine byte position
+            int byteCount = 1; // to determine byte position
 
             // Read 1 byte at a time from the input stream
             while ((data = stdin.read()) != -1) {
@@ -78,7 +77,7 @@ public class CutApplication implements CutInterface {
             }
         } else if (isCharPo) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            int charCount = 0;
+            int charCount = 1;
 
             // Read 1 char at a time from the input stream
             while ((data = reader.read()) != -1) {
@@ -108,6 +107,10 @@ public class CutApplication implements CutInterface {
         StringBuilder output = new StringBuilder();
 
         for (String srcPath : fileName) {
+            // If not the first file, add carriage return
+            if (output.length() != 0) {
+                output.append("\n");
+            }
             File node = IOUtils.resolveFilePath(srcPath).toFile();
             if (!node.exists()) {
                 throw new Exception(ERR_FILE_NOT_FOUND);
@@ -119,7 +122,6 @@ public class CutApplication implements CutInterface {
                 throw new Exception(ERR_NO_PERM);
             }
             output.append(processInput(isCharPo, isBytePo, IOUtils.openInputStream(srcPath), isRange, startIdx, endIdx));
-            output.append('\n'); // carriage return for each file
         }
 
         return output.toString();
@@ -147,6 +149,7 @@ public class CutApplication implements CutInterface {
      *
      * ASSUMPTION 1: Input can ONLY be a list of comma separated numbers, a range of numbers or a single number
      * ASSUMPTION 2: Input can ONLY allow up to 2 comma separated numbers as the interface's method can't accept multiple positions
+     * ASSUMPTION 3: '0' should not be supplied as a single number, a range of numbers or comma separated numbers. The official command throws this error `cut: [-cf] list: values may not include zero`
      *
      * @param args   Array of arguments for the application.
      * @param stdin  An InputStream, not used.
@@ -156,6 +159,10 @@ public class CutApplication implements CutInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException {
+         if (stdout == null) {
+            throw new CutException(ERR_NULL_STREAMS);
+         }
+
          Boolean isCutByCharPos;
          Boolean isCutByBytePos;
          Boolean isRange;
@@ -198,17 +205,19 @@ public class CutApplication implements CutInterface {
                 endIdx = Integer.parseInt(rangeParams[1]);
             }
 
+            // Read from stdin
             if (files.length == 0 || (files.length == 1 && files[0].contains("-"))) {
-                result = cutFromStdin(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, stdin);
+                if (stdin == null) {
+                    throw new Exception(ERR_NULL_STREAMS);
+                }
+                result = cutFromStdin(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, stdin).trim();
                 stdout.write(result.getBytes());
-                stdout.write(STRING_NEWLINE.getBytes());
-            } else {
-                result = cutFromFiles(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, files);
+            } else { // Read from files
+                result = cutFromFiles(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, files).trim();
                 stdout.write(result.getBytes());
-                stdout.write(STRING_NEWLINE.getBytes());
             }
         } catch (Exception e) {
-            throw (CutException) new CutException(ERR_FILE_NOT_FOUND).initCause(e);
+            throw new CutException(e.getMessage());
         }
     }
 }

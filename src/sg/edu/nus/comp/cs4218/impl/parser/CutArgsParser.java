@@ -19,6 +19,6 @@ public class CutArgsParser extends ArgsParser {
     }
 
     public String[] getFiles() {
-        return nonFlagArgs.subList(1, nonFlagArgs.size() - 1).stream().toArray(String[]::new);
+        return nonFlagArgs.subList(1, nonFlagArgs.size()).stream().toArray(String[]::new);
     }
 }
