@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.EMPTY_PATTERN;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
+import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 
 public class GrepApplicationTest {
@@ -64,6 +66,12 @@ public class GrepApplicationTest {
     }
 
     @Test
+    public void testGrepWithNullPatternAndFileName() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromFiles(null, false, false, null));
+        assertTrue(expectedException.getMessage().contains(NULL_POINTER));
+    }
+
+    @Test
     public void testGrepWithNullPattern() {
         Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"-i"}
             , System.in, stdout));
@@ -73,7 +81,7 @@ public class GrepApplicationTest {
     @Test
     public void testGrepWithNoPattern() throws AbstractApplicationException {
         Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.run(new String[] {"-i",
-            "", "Test-folder-1\\textfile.txt"}, null, stdout));
+            "", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout));
         assertTrue(expectedException.getMessage().contains(EMPTY_PATTERN));
     }
 
@@ -99,59 +107,59 @@ public class GrepApplicationTest {
 
     @Test
     public void testGrepWithNonExistentFile() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"pattern", "Test-folder-1\\text.txt"}, null, stdout);
+        grepApplication.run(new String[] {"pattern", "Test-folder-1" + StringUtils.fileSeparator() + "text.txt"}, null, stdout);
         assertTrue(stdout.toString().contains(ERR_FILE_NOT_FOUND));
 
     }
 
     @Test
     public void testGrepWithOneMatchingFile() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"pattern", "Test-folder-1\\textfile.txt"}, null, stdout);
+        grepApplication.run(new String[] {"pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
         assertEquals("pattern\n", stdout.toString());
     }
 
     @Test
     public void testGrepWithNoMatchingFile() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"patterns", "Test-folder-1\\textfile.txt"}, null, stdout);
+        grepApplication.run(new String[] {"patterns", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
         assertEquals("", stdout.toString());
     }
 
     @Test
     public void testGrepWithMultipleFiles() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"patterns", "Test-folder-1\\textfile.txt", "Test-folder-2\\textfile.txt"},
+        grepApplication.run(new String[] {"patterns", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt", "Test-folder-2" + StringUtils.fileSeparator() + "textfile.txt"},
             null, stdout);
-        assertEquals("Test-folder-2\\textfile.txt: patterns\n", stdout.toString());
+        assertEquals("Test-folder-2" + StringUtils.fileSeparator() + "textfile.txt: patterns\n", stdout.toString());
     }
 
     @Test
     public void testGrepWithMultipleMatchingFiles() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"pattern", "Test-folder-1\\textfile.txt", "Test-folder-3\\textfile.txt"},
+        grepApplication.run(new String[] {"pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt", "Test-folder-3" + StringUtils.fileSeparator() + "textfile.txt"},
             null, stdout);
-        assertEquals("Test-folder-1\\textfile.txt: pattern\n" + "Test-folder-3\\textfile.txt: pattern\n",
+        assertEquals("Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt: pattern\n" + "Test-folder-3" + StringUtils.fileSeparator() + "textfile.txt: pattern\n",
             stdout.toString());
     }
 
     @Test
     public void testGrepWithSensitivePattern() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"Pattern", "Test-folder-1\\textfile.txt"}, null, stdout);
+        grepApplication.run(new String[] {"Pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
         assertEquals("", stdout.toString());
     }
 
     @Test
     public void testGrepWithInsensitivePattern() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"-i", "Pattern", "Test-folder-1\\textfile.txt"}, null, stdout);
+        grepApplication.run(new String[] {"-i", "Pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
         assertEquals("pattern\n", stdout.toString());
     }
 
     @Test
     public void testGrepWithCountLines() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"-c", "pattern", "Test-folder-1\\textfile.txt"}, null, stdout);
+        grepApplication.run(new String[] {"-c", "pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
         assertEquals("1\n", stdout.toString());
     }
 
     @Test
     public void testGrepWithInsensitivePathAndCountLines() throws AbstractApplicationException {
-        grepApplication.run(new String[] {"-i", "-c", "Pattern", "Test-folder-1\\textfile.txt"}, null, stdout);
+        grepApplication.run(new String[] {"-i", "-c", "Pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
         assertEquals("1\n", stdout.toString());
     }
 
