@@ -1,18 +1,18 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.SortException;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +60,11 @@ public class SortApplicationTest {
         stdout.flush();
     }
 
+    @AfterAll
+    static void reset() {
+        Environment.setCurrentDirectory(originalDir);
+    }
+
     @Test
     public void testFailsWithNullOutputstream() {
         Exception expectedException = assertThrows(SortException.class, () -> sortApp.run(null, null, null));
@@ -68,7 +73,7 @@ public class SortApplicationTest {
 
     @Test
     public void testFailsWithInvalidFile() {
-        Exception expectedException = assertThrows(SortException.class, () -> sortApp.run(new String[] { "invalidFile.txt" }, System.in, stdout));
+        Exception expectedException = assertThrows(SortException.class, () -> sortApp.run(new String[]{"invalidFile.txt"}, System.in, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
     }
 
