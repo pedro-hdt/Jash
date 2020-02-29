@@ -32,6 +32,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
  * - "-r" flag used
  * - "-f" flag used
  * - "-nr" flags used
+ * - "-nf" flags used
  * - "-rf" flags used
  * - "-nrf" flags used
  * - >1 files supplied
