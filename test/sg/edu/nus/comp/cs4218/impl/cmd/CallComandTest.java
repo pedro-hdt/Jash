@@ -89,6 +89,8 @@ public class CallComandTest {
 
         assertEquals(expectedResult, stdout.toString());
 
+        verify(mockAppRunner).runApp("echo", new String[]{"hello"}, System.in, stdout);
+
     }
 
 
@@ -108,6 +110,8 @@ public class CallComandTest {
         ShellException exception = assertThrows(ShellException.class, () -> cmd.evaluate(System.in, stdout));
 
         assertMsgContains(exception, ERR_INVALID_APP);
+
+        verify(mockAppRunner).runApp(eq(invalidCommand), any(String[].class), eq(System.in), eq(stdout));
 
     }
 
