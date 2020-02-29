@@ -10,22 +10,26 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class RmApplication implements RmInterface {
 
     @Override
     public void remove(Boolean isEmptyFolder, Boolean isRecursive, String... fileName) throws RmException {
 
+        List<String> missingFiles = new ArrayList<>();
+
         for (String f : fileName) {
 
             File file = IOUtils.resolveFilePath(f).toFile();
 
-            // if any of the arguments is invalid, the operation fails at that point without recovery @assumption
             if (!file.exists()) {
-                throw new RmException(file.getName() + ": " + ERR_FILE_NOT_FOUND);
+                missingFiles.add(f); // signal this file does not exist to report it later then skip it
+                continue;
             }
 
             if (file.isDirectory()) {
@@ -46,6 +50,14 @@ public class RmApplication implements RmInterface {
 
             file.delete();
 
+        }
+
+        if (!missingFiles.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String f : missingFiles) {
+                sb.append(f + " skipped: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+            }
+            throw new RmException(STRING_NEWLINE + sb.toString().trim());
         }
 
     }
