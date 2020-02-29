@@ -8,6 +8,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CpException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,8 +93,8 @@ class CpApplicationTest {
     @BeforeAll
     public static void setUp() {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + File.separator + "dummyTestFolder"
-                + File.separator + "CpTestFolder");
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "CpTestFolder");
     }
 
 
