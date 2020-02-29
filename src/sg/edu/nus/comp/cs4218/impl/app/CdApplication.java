@@ -25,7 +25,7 @@ public class CdApplication implements CdInterface {
 
     /**
      * Runs the cd application with the specified arguments.
-     * Assumption: The application must take in one arg. (cd without args is not supported)
+     * Assumption: calling cd with no args should have no effect and throw no exception
      *
      * @param args   Array of arguments for the application.
      * @param stdin  An InputStream, not used.
@@ -37,9 +37,6 @@ public class CdApplication implements CdInterface {
             throws CdException {
         if (args == null) {
             throw new CdException(ERR_NULL_ARGS);
-        }
-        if (args.length < 1) {
-            return;
         }
         changeToDirectory(args[0]);
     }
