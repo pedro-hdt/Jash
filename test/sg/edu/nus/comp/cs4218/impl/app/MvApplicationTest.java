@@ -66,13 +66,12 @@ public class MvApplicationTest {
 
     private static MvApplication mvApp;
 
-    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
-
-
+    private static String ORIGINAL_DIR;
 
 
     @BeforeAll
     static void setupAll() {
+        ORIGINAL_DIR = Environment.getCurrentDirectory();
         Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "MvTestFolder");
     }
 

@@ -35,12 +35,14 @@ class LsApplicationTest {
     private static LsApplication lsApp;
     private static OutputStream stdout;
 
-    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    private static String ORIGINAL_DIR;
 
 
     @BeforeAll
     static void setupAll() {
         Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "LsTestFolder");
+        ORIGINAL_DIR = Environment.getCurrentDirectory();
+        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "LsTestFolder");
     }
 
     @AfterAll

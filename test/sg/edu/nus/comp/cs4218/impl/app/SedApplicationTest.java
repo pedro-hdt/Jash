@@ -75,11 +75,12 @@ public class SedApplicationTest {
     private static InputStream stdin;
     private static OutputStream stdout;
 
-    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    private static String ORIGINAL_DIR;
 
 
     @BeforeAll
     static void setupAll() {
+        ORIGINAL_DIR = Environment.getCurrentDirectory();
         Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SedTestFolder");
     }
 

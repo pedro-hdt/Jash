@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -11,9 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
 
 
 /**
@@ -25,15 +27,15 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
  * Positive test cases:
  * - cd with a single argument
  * - cd with multiple arguments (should ignore all but first)
+ * - cd without any arguments (should have no effect)
  * <p>
  * Negative test cases:
- * - cd without any arguments (should throw no args exception)
  * - cdwith inexistent directory (should throw no such dir exception)
  */
 class CdApplicationTest {
 
     public static CdApplication cdApp;
-    public static final String INIT_DIR = Environment.currentDirectory; // TODO is this problematic in any way?
+    public static String ORIGINAL_DIR;
 
     /**
      * Creates a directory inside the given one and schedules it to be deleted one exit
@@ -47,6 +49,11 @@ class CdApplicationTest {
         return dir;
     }
 
+    @BeforeAll
+    public static void setUp() {
+        ORIGINAL_DIR = Environment.getCurrentDirectory();
+    }
+
     @BeforeEach
     public void setCd() {
         cdApp = new CdApplication();
@@ -54,14 +61,14 @@ class CdApplicationTest {
 
     @AfterEach
     public void resetCurrentDirectory() {
-        Environment.currentDirectory = INIT_DIR;
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     /**
      * Calls cd with a single argument
      */
     @Test
-    public void cdSingleArg() throws IOException, CdException {
+    public void testSingleArg() throws IOException, CdException {
 
         // create directory inside the initial directory
         Path testDir = mkdir(Paths.get(Environment.currentDirectory));
@@ -79,7 +86,7 @@ class CdApplicationTest {
      * Assumption: only first argument is considered and all others ignored
      */
     @Test
-    public void cdMultArgs() throws IOException, CdException {
+    public void testMultArgs() throws IOException, CdException {
 
         // create 2 directories in current
         Path testDir1 = mkdir(Paths.get(Environment.currentDirectory));
@@ -95,7 +102,7 @@ class CdApplicationTest {
      * e.g. if pwd prints `/home/test` and we call `cd /home/test/outer/inner/`
      */
     @Test
-    public void cdTwoLevelsDown() throws IOException, CdException {
+    public void testTwoLevelsDown() throws IOException, CdException {
 
         // create a dir with another nested inside
         Path outer = mkdir(Paths.get(Environment.currentDirectory));
@@ -106,13 +113,15 @@ class CdApplicationTest {
     }
 
     /**
-     * Attempts to call cd without args
-     * Assumption: this should throw an exception with the ERR_NO_ARGS text in the message
+     * Call cd without args. Should have no effect
      */
     @Test
-    public void cdNoArgs() {
-        CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, System.in, System.out));
-        assertTrue(exception.getMessage().contains(ERR_NO_ARGS));
+    public void testNoArgs() throws CdException {
+
+        String dirBefore = Environment.getCurrentDirectory();
+
+        cdApp.run(new String[]{}, System.in, System.out);
+        assertEquals(dirBefore, Environment.getCurrentDirectory());
     }
 
     /**
@@ -120,7 +129,7 @@ class CdApplicationTest {
      * Assumption: should throw a CdException containing the text in ERR_FILE_NOT_FOUND
      */
     @Test
-    public void cdNonExistentDirectory() throws IOException {
+    public void testFailsNonExistentDirectory() throws IOException {
 
         // Create a directory, save its name, then delete it
         Path testDir = mkdir(Paths.get(Environment.currentDirectory));
@@ -128,7 +137,7 @@ class CdApplicationTest {
         Files.delete(testDir);
 
         CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{dirName}, System.in, System.out));
-        assertTrue(exception.getMessage().contains(ERR_FILE_NOT_FOUND));
+        assertMsgContains(exception, ERR_FILE_NOT_FOUND);
     }
 
 }

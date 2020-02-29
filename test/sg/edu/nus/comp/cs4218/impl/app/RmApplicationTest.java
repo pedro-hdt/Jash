@@ -1,7 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 
 import java.io.IOException;
@@ -12,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 
 /**
  * Provides unit tests for the RmApplication class
@@ -39,9 +43,22 @@ public class RmApplicationTest {
     // we keep this string as suffix in the filenames created
     private static final String RM_TEST_CLASS = "RmApplicationTest";
 
+    private static String ORIGINAL_DIR;
+
+
+    @BeforeAll
+    public static void setUp() {
+        ORIGINAL_DIR = Environment.getCurrentDirectory();
+    }
+
     @BeforeEach
     public void setRm() {
         rmApp = new RmApplication();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     /**
@@ -51,6 +68,7 @@ public class RmApplicationTest {
         return Files.createTempFile(RM_TEST_CLASS, "");
     }
 
+
     /**
      * Utility method to create a temporary file in a specific directory
      */
@@ -58,12 +76,14 @@ public class RmApplicationTest {
         return Files.createTempFile(dir, RM_TEST_CLASS, "");
     }
 
+
     /**
      * Utility method to create an empty temporary directory
      */
     public Path mkEmptyDir() throws IOException {
         return Files.createTempDirectory(RM_TEST_CLASS);
     }
+
 
     /**
      * Utility method to create a temporary directory with a file inside it
@@ -74,6 +94,7 @@ public class RmApplicationTest {
         mkFile(dir);
         return dir;
     }
+
 
     /**
      * Utility method to create a populated directory tree
@@ -88,14 +109,6 @@ public class RmApplicationTest {
             Files.createTempFile(testDirs[i], RM_TEST_CLASS, "");
         }
         return testDirs[0];
-    }
-
-    /**
-     * Asserts that the given RmException is that rm fails to delete a directory
-     * since it is not empty and the -r flag is not provided
-     */
-    public void verifyExceptionIsDir(RmException exception) {
-        assertTrue(exception.getMessage().contains(ERR_IS_DIR));
     }
 
 
@@ -216,7 +229,7 @@ public class RmApplicationTest {
         });
 
         // verify it was the correct exception
-        verifyExceptionIsDir(exception);
+        assertMsgContains(exception, ERR_IS_DIR);
 
         // make sure directory still exists afterwards
         assertTrue(Files.exists(testDir));
@@ -245,7 +258,7 @@ public class RmApplicationTest {
         RmException exception = assertThrows(RmException.class, () -> {
             rmApp.run(args, System.in, System.out);
         });
-        verifyExceptionIsDir(exception); // verify the correct exceptions is thrown
+        assertMsgContains(exception, ERR_IS_DIR); // verify the correct exceptions is thrown
 
         // make sure directory AND file still exist afterwards
         assertTrue(Files.exists(testFile));
@@ -276,7 +289,7 @@ public class RmApplicationTest {
         RmException exception = assertThrows(RmException.class, () -> {
             rmApp.run(args, System.in, System.out);
         });
-        verifyExceptionIsDir(exception); // verify the correct exceptions is thrown
+        assertMsgContains(exception, ERR_IS_DIR); // verify the correct exceptions is thrown
 
         // make sure directory and file still exist afterwards
         assertTrue(Files.exists(testFile));
