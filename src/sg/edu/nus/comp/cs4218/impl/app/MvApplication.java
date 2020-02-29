@@ -4,21 +4,20 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
-import sg.edu.nus.comp.cs4218.app.MvInterface;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+
+import sg.edu.nus.comp.cs4218.app.MvInterface;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.exception.MvException;
+import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 public class MvApplication implements MvInterface {
 
@@ -56,12 +55,8 @@ public class MvApplication implements MvInterface {
             } else {
                 // if overwriting is not allowed then only allow possibility of moving if its directory
                 if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
-                    try {
-                        Files.move(IOUtils.resolveFilePath(srcPath),
-                                Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
-                    } catch(FileAlreadyExistsException faee) {
-                        // Do nothing and fail silently as expected cause overwriting is not allowed with the flag
-                    }
+                    Files.move(IOUtils.resolveFilePath(srcPath),
+                            Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
 
                 }
             }

@@ -130,6 +130,9 @@ public class MvApplicationTest {
     }
 
 
+    /**
+     * Tests failing when null args passed
+     */
     @Test
     public void testFailsWithNullArgs() {
         Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(null, null, null));
@@ -137,6 +140,9 @@ public class MvApplicationTest {
 
     }
 
+    /**
+     * Tests failing when insufficient args passed
+     */
     @Test
     public void testFailsWithLessThan2Args() {
         Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[0], null, null));
@@ -147,6 +153,21 @@ public class MvApplicationTest {
 
     }
 
+    /**
+     * Tests failing when illegal args passed
+     */
+    @Test
+    public void testIllegalArgsException() {
+
+        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[]{"no-file.txt", "no-dir", "-f"}, null, null));
+        assertTrue(expectedException.getMessage().contains("illegal option"));
+
+    }
+
+
+    /**
+     * Tests failing when file not present to be renamed
+     */
     @Test
     public void testRenamingFailsWhenFileNotPresent() {
         Exception expectedException = assertThrows(MvException.class, ()
@@ -155,6 +176,9 @@ public class MvApplicationTest {
 
     }
 
+    /**
+     * Tests failing scenario when file not present to be moved
+     */
     @Test
     public void testMovingFailsWhenFileNotPresent() {
         Exception expectedException = assertThrows(MvException.class, ()
@@ -163,6 +187,9 @@ public class MvApplicationTest {
 
     }
 
+    /**
+     * Tests renaming an existing file
+     */
     @Test
     public void testRenameExistingFile() {
         try {
@@ -174,6 +201,9 @@ public class MvApplicationTest {
         }
     }
 
+    /**
+     * Tests renaming an existing directory
+     */
     @Test
     public void testRenameExistingDirectory() {
         try {
@@ -186,6 +216,9 @@ public class MvApplicationTest {
     }
 
 
+    /**
+     * Tests moving a file to directory
+     */
     @Test
     public void testMoveFileToDir() {
         try {
@@ -199,19 +232,23 @@ public class MvApplicationTest {
         }
     }
 
+    /**
+     * Tests moving of a directory to another directory
+     * @throws MvException
+     */
     @Test
-    public void testMoveDirToAnotherDir() {
-        try {
-            mvApp.run(new String[] {INIT_DIR, DEST_DIR}, null, null);
+    public void testMoveDirToAnotherDir() throws MvException {
+        mvApp.run(new String[] {INIT_DIR, DEST_DIR}, null, null);
 
-            assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR)));
-            assertTrue(!Files.exists(IOUtils.resolveFilePath(INIT_DIR)));
-        } catch (MvException e) {
-            fail("should not fail:" + e);
-        }
+        assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR)));
+        assertTrue(!Files.exists(IOUtils.resolveFilePath(INIT_DIR)));
     }
 
+    /**
+     * Tests if -n passed to not overwrite a file
+     * @throws IOException
+     */
     @Test
     public void testDontOverwriteFile() throws IOException {
         try {
@@ -225,6 +262,10 @@ public class MvApplicationTest {
         }
     }
 
+    /**
+     * Tests to successfully overwrite a file and its content
+     * @throws IOException
+     */
     @Test
     public void testOverwriteFileSuccess() throws IOException {
         try {
@@ -237,21 +278,22 @@ public class MvApplicationTest {
         }
     }
 
+    /**
+     * Tests to move multiple files with no overwriting
+     * @throws MvException
+     */
     @Test
-    public void testMoveMultipleFiles() {
-        try {
-            mvApp.run(new String[] {MOVE_FIRST_TXT, MOVE_SECOND_TXT, DEST_DIR}, null, null);
+    public void testMoveMultipleFiles() throws MvException {
+        mvApp.run(new String[] {MOVE_FIRST_TXT, MOVE_SECOND_TXT, DEST_DIR, "-n"}, null, null);
 
-            assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_FIRST_TXT)));
-            assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_FIRST_TXT)));
+        assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_FIRST_TXT)));
+        assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_FIRST_TXT)));
 
-            assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_SECOND_TXT)));
-            assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_SECOND_TXT)));
-        } catch (MvException e) {
-            fail("should not fail:" + e);
-        }
+        assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_SECOND_TXT)));
+        assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_SECOND_TXT)));
+
     }
 
 

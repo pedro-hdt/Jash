@@ -1,10 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_EMPTY_REGEX;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_RULE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_X;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_REP_RULE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
@@ -25,7 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -44,6 +47,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
  * -    Empty regex given
  * -    Null file input
  * -    File doesn't exist
+ * -    File doesn't have read permission or is directory
  *
  *
  * Positive:
@@ -66,6 +70,7 @@ public class SedApplicationTest {
     public static final String FILE1_TXT = "file1.txt";
     public static final String FILE2_TXT = "file2.txt";
     public static final String MULTIPLE_LINES = "multipleLines.txt";
+    public static final String UNREADABLE_FILE = "unreadableFile.txt";
     private static SedApplication sed;
     private static InputStream stdin;
     private static OutputStream stdout;
@@ -102,10 +107,9 @@ public class SedApplicationTest {
 
         // Reset for multipleLines.txt
         outputStream = new FileOutputStream(IOUtils.resolveFilePath(MULTIPLE_LINES).toFile());
-        strToBytes = new String("hello boy" + StringUtils.STRING_NEWLINE + "girl hello hello").getBytes();
+        strToBytes = ("hello boy" + StringUtils.STRING_NEWLINE + "girl hello hello").getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
-
 
 
         Environment.setCurrentDirectory(ORIGINAL_DIR);
@@ -122,6 +126,9 @@ public class SedApplicationTest {
         stdout.flush();
     }
 
+    /**
+     * Test for null args and stream
+     */
     @Test
     public void testFailsWithNullArgsOrStream() {
         Exception expectedException = assertThrows(SedException.class, () -> sed.run(null, null, stdout));
@@ -130,8 +137,13 @@ public class SedApplicationTest {
         expectedException = assertThrows(SedException.class, () -> sed.run(new String[1], null, null));
         assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
 
+        expectedException = assertThrows(SedException.class, () -> sed.run(new String[]{"s|a|b|"}, null, stdout));
+        assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
     }
 
+    /**
+     * Tests when no arguement specified
+     */
     @Test
     public void testFailsWithLessThanOneArgs() {
         Exception exception = assertThrows(SedException.class, () -> sed.run(new String[0], null, stdout));
@@ -139,6 +151,9 @@ public class SedApplicationTest {
 
     }
 
+    /**
+     * Tests when replacement rule is invalid
+     */
     @Test
     public void testInvalidRuleLessLimiters() {
 
@@ -149,6 +164,9 @@ public class SedApplicationTest {
         assertTrue(exception.getMessage().contains(ERR_INVALID_REP_RULE));
     }
 
+    /**
+     * Tests when invalid rule has character instead of number
+     */
     @Test
     public void testInvalidRuleNotANumber() {
         String stdInString = "hello";
@@ -160,6 +178,9 @@ public class SedApplicationTest {
         assertTrue(exception.getMessage().contains(ERR_INVALID_REP_X));
     }
 
+    /**
+     * Tests with empty regex value
+     */
     @Test
     public void testInvalidRuleEmptyRegex() {
 
@@ -170,6 +191,9 @@ public class SedApplicationTest {
         assertTrue(exception.getMessage().contains(ERR_EMPTY_REGEX));
     }
 
+    /**
+     * Tests when null file passed
+     */
     @Test
     public void testInvalidNullFile() {
 
@@ -178,6 +202,35 @@ public class SedApplicationTest {
         assertTrue(exception.getMessage().contains(ERR_NULL_ARGS));
     }
 
+    /**
+     * When file with no read permission is passed
+     * @throws IOException
+     */
+    @Test
+    public void testInvalidUnreadableFile() throws IOException {
+
+        File file = File.createTempFile(UNREADABLE_FILE, "");
+        file.setReadable(false);
+
+        Exception exception = assertThrows(Exception.class, ()
+                -> sed.replaceSubstringInFile("regex", "yes", 1, file.toString()));
+        assertTrue(exception.getMessage().contains(ERR_NO_PERM));
+    }
+
+    /**
+     * Tests when directory passed instead of file
+     */
+    @Test
+    public void testInvalidDir() {
+
+        Exception exception = assertThrows(Exception.class, ()
+                -> sed.replaceSubstringInFile("ab", "ok", 1, "dummyDir"));
+        assertTrue(exception.getMessage().contains(ERR_IS_DIR));
+    }
+
+    /**
+     * Tests when file isn't present
+     */
     @Test
     public void testInvalidFileDoesntExist() {
 
@@ -186,6 +239,10 @@ public class SedApplicationTest {
         assertTrue(exception.getMessage().contains(ERR_FILE_NOT_FOUND));
     }
 
+    /**
+     * Successful replacement in stdin
+     * @throws SedException
+     */
     @Test
     public void testReplaceSubStringFromStdin() throws SedException {
         String stdInString = "hello toBeReplaced";
@@ -197,113 +254,118 @@ public class SedApplicationTest {
         assertTrue(stdout.toString().contains("replacedWord"));
     }
 
+    /**
+     * Successful replacement for regex in replaceSubstringInStdin()
+     * @throws Exception
+     */
     @Test
-    public void testReplaceSubstringInStdinWithRandomRegex() {
+    public void testReplaceSubstringInStdinWithRandomRegex() throws Exception {
         String stdInString = "man 1";
         String regex = "^ma";
         String replacement = "woma";
 
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            String result = sed.replaceSubstringInStdin(regex, replacement,1, stdin);
-            assertTrue(result.contains("woman 1"));
-        } catch (Exception e) {
-            fail("should not fail: " + e.getMessage());//NOPMD - Suppressed as its fine to have similar fail with different exception msg
-        }
+        String result = sed.replaceSubstringInStdin(regex, replacement,1, stdin);
+        assertTrue(result.contains("woman 1"));
+
     }
 
+    /**
+     * Successful replacement in file content
+     * @throws Exception
+     */
     @Test
-    public void testSuccessfulReplaceInFileContent() throws IOException {
+    public void testSuccessfulReplaceInFileContent() throws Exception {
         String[] args = new String[] {"s/before/after/", REPLACING_FILE};
 
-        try {
-            String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
-            assertTrue(str.contains("before"));
+        String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
+        assertTrue(str.contains("before"));
 
-            sed.run(args, stdin, stdout);
-            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
-            assertTrue(str.contains("after"));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
+        assertTrue(str.contains("after"));
     }
 
+    /**
+     * Replacement criteria when no matches
+     * @throws SedException
+     */
     @Test
-    public void testReplaceSubstringNoMatches() {
+    public void testReplaceSubstringNoMatches() throws SedException {
         String stdInString = "hello";
 
         String[] args = new String[] {"s/notFound/random/"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains(stdInString));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        assertTrue(stdout.toString().contains(stdInString));
+
     }
 
+    /**
+     * Replace second regex match with replacementIndex specified
+     * @throws SedException
+     */
     @Test
-    public void testReplaceSubstringSecondMatch() {
+    public void testReplaceSubstringSecondMatch() throws SedException {
         String stdInString = "hello hello";
 
         String[] args = new String[] {"s/hello/boy/2"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("hello boy"));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        assertTrue(stdout.toString().contains("hello boy"));
     }
 
+    /**
+     * Complex regex replacement - 1
+     * @throws SedException
+     */
     @Test
-    public void testReplaceSubstringComplexRegex1() {
+    public void testReplaceSubstringComplexRegex1() throws SedException {
         String stdInString = "bullet";
 
         String[] args = new String[] {"s/^/> /"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("> bullet"));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        assertTrue(stdout.toString().contains("> bullet"));
+
     }
 
+    /**
+     * Complex regex replacement - 2
+     * @throws SedException
+     */
     @Test
-    public void testReplaceSubstringComplexRegex2(){
+    public void testReplaceSubstringComplexRegex2() throws SedException{
         String stdInString = "$16.32";
 
         String[] args = new String[] {"s|\\p{Sc}*(\\s?\\d+[.,]?\\d*)\\p{Sc}*|4|"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("4"));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        assertTrue(stdout.toString().contains("4"));
     }
 
+    /**
+     * Test replacement argument with new separators
+     */
     @Test
-    public void testReplaceSubstringWithDiffSeparators() {
+    public void testReplaceSubstringWithDiffSeparators() throws SedException {
         String stdInString = "cat";
 
         String[] args = new String[] {"s|c|m|"};
         stdin = new ByteArrayInputStream(stdInString.getBytes());
 
-        try {
-            sed.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("mat"));
-        } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
-        }
+        sed.run(args, stdin, stdout);
+        assertTrue(stdout.toString().contains("mat"));
     }
 
+    /**
+     * Replace to empty string
+     */
     @Test
     public void testReplaceSubstringClear() {
         String stdInString = "clear";
@@ -319,6 +381,9 @@ public class SedApplicationTest {
         }
     }
 
+    /**
+     * When no input to be replaced
+     */
     @Test
     public void testReplaceNoContentInInput() {
         String[] args = new String[] {"s/hello//", "emptyFile.txt"};
@@ -331,6 +396,9 @@ public class SedApplicationTest {
         }
     }
 
+    /**
+     * Replaces content along multiple lines
+     */
     @Test
     public void testReplaceAcrossMultipleLines() {
         String[] args = new String[] {"s/hello/hell/", MULTIPLE_LINES};
@@ -343,6 +411,10 @@ public class SedApplicationTest {
         }
     }
 
+    /**
+     * Replaces content in multiple files
+     * @throws IOException
+     */
     @Test
     public void testReplaceSubstringMultipleFiles() throws IOException {
         String[] args = new String[] {"s/file/updatedFile/", FILE1_TXT, FILE2_TXT};
