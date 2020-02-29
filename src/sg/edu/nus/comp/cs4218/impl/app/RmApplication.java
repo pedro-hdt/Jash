@@ -55,7 +55,10 @@ public class RmApplication implements RmInterface {
         if (!missingFiles.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (String f : missingFiles) {
-                sb.append(f + " skipped: " + ERR_FILE_NOT_FOUND + STRING_NEWLINE);
+                sb.append(f);
+                sb.append(" skipped: ");
+                sb.append(ERR_FILE_NOT_FOUND);
+                sb.append(STRING_NEWLINE);
             }
             throw new RmException(STRING_NEWLINE + sb.toString().trim());
         }

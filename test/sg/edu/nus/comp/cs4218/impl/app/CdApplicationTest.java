@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -35,7 +34,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND
 class CdApplicationTest {
 
     public static CdApplication cdApp;
-    public static String ORIGINAL_DIR;
+    public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
     /**
      * Creates a directory inside the given one and schedules it to be deleted one exit
@@ -47,11 +46,6 @@ class CdApplicationTest {
         Path dir = Files.createTempDirectory(parent, "cdTest");
         dir.toFile().deleteOnExit();
         return dir;
-    }
-
-    @BeforeAll
-    public static void setUp() {
-        ORIGINAL_DIR = Environment.getCurrentDirectory();
     }
 
     @BeforeEach

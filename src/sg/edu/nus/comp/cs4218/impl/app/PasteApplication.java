@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.PasteInterface;
-import sg.edu.nus.comp.cs4218.exception.LsException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
@@ -54,7 +53,7 @@ public class PasteApplication implements PasteInterface {
             try {
                 readers.add(new BufferedReader(new FileReader(IOUtils.resolveFilePath(f).toString())));
             } catch (IOException e) {
-                throw new PasteException(ERR_IO_EXCEPTION);
+                throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
             }
         }
 
@@ -76,6 +75,10 @@ public class PasteApplication implements PasteInterface {
                 sb.append(STRING_NEWLINE);
             }
 
+            for (BufferedReader reader : readers) {
+                reader.close();
+            }
+
         } catch (IOException e) {
             throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
         }
@@ -92,13 +95,13 @@ public class PasteApplication implements PasteInterface {
 
         for (String f : fileName) {
             try {
-                if (f.equals("-")) {
+                if ("-".equals(f)) {
                     fileReaders.add(null);
                 } else {
                     fileReaders.add(new BufferedReader(new FileReader(IOUtils.resolveFilePath(f).toString())));
                 }
             } catch (IOException e) {
-                throw new PasteException(ERR_IO_EXCEPTION);
+                throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
             }
         }
 
@@ -149,27 +152,29 @@ public class PasteApplication implements PasteInterface {
             throw new PasteException(ERR_NO_OSTREAM);
         }
 
-        boolean hasStdin = Arrays.stream(args).anyMatch((x) -> x.equals("-"));
-        boolean hasFiles = !Arrays.stream(args).allMatch((x) -> x.equals("-"));
+        boolean hasStdin = Arrays.stream(args).anyMatch((x) -> "-".equals(x));
+        boolean hasFiles = !Arrays.stream(args).allMatch((x) -> "-".equals(x));
 
         String result;
-        if (!hasStdin) {
-            result = mergeFile(args);
-        } else if (!hasFiles) {
-            String[] lines = mergeStdin(stdin).split("\n");
-            StringBuilder sb = new StringBuilder();
-            int columns = args.length;
-            for (int i = 0; i < lines.length; i++) {
-                sb.append(lines[i]);
-                sb.append(CHAR_TAB);
-                if (i % columns == columns - 1) {
-                    sb.deleteCharAt(sb.length() - 1);
-                    sb.append(STRING_NEWLINE);
+        if (hasStdin) {
+            if (hasFiles) {
+                result = mergeFileAndStdin(stdin, args);
+            } else {
+                String[] lines = mergeStdin(stdin).split("\n");
+                StringBuilder sb = new StringBuilder();
+                int columns = args.length;
+                for (int i = 0; i < lines.length; i++) {
+                    sb.append(lines[i]);
+                    sb.append(CHAR_TAB);
+                    if (i % columns == columns - 1) {
+                        sb.deleteCharAt(sb.length() - 1);
+                        sb.append(STRING_NEWLINE);
+                    }
                 }
+                result = sb.toString().trim();
             }
-            result = sb.toString().trim();
         } else {
-            result = mergeFileAndStdin(stdin, args);
+            result = mergeFile(args);
         }
 
         try {

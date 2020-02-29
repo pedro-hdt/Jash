@@ -33,7 +33,7 @@ public class ShellImpl implements Shell {
                     commandString = reader.readLine();
                 } catch (IOException e) {
                     return; // Streams are closed, terminate process
-                } // TODO double check this is correct behavior
+                }
 
                 if (!StringUtils.isBlank(commandString)) {
                     shell.parseAndEvaluate(commandString, System.out);

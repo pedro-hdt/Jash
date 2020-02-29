@@ -22,13 +22,13 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
 
-    private static final String PASTE_FILE1 = "pasteFile1.txt";
-    private static final String PASTE_FILE2 = "pasteFile2.txt";
-    private static final String PASTE_FILES1AND2 = "pasteFiles1and2.txt";
-    private static final String PASTE_FILE1_2COLS = "pasteFile1-2cols.txt";
-    private static final String PASTE_FILE1_2COLSAND2 = "pasteFile1-2colsand2.txt";
+    private static final String FILE1 = "pasteFile1.txt";
+    private static final String FILE2 = "pasteFile2.txt";
+    private static final String FILES1AND2 = "pasteFiles1and2.txt";
+    private static final String FILE1_2COLS = "pasteFile1-2cols.txt";
+    private static final String FILE1_2COLSAND2 = "pasteFile1-2colsand2.txt";
 
-    private static String ORIGINAL_DIR;
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
     private static PasteApplication paste;
     private static ByteArrayInputStream stdin;
@@ -37,7 +37,6 @@ public class PasteApplicationTest {
     @BeforeAll
     public static void setUp() {
         stdout = new ByteArrayOutputStream();
-        ORIGINAL_DIR = Environment.getCurrentDirectory();
         Environment.setCurrentDirectory(ORIGINAL_DIR
                 + File.separator + "dummyTestFolder"
                 + File.separator + "PasteTestFolder");
@@ -76,9 +75,9 @@ public class PasteApplicationTest {
     @Test
     public void testSingleFileArg() throws PasteException, IOException {
 
-        paste.run(new String[]{PASTE_FILE1}, System.in, stdout);
+        paste.run(new String[]{FILE1}, System.in, stdout);
 
-        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1))) + STRING_NEWLINE,
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1))) + STRING_NEWLINE,
                 stdout.toString());
 
     }
@@ -90,9 +89,9 @@ public class PasteApplicationTest {
     @Test
     public void testTwoFileArgs() throws PasteException, IOException {
 
-        paste.run(new String[]{PASTE_FILE1, PASTE_FILE2}, System.in, stdout);
+        paste.run(new String[]{FILE1, FILE2}, System.in, stdout);
 
-        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILES1AND2))) + STRING_NEWLINE,
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(FILES1AND2))) + STRING_NEWLINE,
                 stdout.toString());
 
     }
@@ -103,11 +102,11 @@ public class PasteApplicationTest {
     @Test
     public void pasteSingleStdinArgs() throws PasteException, IOException {
 
-        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1)));
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(FILE1)));
 
         paste.run(new String[]{"-"}, stdin, stdout);
 
-        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1))) + STRING_NEWLINE,
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1))) + STRING_NEWLINE,
                 stdout.toString());
 
     }
@@ -118,11 +117,11 @@ public class PasteApplicationTest {
     @Test
     public void pasteTwoStdinArgs() throws PasteException, IOException {
 
-        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1)));
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(FILE1)));
 
         paste.run(new String[]{"-", "-"}, stdin, stdout);
 
-        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1_2COLS))) + STRING_NEWLINE,
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1_2COLS))) + STRING_NEWLINE,
                 stdout.toString());
 
     }
@@ -133,11 +132,11 @@ public class PasteApplicationTest {
     @Test
     public void pasteOneFileOneStdinArgs() throws PasteException, IOException {
 
-        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE2)));
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(FILE2)));
 
-        paste.run(new String[]{PASTE_FILE1, "-"}, stdin, stdout);
+        paste.run(new String[]{FILE1, "-"}, stdin, stdout);
 
-        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILES1AND2))) + STRING_NEWLINE,
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(FILES1AND2))) + STRING_NEWLINE,
                 stdout.toString());
 
     }
@@ -148,11 +147,11 @@ public class PasteApplicationTest {
     @Test
     public void pasteOneFileTwoStdinArgs() throws PasteException, IOException {
 
-        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1)));
+        stdin = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath(FILE1)));
 
-        paste.run(new String[]{"-", "-", PASTE_FILE2}, stdin, stdout);
+        paste.run(new String[]{"-", "-", FILE2}, stdin, stdout);
 
-        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(PASTE_FILE1_2COLSAND2))) + STRING_NEWLINE,
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1_2COLSAND2))) + STRING_NEWLINE,
                 stdout.toString());
 
     }

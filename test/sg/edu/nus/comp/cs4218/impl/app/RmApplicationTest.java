@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -43,13 +42,8 @@ public class RmApplicationTest {
     // we keep this string as suffix in the filenames created
     private static final String RM_TEST_CLASS = "RmApplicationTest";
 
-    private static String ORIGINAL_DIR;
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
-
-    @BeforeAll
-    public static void setUp() {
-        ORIGINAL_DIR = Environment.getCurrentDirectory();
-    }
 
     @BeforeEach
     public void setRm() {

@@ -7,10 +7,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,11 +42,13 @@ public class SortApplicationTest {
     private static SortApplication sortApp;
     private static OutputStream stdout;
 
-    private static final String originalDir = Environment.getCurrentDirectory();
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(originalDir + File.separator + "dummyTestFolder" + File.separator + "SortTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "SortTestFolder");
     }
 
     @BeforeEach
@@ -62,7 +64,7 @@ public class SortApplicationTest {
 
     @AfterAll
     static void reset() {
-        Environment.setCurrentDirectory(originalDir);
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     @Test

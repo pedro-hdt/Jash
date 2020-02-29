@@ -1,25 +1,24 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests commands used in sequence
@@ -34,7 +33,9 @@ public class SequenceCommandTest {
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "SequenceTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "SequenceTestFolder");
     }
 
     @AfterAll

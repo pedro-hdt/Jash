@@ -8,7 +8,8 @@ import sg.edu.nus.comp.cs4218.impl.app.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
 
 
 public class ApplicationRunner {
@@ -53,7 +54,7 @@ public class ApplicationRunner {
 
         switch (app) {
 
-            // Basic Functionality - BF - TODO: paste
+            // Basic Functionality - BF
             case APP_RM:
                 application = new RmApplication();
                 break;
@@ -85,7 +86,7 @@ public class ApplicationRunner {
             case APP_CP:
                 throw new ShellException(app + ": " + ERR_NOT_SUPPORTED);
 
-                // Extended Functionality 2 - EF2 - TODO: cut
+                // Extended Functionality 2 - EF2
             case APP_CUT:
                 throw new ShellException(app + ": " + ERR_NOT_SUPPORTED); // TODO implement CutApplication
             case APP_LS:

@@ -1,29 +1,25 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.LsException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+
 /**
  * Test Suite for ls command
- *
+ * <p>
  * Contains negative and positive test cases
  */
 class LsApplicationTest {
@@ -35,13 +31,14 @@ class LsApplicationTest {
     private static LsApplication lsApp;
     private static OutputStream stdout;
 
-    private static String ORIGINAL_DIR;
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
 
     @BeforeAll
     static void setupAll() {
-        ORIGINAL_DIR = Environment.getCurrentDirectory();
-        Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "LsTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "LsTestFolder");
     }
 
     @AfterAll

@@ -1,12 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.MvException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,15 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 /**
  * Tests for mv command
@@ -66,12 +60,11 @@ public class MvApplicationTest {
 
     private static MvApplication mvApp;
 
-    private static String ORIGINAL_DIR;
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
 
     @BeforeAll
     static void setupAll() {
-        ORIGINAL_DIR = Environment.getCurrentDirectory();
         Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "MvTestFolder");
     }
 

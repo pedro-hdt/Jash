@@ -2,7 +2,10 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestUtils {
+public final class TestUtils {
+
+    private TestUtils() {
+    }
 
     /**
      * Asserts that the given exception's message contains the specified text
