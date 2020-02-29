@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for mv command
@@ -72,7 +73,7 @@ public class MvApplicationTest {
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "MvTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "MvTestFolder");
     }
 
     @AfterAll
@@ -89,18 +90,18 @@ public class MvApplicationTest {
         // Reset after moving file to dir
         Files.createFile(IOUtils.resolveFilePath(FILE_TO_MOVE_TXT));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + File.separator + DEST_DIR + File.separator + FILE_TO_MOVE_TXT));
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + FILE_TO_MOVE_TXT));
 
         // Reset after moving dir to dir
         Files.createDirectory(IOUtils.resolveFilePath(INIT_DIR));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + File.separator + DEST_DIR + File.separator + INIT_DIR));
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR));
 
         // Reset after overwriting
         Files.createFile(Paths.get(Environment.getCurrentDirectory()
-                + File.separator + DEST_DIR + File.separator + OVERWRITE_FILE));
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE));
         FileOutputStream outputStream = new FileOutputStream(new File(Paths.get(Environment.getCurrentDirectory()
-                + File.separator + DEST_DIR + File.separator + OVERWRITE_FILE).toString()));
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE).toString()));
         byte[] strToBytes = "first".getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
@@ -114,10 +115,10 @@ public class MvApplicationTest {
         // Reset after moving multiple files
         Files.createFile(IOUtils.resolveFilePath(MOVE_FIRST_TXT));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + File.separator + DEST_DIR + File.separator + MOVE_FIRST_TXT));
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_FIRST_TXT));
         Files.createFile(IOUtils.resolveFilePath(MOVE_SECOND_TXT));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + File.separator + DEST_DIR + File.separator + MOVE_SECOND_TXT));
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_SECOND_TXT));
 
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
@@ -191,7 +192,7 @@ public class MvApplicationTest {
             mvApp.run(new String[] {FILE_TO_MOVE_TXT, DEST_DIR}, null, null);
 
             assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + File.separator + DEST_DIR + File.separator + FILE_TO_MOVE_TXT)));
+                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + FILE_TO_MOVE_TXT)));
             assertTrue(!Files.exists(IOUtils.resolveFilePath(FILE_TO_MOVE_TXT)));
         } catch (MvException e) {
             fail("should not fail:" + e);
@@ -204,7 +205,7 @@ public class MvApplicationTest {
             mvApp.run(new String[] {INIT_DIR, DEST_DIR}, null, null);
 
             assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + File.separator + DEST_DIR + File.separator + INIT_DIR)));
+                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR)));
             assertTrue(!Files.exists(IOUtils.resolveFilePath(INIT_DIR)));
         } catch (MvException e) {
             fail("should not fail:" + e);
@@ -214,11 +215,11 @@ public class MvApplicationTest {
     @Test
     public void testDontOverwriteFile() throws IOException {
         try {
-            mvApp.run(new String[] {"-n", DEST_DIR + File.separator + NO_OVERWRITE_FILE, NO_OVERWRITE_FILE}, null, null);
+            mvApp.run(new String[] {"-n", DEST_DIR + StringUtils.fileSeparator() + NO_OVERWRITE_FILE, NO_OVERWRITE_FILE}, null, null);
 
             assertFalse(Arrays.equals(Files.readAllBytes(IOUtils.resolveFilePath(NO_OVERWRITE_FILE)),
                     Files.readAllBytes(Paths.get(Environment.getCurrentDirectory()
-                            + File.separator + DEST_DIR + File.separator + NO_OVERWRITE_FILE))));
+                            + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + NO_OVERWRITE_FILE))));
         } catch (MvException e) {
             fail("should not fail:" + e);
         }
@@ -227,7 +228,7 @@ public class MvApplicationTest {
     @Test
     public void testOverwriteFileSuccess() throws IOException {
         try {
-            mvApp.run(new String[] {DEST_DIR + File.separator + OVERWRITE_FILE, OVERWRITE_FILE}, null, null);
+            mvApp.run(new String[] {DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE, OVERWRITE_FILE}, null, null);
 
             String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(OVERWRITE_FILE)));
             assertTrue(str.contains("first"));
@@ -242,11 +243,11 @@ public class MvApplicationTest {
             mvApp.run(new String[] {MOVE_FIRST_TXT, MOVE_SECOND_TXT, DEST_DIR}, null, null);
 
             assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + File.separator + DEST_DIR + File.separator + MOVE_FIRST_TXT)));
+                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_FIRST_TXT)));
             assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_FIRST_TXT)));
 
             assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
-                    + File.separator + DEST_DIR + File.separator + MOVE_SECOND_TXT)));
+                    + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_SECOND_TXT)));
             assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_SECOND_TXT)));
         } catch (MvException e) {
             fail("should not fail:" + e);

@@ -1,8 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
@@ -12,7 +10,7 @@ import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -21,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class MvApplication implements MvInterface {
 
@@ -43,23 +40,15 @@ public class MvApplication implements MvInterface {
             if (shouldOverwrite) {
                 // Can avoid this with assumption that target operand is always a directory
                 if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
-                    try (Stream<String> lineStream = Files.lines(IOUtils.resolveFilePath(srcPath));
-                         BufferedWriter writer = Files.newBufferedWriter(IOUtils.resolveFilePath(destFolder))) {
-                            lineStream
-                                .filter(line -> !"pattern".equals(line.trim()))
-                                .forEach(line -> {
-                                    try {
-                                        writer.append(line);
-                                        writer.newLine();
-                                    } catch (Exception e) {
-                                        // Do nothing
-                                    }
-                                });
-                    }
+                    FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(destFolder).toFile());
+                    byte[] strToBytes = Files.readAllBytes(IOUtils.resolveFilePath(srcPath));
+                    outputStream.write(strToBytes);
+                    outputStream.close();
+
                     Files.delete(IOUtils.resolveFilePath(srcPath));
                     return null;
                 }
-                // Assumption: Replacement doesn't work when a directory is being moved and target directory is non-empty
+                // Assumption: Replacement doesn't work when a directory is being moved and target directory is non-empty and same name
                 Files.move(IOUtils.resolveFilePath(srcPath),
                         Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
                                 IOUtils.resolveFilePath(srcPath).getFileName().toString()),

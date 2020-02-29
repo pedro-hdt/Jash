@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.LsException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 class LsApplicationTest {
 
@@ -31,7 +32,7 @@ class LsApplicationTest {
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "LsTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "LsTestFolder");
     }
 
     @AfterAll
@@ -93,7 +94,7 @@ class LsApplicationTest {
 
         lsApp.run(new String[]{"-d"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("folder1\nfolder2"));
+        assertTrue(stdout.toString().contains("folder1" + StringUtils.STRING_NEWLINE + "folder2"));
     }
 
     /**
@@ -105,7 +106,7 @@ class LsApplicationTest {
 
         lsApp.run(new String[]{"-R"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("folder2:\nfile1Folder2.txt"));
+        assertTrue(stdout.toString().contains("folder2:"  + StringUtils.STRING_NEWLINE + "file1Folder2.txt"));
         assertTrue(stdout.toString().contains("folder1"));
     }
 
@@ -118,7 +119,7 @@ class LsApplicationTest {
 
         lsApp.run(new String[]{"-R", "-d"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("folder1\nfolder2"));
+        assertTrue(stdout.toString().contains("folder1" + StringUtils.STRING_NEWLINE + "folder2"));
         assertFalse(stdout.toString().contains("file1Folder2.txt"));
     }
 

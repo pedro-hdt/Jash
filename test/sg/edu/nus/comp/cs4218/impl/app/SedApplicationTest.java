@@ -28,6 +28,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * SedApplicationTest used to test sed command
@@ -74,7 +75,7 @@ public class SedApplicationTest {
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "SedTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SedTestFolder");
     }
 
     @AfterAll
@@ -101,7 +102,7 @@ public class SedApplicationTest {
 
         // Reset for multipleLines.txt
         outputStream = new FileOutputStream(IOUtils.resolveFilePath(MULTIPLE_LINES).toFile());
-        strToBytes = "hello boy\ngirl hello hello".getBytes();
+        strToBytes = new String("hello boy" + StringUtils.STRING_NEWLINE + "girl hello hello").getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
 
@@ -336,7 +337,7 @@ public class SedApplicationTest {
 
         try {
             sed.run(args, null, stdout);
-            assertTrue(stdout.toString().contains("hell boy\ngirl hell hello"));
+            assertTrue(stdout.toString().contains("hell boy" + StringUtils.STRING_NEWLINE + "girl hell hello"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
