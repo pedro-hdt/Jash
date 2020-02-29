@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
 
 
 /**
@@ -28,9 +27,9 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
  * Positive test cases:
  * - cd with a single argument
  * - cd with multiple arguments (should ignore all but first)
+ * - cd without any arguments (should have no effect)
  * <p>
  * Negative test cases:
- * - cd without any arguments (should throw no args exception)
  * - cdwith inexistent directory (should throw no such dir exception)
  */
 class CdApplicationTest {
@@ -114,13 +113,15 @@ class CdApplicationTest {
     }
 
     /**
-     * Attempts to call cd without args
-     * Assumption: this should throw an exception with the ERR_NO_ARGS text in the message
+     * Call cd without args. Should have no effect
      */
     @Test
-    public void testFailsNoArgs() {
-        CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, System.in, System.out));
-        assertMsgContains(exception, ERR_NO_ARGS);
+    public void testNoArgs() throws CdException {
+
+        String dirBefore = Environment.getCurrentDirectory();
+
+        cdApp.run(new String[]{}, System.in, System.out);
+        assertEquals(dirBefore, Environment.getCurrentDirectory());
     }
 
     /**

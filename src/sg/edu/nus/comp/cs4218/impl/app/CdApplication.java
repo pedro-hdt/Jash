@@ -39,7 +39,7 @@ public class CdApplication implements CdInterface {
             throw new CdException(ERR_NULL_ARGS);
         }
         if (args.length < 1) {
-            throw new CdException(ERR_NO_ARGS);
+            return;
         }
         changeToDirectory(args[0]);
     }
