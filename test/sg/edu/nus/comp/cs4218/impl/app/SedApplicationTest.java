@@ -1,13 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.SedException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_EMPTY_REGEX;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_RULE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_X;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_REP_RULE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,8 +18,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.SedException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * SedApplicationTest used to test sed command
@@ -67,7 +75,7 @@ public class SedApplicationTest {
     @BeforeAll
     static void setupAll() {
         ORIGINAL_DIR = Environment.getCurrentDirectory();
-        Environment.setCurrentDirectory(ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "SedTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SedTestFolder");
     }
 
     @AfterAll
@@ -94,7 +102,7 @@ public class SedApplicationTest {
 
         // Reset for multipleLines.txt
         outputStream = new FileOutputStream(IOUtils.resolveFilePath(MULTIPLE_LINES).toFile());
-        strToBytes = "hello boy\ngirl hello hello".getBytes();
+        strToBytes = new String("hello boy" + StringUtils.STRING_NEWLINE + "girl hello hello").getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
 
@@ -329,7 +337,7 @@ public class SedApplicationTest {
 
         try {
             sed.run(args, null, stdout);
-            assertTrue(stdout.toString().contains("hell boy\ngirl hell hello"));
+            assertTrue(stdout.toString().contains("hell boy" + StringUtils.STRING_NEWLINE + "girl hell hello"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }
