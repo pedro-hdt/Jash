@@ -8,6 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -16,11 +19,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 
-public class PipeOperatorTest {
+/**
+ * Tests for Pipe operator used in commands
+ */
+public class PipeCommandTest {
 
-    public static ShellImpl shell = new ShellImpl();
+    public PipeCommand pipeCommand;
     private static OutputStream stdout;
 
 
@@ -39,7 +46,7 @@ public class PipeOperatorTest {
 
     @BeforeEach
     void setUp() {
-        shell = new ShellImpl();
+        pipeCommand = null;
         stdout = new ByteArrayOutputStream();
     }
 
@@ -54,7 +61,12 @@ public class PipeOperatorTest {
     @Test
     public void testLsWithGrepUsingPipe() {
         try {
-            shell.parseAndEvaluate("ls | grep filtered", stdout);
+            CallCommand lsCommand = new CallCommand(new ArrayList<>(Collections.singleton("ls")), new ApplicationRunner(), new ArgumentResolver());
+            CallCommand grepCommand = new CallCommand(new ArrayList<>(Arrays.asList("grep", "filtered")), new ApplicationRunner(), new ArgumentResolver());
+
+            pipeCommand = new PipeCommand(new ArrayList<>(Arrays.asList(lsCommand, grepCommand)));
+            pipeCommand.evaluate(System.in, stdout);
+
             assertTrue(stdout.toString().contains("filtered.txt"));
             assertFalse(stdout.toString().contains("random.txt"));
 
