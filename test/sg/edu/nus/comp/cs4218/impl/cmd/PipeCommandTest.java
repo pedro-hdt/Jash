@@ -32,6 +32,7 @@ import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
  */
 public class PipeCommandTest {
 
+    public static final String ECHO_CMD = "echo";
     public PipeCommand pipeCommand;
     private static OutputStream stdout;
 
@@ -66,7 +67,7 @@ public class PipeCommandTest {
     @Test
     public void testThrowsShellExceptionForEmptyPipedCommand() {
         CallCommand invalidCmd = new CallCommand(new ArrayList<>(), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCmd = new CallCommand(Arrays.asList("echo", "hi"), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCmd = new CallCommand(Arrays.asList(ECHO_CMD, "hi"), new ApplicationRunner(), new ArgumentResolver());
 
         pipeCommand = new PipeCommand(Arrays.asList(invalidCmd, echoCmd));
 
@@ -80,7 +81,7 @@ public class PipeCommandTest {
     @Test
     public void testThrowsCmdExceptionForInvalidCmd() {
         CallCommand invalidSedCmd = new CallCommand(Arrays.asList("sed", "s|he|"), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCmd = new CallCommand(Arrays.asList("echo", "hi"), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCmd = new CallCommand(Arrays.asList(ECHO_CMD, "hi"), new ApplicationRunner(), new ArgumentResolver());
 
         pipeCommand = new PipeCommand(Arrays.asList(invalidSedCmd, echoCmd));
 
@@ -115,8 +116,8 @@ public class PipeCommandTest {
      */
     @Test
     public void testEchoCommandsWithPipe() throws AbstractApplicationException, ShellException {
-        CallCommand echoCmd1 = new CallCommand(new ArrayList<>(Collections.singleton("echo")), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCmd2 = new CallCommand(new ArrayList<>(Arrays.asList("echo", "hello")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCmd1 = new CallCommand(new ArrayList<>(Collections.singleton(ECHO_CMD)), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCmd2 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hello")), new ApplicationRunner(), new ArgumentResolver());
 
         pipeCommand = new PipeCommand(new ArrayList<>(Arrays.asList(echoCmd1, echoCmd2)));
         pipeCommand.evaluate(System.in, stdout);

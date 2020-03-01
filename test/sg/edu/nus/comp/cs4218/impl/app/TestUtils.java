@@ -10,11 +10,11 @@ public final class TestUtils {
     /**
      * Asserts that the given exception's message contains the specified text
      *
-     * @param e    exception to be looked into
+     * @param exception    exception to be looked into
      * @param text text we are looking for
      */
-    public static void assertMsgContains(Exception e, String text) {
-        assertTrue(e.getMessage().contains(text));
+    public static void assertMsgContains(Exception exception, String text) {
+        assertTrue(exception.getMessage().contains(text));
     }
 
 }

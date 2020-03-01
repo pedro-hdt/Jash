@@ -173,8 +173,8 @@ public class ArgumentResolver {
         Command command = CommandBuilder.parseCommand(commandString, getAppRunner());
         command.evaluate(System.in, outputStream);
 
-        // replace newlines with spaces
-        return outputStream.toString().replace(STRING_NEWLINE, String.valueOf(CHAR_SPACE));
+        // replace newlines with empty string (removed)
+        return outputStream.toString().replace(STRING_NEWLINE, "");
     }
 
     /**

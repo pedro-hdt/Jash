@@ -1,11 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.ByteArrayOutputStream;
@@ -65,6 +63,18 @@ public class EchoApplicationTest {
         echo.run(new String[]{"hello"}, System.in, out);
 
         assertEquals("hello" + STRING_NEWLINE, out.toString());
+
+    }
+
+    /**
+     * Call echo with a single argument as space
+     */
+    @Test
+    public void singleArgAsSpace() throws EchoException {
+
+        echo.run(new String[]{" "}, System.in, out);
+
+        assertEquals(" " + STRING_NEWLINE, out.toString());
 
     }
 
