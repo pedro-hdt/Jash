@@ -1,9 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 
 import java.io.IOException;
@@ -14,8 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 /**
  * Provides unit tests for the RmApplication class
@@ -37,47 +34,36 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
  */
 public class RmApplicationTest {
 
-    private static RmApplication rmApp;
+    private static RmApplication rm;
 
     // we keep this string as suffix in the filenames created
-    private static final String RM_TEST_CLASS = "RmApplicationTest";
-
-    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
-
+    private static final String rmTestClass = "RmApplicationTest";
 
     @BeforeEach
     public void setRm() {
-        rmApp = new RmApplication();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        Environment.setCurrentDirectory(ORIGINAL_DIR);
+        rm = new RmApplication();
     }
 
     /**
      * Utility method to create a temporary file
      */
     public Path mkFile() throws IOException {
-        return Files.createTempFile(RM_TEST_CLASS, "");
+        return Files.createTempFile(rmTestClass, "");
     }
-
 
     /**
      * Utility method to create a temporary file in a specific directory
      */
     public Path mkFile(Path dir) throws IOException {
-        return Files.createTempFile(dir, RM_TEST_CLASS, "");
+        return Files.createTempFile(dir, rmTestClass, "");
     }
-
 
     /**
      * Utility method to create an empty temporary directory
      */
     public Path mkEmptyDir() throws IOException {
-        return Files.createTempDirectory(RM_TEST_CLASS);
+        return Files.createTempDirectory(rmTestClass);
     }
-
 
     /**
      * Utility method to create a temporary directory with a file inside it
@@ -89,20 +75,27 @@ public class RmApplicationTest {
         return dir;
     }
 
-
     /**
      * Utility method to create a populated directory tree
      * Used to test recursive removal
      */
     public Path mkTree() throws IOException {
         Path[] testDirs = new Path[4];
-        testDirs[0] = Files.createTempDirectory(RM_TEST_CLASS);
-        Files.createTempFile(testDirs[0], RM_TEST_CLASS, "");
+        testDirs[0] = Files.createTempDirectory(rmTestClass);
+        Files.createTempFile(testDirs[0], rmTestClass, "");
         for (int i = 1; i < 4; i++) {
-            testDirs[i] = Files.createTempDirectory(testDirs[i - 1], RM_TEST_CLASS);
-            Files.createTempFile(testDirs[i], RM_TEST_CLASS, "");
+            testDirs[i] = Files.createTempDirectory(testDirs[i - 1], rmTestClass);
+            Files.createTempFile(testDirs[i], rmTestClass, "");
         }
         return testDirs[0];
+    }
+
+    /**
+     * Asserts that the given RmException is that rm fails to delete a directory
+     * since it is not empty and the -r flag is not provided
+     */
+    public void verifyExceptionIsDir(RmException e) {
+        assertTrue(e.getMessage().contains(ERR_IS_DIR));
     }
 
 
@@ -117,7 +110,7 @@ public class RmApplicationTest {
 
         // assemble args and call rm
         String[] args = {testFile.toString()};
-        rmApp.run(args, System.in, System.out);
+        rm.run(args, System.in, System.out);
 
         // make sure file no longer exists afterwards
         assertFalse(Files.exists(testFile));
@@ -135,7 +128,7 @@ public class RmApplicationTest {
 
         // assemble args and call rm
         String[] args = {"-d", testDir.toString()};
-        rmApp.run(args, System.in, System.out);
+        rm.run(args, System.in, System.out);
 
         // make sure directory no longer exists afterwards
         assertFalse(testDir.toFile().exists());
@@ -154,7 +147,7 @@ public class RmApplicationTest {
 
         // assemble args and call rm to delete the outer directory recursively
         String[] args = {"-r", testTree.toString()};
-        rmApp.run(args, System.in, System.out);
+        rm.run(args, System.in, System.out);
 
         // make sure directory no longer exists afterwards
         assertFalse(Files.exists(testTree));
@@ -173,7 +166,7 @@ public class RmApplicationTest {
 
         // assemble args and call rm to delete the directory recursively
         String[] args = {"-r", testDir.toString()};
-        rmApp.run(args, System.in, System.out);
+        rm.run(args, System.in, System.out);
 
         // make sure directory no longer exists afterwards
         assertFalse(Files.exists(testDir));
@@ -198,7 +191,7 @@ public class RmApplicationTest {
         List<String> args = new LinkedList<>();
         args.add("-r");
         args.addAll(filesAndDirs.stream().map(Path::toString).collect(Collectors.toList()));
-        rmApp.run(args.toArray(new String[0]), System.in, System.out);
+        rm.run(args.toArray(new String[0]), System.in, System.out);
 
         // check all files are gone
         assertTrue(filesAndDirs.stream().noneMatch(Files::exists));
@@ -218,12 +211,12 @@ public class RmApplicationTest {
 
         // assemble args and call rm expecting an exception
         String[] args = {testDir.toString()};
-        RmException exception = assertThrows(RmException.class, () -> {
-            rmApp.run(args, System.in, System.out);
+        RmException e = assertThrows(RmException.class, () -> {
+            rm.run(args, System.in, System.out);
         });
 
         // verify it was the correct exception
-        assertMsgContains(exception, ERR_IS_DIR);
+        verifyExceptionIsDir(e);
 
         // make sure directory still exists afterwards
         assertTrue(Files.exists(testDir));
@@ -249,10 +242,10 @@ public class RmApplicationTest {
 
         // assemble args again, this time with the -d flag and call rm expecting an exception
         String[] args = {"-d", testDir.toString()};
-        RmException exception = assertThrows(RmException.class, () -> {
-            rmApp.run(args, System.in, System.out);
+        RmException e = assertThrows(RmException.class, () -> {
+            rm.run(args, System.in, System.out);
         });
-        assertMsgContains(exception, ERR_IS_DIR); // verify the correct exceptions is thrown
+        verifyExceptionIsDir(e); // verify the correct exceptions is thrown
 
         // make sure directory AND file still exist afterwards
         assertTrue(Files.exists(testFile));
@@ -280,10 +273,10 @@ public class RmApplicationTest {
 
         // assemble args and call rm expecting an exception
         String[] args = {testDir.toString()};
-        RmException exception = assertThrows(RmException.class, () -> {
-            rmApp.run(args, System.in, System.out);
+        RmException e = assertThrows(RmException.class, () -> {
+            rm.run(args, System.in, System.out);
         });
-        assertMsgContains(exception, ERR_IS_DIR); // verify the correct exceptions is thrown
+        verifyExceptionIsDir(e); // verify the correct exceptions is thrown
 
         // make sure directory and file still exist afterwards
         assertTrue(Files.exists(testFile));

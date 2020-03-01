@@ -5,7 +5,4 @@ public class InvalidArgsException extends Exception {
         super(message);
     }
 
-    public InvalidArgsException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
