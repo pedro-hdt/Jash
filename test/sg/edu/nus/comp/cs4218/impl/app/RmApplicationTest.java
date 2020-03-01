@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.RmException;
+import sg.edu.nus.comp.cs4218.impl.parser.ArgsParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 /**
  * Provides unit tests for the RmApplication class
@@ -292,6 +293,60 @@ public class RmApplicationTest {
         // cleanup
         Files.delete(testFile);
         Files.delete(testDir);
+
+    }
+
+
+    /**
+     * Attempt to call remove with no arguments
+     */
+    @Test
+    public void rmNoArguments() {
+
+        // call rm expecting an exception
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(new String[0], System.in, System.out);
+        });
+        assertMsgContains(exception, ERR_NO_FILE_ARGS); // verify the correct exceptions is thrown
+
+    }
+
+
+    /**
+     * Attempt to call rm with an invalid flag
+     */
+    @Test
+    public void rmInvlaidFlag() {
+
+        // call rm expecting an exception
+        String[] args = {"-a", "fakeFile"};
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(args, System.in, System.out);
+        });
+        assertMsgContains(exception, ArgsParser.ILLEGAL_FLAG_MSG); // verify the correct exceptions is thrown
+
+    }
+
+    /**
+     * Call rm with multiple files, some of them inexistent
+     */
+    @Test
+    public void rmIMultFilesSomeNonExistent() throws IOException {
+
+        Path actualFile1 = mkFile();
+        actualFile1.toFile().deleteOnExit();
+        Path actualFile2 = mkFile();
+        actualFile2.toFile().deleteOnExit();
+
+        // call rm expecting an exception
+        String[] args = {actualFile1.toString(), "fakeFile", actualFile2.toString()};
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(args, System.in, System.out);
+        });
+        assertMsgContains(exception, ERR_FILE_NOT_FOUND); // verify the correct exceptions is thrown
+        assertMsgContains(exception, "fakeFile");
+        assertFalse(Files.exists(actualFile1));
+        assertFalse(Files.exists(actualFile2));
 
     }
 
