@@ -26,6 +26,11 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_NOT_FOU
 class FindApplicationTest {
 
 
+    public static final String FOLDER1 = "Test-folder-1";
+    public static final String FOLDER2 = "Test-folder-2";
+    public static final String TEXTFILE = "textfile.txt";
+    public static final String TESTFILE = "test.txt";
+    public static final String NAME_FLAG = "-name";
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
     private static FindApplication findApplication;
     private static OutputStream stdout;
@@ -91,8 +96,7 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithOnlyFolder() {
-        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {"Test" +
-            "-folder-1"}, System.in, stdout));
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER1}, System.in, stdout));
         ;
         assertTrue(expectedException.getMessage().toString().contains(NO_FILE));
     }
@@ -102,8 +106,7 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithNoFlag() {
-        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {"Test" +
-            "-folder-1", "test.txt"}, System.in, stdout));
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER1, TESTFILE}, System.in, stdout));
         ;
         assertTrue(expectedException.getMessage().toString().contains(NO_FILE));
     }
@@ -113,8 +116,7 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWitNoFileSpecified() {
-        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {"Test" +
-            "-folder-1", "-name"}, System.in, stdout));
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER1, NAME_FLAG}, System.in, stdout));
         ;
         assertTrue(expectedException.getMessage().toString().contains(NO_FILE));
     }
@@ -125,7 +127,7 @@ class FindApplicationTest {
     @Test
     public void testFindWithNoFolderSpecified() {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {
-            "-name", "test.txt"}, System.in, stdout));
+            NAME_FLAG, TESTFILE}, System.in, stdout));
         ;
         assertTrue(expectedException.getMessage().toString().contains(NO_FOLDER));
     }
@@ -136,7 +138,7 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithWrongFolderName() throws AbstractApplicationException {
-        findApplication.run(new String[] {"Test-folder-10", "-name", "test.txt"}, System.in, stdout);
+        findApplication.run(new String[] {"Test-folder-10", NAME_FLAG, TESTFILE}, System.in, stdout);
         assertTrue(stdout.toString().contains(ERR_FOLDER_NOT_FOUND));
     }
 
@@ -147,7 +149,7 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithNoMatchingFile() throws AbstractApplicationException {
-        findApplication.run(new String[] {"Test-folder-1", "-name", "test.txt"}, System.in, stdout);
+        findApplication.run(new String[] {FOLDER1, NAME_FLAG, TESTFILE}, System.in, stdout);
         assertEquals("", stdout.toString());
     }
 
@@ -156,8 +158,8 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithMultipleFileNames() {
-        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {"Test-folder-2", "-name", "Test-folder-2-2","textfile.txt"}, System.in, stdout));
-        assertTrue(expectedException.getMessage().toString().contains(MULTIPLE_FILES));
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER2, NAME_FLAG, "Test-folder-2-2",TEXTFILE}, System.in, stdout));
+        assertTrue(expectedException.getMessage().contains(MULTIPLE_FILES));
     }
 
     /**
@@ -166,8 +168,8 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithMatchingFile() throws AbstractApplicationException {
-        findApplication.run(new String[] {"Test-folder-1", "-name", "textfile.txt"}, System.in, stdout);
-        assertEquals("Test-folder-1" + StringUtils.CHAR_FILE_SEP + "textfile.txt" + StringUtils.STRING_NEWLINE,
+        findApplication.run(new String[] {FOLDER1, NAME_FLAG, TEXTFILE}, System.in, stdout);
+        assertEquals(FOLDER1 + StringUtils.CHAR_FILE_SEP + TEXTFILE + StringUtils.STRING_NEWLINE,
             stdout.toString());
     }
 
@@ -177,9 +179,9 @@ class FindApplicationTest {
      */
     @Test
     public void testFindWithMatchingFileRecursively() throws AbstractApplicationException {
-        findApplication.run(new String[] {"Test-folder-2", "-name", "textfile.txt"}, System.in, stdout);
-        assertEquals("Test-folder-2" + StringUtils.CHAR_FILE_SEP
+        findApplication.run(new String[] {FOLDER2, NAME_FLAG, TEXTFILE}, System.in, stdout);
+        assertEquals(FOLDER2 + StringUtils.CHAR_FILE_SEP
                 + "Test-folder-2-2" + StringUtils.CHAR_FILE_SEP + "Test-folder-2-3" + StringUtils.CHAR_FILE_SEP
-                + "textfile.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
+                + TEXTFILE + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 }
