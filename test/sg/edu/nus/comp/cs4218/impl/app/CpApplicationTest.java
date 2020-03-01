@@ -106,11 +106,11 @@ class CpApplicationTest {
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        Environment.setCurrentDirectory(ORIGINAL_DIR);
         for (File f : (new File("destDir")).listFiles()) {
             f.delete();
         }
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
 
