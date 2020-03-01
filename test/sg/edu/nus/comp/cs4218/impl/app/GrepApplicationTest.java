@@ -12,7 +12,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +36,7 @@ public class GrepApplicationTest {
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(originalDir + File.separator + "dummyTestFolder" + File.separator +
+        Environment.setCurrentDirectory(originalDir + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() +
             "GrepTestFolder");
     }
 

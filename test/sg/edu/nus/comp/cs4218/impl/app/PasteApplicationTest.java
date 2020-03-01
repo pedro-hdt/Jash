@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -38,8 +38,8 @@ public class PasteApplicationTest {
     public static void setUp() {
         stdout = new ByteArrayOutputStream();
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + File.separator + "dummyTestFolder"
-                + File.separator + "PasteTestFolder");
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "PasteTestFolder");
     }
 
     @BeforeEach
