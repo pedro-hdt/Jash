@@ -160,7 +160,7 @@ public class PasteApplication implements PasteInterface {
             if (hasFiles) {
                 result = mergeFileAndStdin(stdin, args);
             } else {
-                String[] lines = mergeStdin(stdin).split("\n");
+                String[] lines = mergeStdin(stdin).split(STRING_NEWLINE);
                 StringBuilder sb = new StringBuilder();
                 int columns = args.length;
                 for (int i = 0; i < lines.length; i++) {
