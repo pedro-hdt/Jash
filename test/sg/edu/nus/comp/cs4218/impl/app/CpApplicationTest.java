@@ -71,7 +71,7 @@ class CpApplicationTest {
         byte[] hash1 = null, hash2 = null;
         try {
 
-            // TODO SHA-256 is probably overkill
+            // SHA-256 is probably overkill but fine with such small files
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
             md.update(Files.readAllBytes(file1));
@@ -106,6 +106,7 @@ class CpApplicationTest {
 
     @AfterAll
     public static void cleanUp() throws IOException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
         for (File f : (new File("destDir")).listFiles()) {
             f.delete();
         }
