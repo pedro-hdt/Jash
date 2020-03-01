@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
@@ -28,10 +29,13 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  * - Redirecting output to a file
  * - Redirecting input from file
  * - Redirecting both input and output to/from different files
+ * - redirecting output to a file, called from the shell (integration)
  * <p>
  * Negative test cases:
  * - Empty args
  * - Null args
+ * - Output redirection without destination (eg "echo hello >")
+ * - Output redirection to multiple different files (eg "echo hello > f1 > f2")
  */
 public class IORedirectionHandlerTest {
 
@@ -53,6 +57,7 @@ public class IORedirectionHandlerTest {
 
         // file to be used as output redirection
         Path outFile = IOUtils.resolveFilePath("outfile.txt");
+        outFile.toFile().deleteOnExit();
 
         // instantiate a redirection handler for the command
         IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
@@ -86,8 +91,6 @@ public class IORedirectionHandlerTest {
         assertTrue(1 == outFileBytes.length);
         assertEquals(65, outFileBytes[0]);
 
-        Files.delete(outFile); // cleanup
-
     }
 
 
@@ -110,6 +113,7 @@ public class IORedirectionHandlerTest {
 
         // file to be used as output redirection
         Path inFile = IOUtils.resolveFilePath("infile.txt");
+        inFile.toFile().deleteOnExit();
         Files.write(inFile, new byte[]{65}); // write an A (byte 65 in ASCII) into the file for validation
 
         // instantiate a redirection handler for the command
@@ -143,9 +147,7 @@ public class IORedirectionHandlerTest {
         // verify there is nothing else there
         assertTrue(-1 == inputStream.read());
 
-        // cleanup
         inputStream.close();
-        Files.delete(inFile);
 
     }
 
@@ -163,10 +165,12 @@ public class IORedirectionHandlerTest {
 
         // file to be used as output redirection
         Path inFile = IOUtils.resolveFilePath("infile.txt");
+        inFile.toFile().deleteOnExit();
         Files.write(inFile, new byte[]{65}); // write an A (byte 65 in ASCII) into the file for validation
 
         // file to be used as output redirection
         Path outFile = IOUtils.resolveFilePath("outfile.txt");
+        outFile.toFile().deleteOnExit();
 
         // instantiate a redirection handler for the command
         IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
@@ -208,11 +212,7 @@ public class IORedirectionHandlerTest {
         assertTrue(1 == outFileBytes.length);
         assertEquals(65, outFileBytes[0]);
 
-        // cleanup
         inputStream.close();
-        Files.delete(inFile);
-        Files.delete(outFile);
-
     }
 
 
@@ -229,6 +229,7 @@ public class IORedirectionHandlerTest {
 
         // file to be used as output redirection
         Path outFile = IOUtils.resolveFilePath("outfile.txt");
+        outFile.toFile().deleteOnExit();
 
         ShellImpl shellImpl = new ShellImpl();
         shellImpl.parseAndEvaluate("echo hello > " + outFile.toString(), System.out);
@@ -238,7 +239,6 @@ public class IORedirectionHandlerTest {
         assertTrue(5 + STRING_NEWLINE.length() == outFileBytes.length); // 5 chars in hello + newline
         assertArrayEquals(("hello" + STRING_NEWLINE).getBytes(), outFileBytes);
 
-        Files.delete(outFile); // cleanup
     }
 
 
@@ -307,6 +307,35 @@ public class IORedirectionHandlerTest {
                 assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
+    }
+
+    /**
+     * Attempts to call "echo hello > outfile1.txt > outfile2.txt" (with multiple outputs)
+     * This should cause an exception of multiple streams
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     */
+    @Test
+    public void testFailsRedirOutputMultStreams() {
+
+        Path outFile1 = IOUtils.resolveFilePath("outfile1.txt");
+        Path outFile2 = IOUtils.resolveFilePath("outfile2.txt");
+        outFile1.toFile().deleteOnExit();
+
+        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+                Arrays.asList("echo", "hello", ">", outFile1.toString(), ">", outFile2.toString()),
+                System.in,
+                System.out,
+                new ArgumentResolver()
+        );
+
+
+        ShellException shellException =
+                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+
+        assertMsgContains(shellException, ERR_MULTIPLE_STREAMS);
+
     }
 
 }

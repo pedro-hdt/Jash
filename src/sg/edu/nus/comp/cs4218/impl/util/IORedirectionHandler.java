@@ -14,7 +14,12 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
 
-public class IORedirectionHandler { // TODO needs javadoc
+
+/**
+ * Utility class responsible for extracting the input and output streams appropriate for IO redirection,
+ * and separates arguments (tokens) which are not redirection related
+ */
+public class IORedirectionHandler {
     private final List<String> argsList;
     private final ArgumentResolver argumentResolver;
     private final InputStream origInputStream;
