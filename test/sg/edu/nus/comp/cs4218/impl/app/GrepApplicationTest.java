@@ -145,7 +145,7 @@ public class GrepApplicationTest {
     @Test
     public void testGrepWithOneMatchingFile() throws AbstractApplicationException {
         grepApplication.run(new String[] {"pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
-        assertEquals("pattern\n", stdout.toString());
+        assertEquals("pattern" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -166,7 +166,7 @@ public class GrepApplicationTest {
     public void testGrepWithMultipleFiles() throws AbstractApplicationException {
         grepApplication.run(new String[] {"patterns", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt", "Test-folder-2" + StringUtils.fileSeparator() + "textfile.txt"},
             null, stdout);
-        assertEquals("Test-folder-2" + StringUtils.fileSeparator() + "textfile.txt: patterns\n", stdout.toString());
+        assertEquals("Test-folder-2" + StringUtils.fileSeparator() + "textfile.txt: patterns" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -177,7 +177,7 @@ public class GrepApplicationTest {
     public void testGrepWithMultipleMatchingFiles() throws AbstractApplicationException {
         grepApplication.run(new String[] {"pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt", "Test-folder-3" + StringUtils.fileSeparator() + "textfile.txt"},
             null, stdout);
-        assertEquals("Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt: pattern\n" + "Test-folder-3" + StringUtils.fileSeparator() + "textfile.txt: pattern\n",
+        assertEquals("Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt: pattern" + StringUtils.STRING_NEWLINE + "Test-folder-3" + StringUtils.fileSeparator() + "textfile.txt: pattern" + StringUtils.STRING_NEWLINE,
             stdout.toString());
     }
 
@@ -198,7 +198,7 @@ public class GrepApplicationTest {
     @Test
     public void testGrepWithInsensitivePattern() throws AbstractApplicationException {
         grepApplication.run(new String[] {"-i", "Pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
-        assertEquals("pattern\n", stdout.toString());
+        assertEquals("pattern" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -208,7 +208,7 @@ public class GrepApplicationTest {
     @Test
     public void testGrepWithCountLines() throws AbstractApplicationException {
         grepApplication.run(new String[] {"-c", "pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
-        assertEquals("1\n", stdout.toString());
+        assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -218,7 +218,7 @@ public class GrepApplicationTest {
     @Test
     public void testGrepWithInsensitivePathAndCountLines() throws AbstractApplicationException {
         grepApplication.run(new String[] {"-i", "-c", "Pattern", "Test-folder-1" + StringUtils.fileSeparator() + "textfile.txt"}, null, stdout);
-        assertEquals("1\n", stdout.toString());
+        assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -244,7 +244,7 @@ public class GrepApplicationTest {
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
         grepApplication.run(new String[] {"Patience"}, inputstream, stdout);
-        assertEquals("Patience is the key to success\n", stdout.toString());
+        assertEquals("Patience is the key to success" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -257,7 +257,7 @@ public class GrepApplicationTest {
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
         grepApplication.run(new String[] {"-i", "patience"}, inputstream, stdout);
-        assertEquals("Patience is the key to success\n", stdout.toString());
+        assertEquals("Patience is the key to success" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -270,7 +270,7 @@ public class GrepApplicationTest {
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
         grepApplication.run(new String[] {"-c", "Patience"}, inputstream, stdout);
-        assertEquals("1\n", stdout.toString());
+        assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -279,13 +279,13 @@ public class GrepApplicationTest {
      */
     @Test
     public void testGrepFromStdinWithMultipleLines() throws AbstractApplicationException {
-        String content1 = "Patience is the key to success\n";
-        String content2 = "No success without hard work\n";
+        String content1 = "Patience is the key to success" + StringUtils.STRING_NEWLINE;
+        String content2 = "No success without hard work" + StringUtils.STRING_NEWLINE;
         String content = content1 + content2;
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
         grepApplication.run(new String[] {"-c", "Patience"}, inputstream, stdout);
-        assertEquals("1\n", stdout.toString());
+        assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -294,13 +294,13 @@ public class GrepApplicationTest {
      */
     @Test
     public void testGrepFromStdinWithMultipleMatchingLines() throws AbstractApplicationException {
-        String content1 = "Patience is the key to success\n";
-        String content2 = "No success without hard work\n";
+        String content1 = "Patience is the key to success" + StringUtils.STRING_NEWLINE;
+        String content2 = "No success without hard work" + StringUtils.STRING_NEWLINE;
         String content = content1 + content2;
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
         grepApplication.run(new String[] {"-c", "success"}, inputstream, stdout);
-        assertEquals("2\n", stdout.toString());
+        assertEquals("2" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -309,12 +309,12 @@ public class GrepApplicationTest {
      */
     @Test
     public void testGrepFromStdinWithAllOptions() throws AbstractApplicationException {
-        String content1 = "Patience is the key to Success\n";
-        String content2 = "No success without hard work\n";
+        String content1 = "Patience is the key to Success" + StringUtils.STRING_NEWLINE;
+        String content2 = "No success without hard work" + StringUtils.STRING_NEWLINE;
         String content = content1 + content2;
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
         grepApplication.run(new String[] {"-i", "-c", "success"}, inputstream, stdout);
-        assertEquals("2\n", stdout.toString());
+        assertEquals("2" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 }
