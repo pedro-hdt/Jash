@@ -9,6 +9,8 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.app.TestUtils;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -74,6 +76,18 @@ public class SequenceCommandTest {
     }
 
     /**
+     * Throws ShellException when command starts with ;
+     */
+    @Test
+    public void testExceptionWhenNewCmdWithSemicolon() {
+
+        ShellImpl shell = new ShellImpl();
+        Exception exception = assertThrows(ShellException.class, () -> shell.parseAndEvaluate(";", stdout));
+
+        TestUtils.assertMsgContains(exception, ERR_SYNTAX);
+    }
+
+    /**
      * Asserts if exception thrown when invalid commands are piped
      * @throws AbstractApplicationException
      * @throws ShellException
@@ -100,6 +114,46 @@ public class SequenceCommandTest {
         sequenceCommand.evaluate(System.in, stdout);
 
         assertTrue(stdout.toString().contains("hello" + StringUtils.STRING_NEWLINE + "hi"));
+
+    }
+
+    /**
+     * Test integration with parser
+     */
+    @Test
+    public void testSequenceOnShell() throws Exception {
+
+        ShellImpl shell = new ShellImpl();
+        shell.parseAndEvaluate("echo hello; echo hi", stdout);
+
+        assertTrue(stdout.toString().contains("hello" + StringUtils.STRING_NEWLINE + "hi"));
+
+    }
+
+
+    /**
+     * Test integration of sequence with pipe
+     */
+    @Test
+    public void testSequenceWithPipeOnShell() throws Exception {
+
+        ShellImpl shell = new ShellImpl();
+        shell.parseAndEvaluate("echo hello; ls | grep present", stdout);
+
+        assertTrue(stdout.toString().contains("hello" + StringUtils.STRING_NEWLINE + "present.txt"));
+
+    }
+
+    /**
+     * Test integration on shell
+     */
+    @Test
+    public void testPipeWithSequence() throws Exception {
+
+        ShellImpl shell = new ShellImpl();
+        shell.parseAndEvaluate("ls | grep present ; echo hello", stdout);
+
+        assertTrue(stdout.toString().contains("present.txt" + StringUtils.STRING_NEWLINE + "hello"));
 
     }
 }

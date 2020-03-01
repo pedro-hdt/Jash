@@ -9,6 +9,9 @@ import sg.edu.nus.comp.cs4218.exception.EchoException;
 import java.io.ByteArrayOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
@@ -38,6 +41,30 @@ public class EchoApplicationTest {
     @AfterEach
     public void resetOut() {
         out.reset();
+    }
+
+
+    /**
+     * Call echo with null arg for constructResult()
+     */
+    @Test
+    public void testNullArgs() {
+        Exception exception = assertThrows(EchoException.class, () -> echo.constructResult(null));
+
+        TestUtils.assertMsgContains(exception, ERR_NULL_ARGS);
+
+    }
+
+    /**
+     * Call echo with null stream
+     */
+    @Test
+    public void testNullOutputStream() {
+
+        Exception exception = assertThrows(EchoException.class, () -> echo.run(new String[]{"test"}, System.in, null));
+
+        TestUtils.assertMsgContains(exception, ERR_NO_OSTREAM);
+
     }
 
     /**

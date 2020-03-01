@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.TestUtils;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
@@ -123,6 +124,19 @@ public class PipeCommandTest {
         pipeCommand.evaluate(System.in, stdout);
 
         assertTrue(stdout.toString().contains("hello"));
+
+    }
+
+    /**
+     * Test integration with parser
+     */
+    @Test
+    public void testSequenceOnShell() throws Exception {
+
+        ShellImpl shell = new ShellImpl();
+        shell.parseAndEvaluate("echo hello | echo hi", stdout);
+
+        assertTrue(stdout.toString().contains("hi"));
 
     }
 
