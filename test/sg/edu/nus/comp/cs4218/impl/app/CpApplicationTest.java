@@ -205,7 +205,7 @@ class CpApplicationTest {
     public void testSingleFileToExistentFile() throws IOException, AbstractApplicationException {
 
         Path src = IOUtils.resolveFilePath("src1");
-        Path dest = Files.createFile(IOUtils.resolveFilePath("destFile"));
+        Path dest = IOUtils.resolveFilePath("destFile");
 
         String[] args = {src.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);
@@ -231,6 +231,8 @@ class CpApplicationTest {
         Path copy1 = IOUtils.resolveFilePath("destDir/src1");
         Path copy2 = IOUtils.resolveFilePath("destDir/src2");
 
+        assertTrue(Files.exists(copy1));
+        assertTrue(Files.exists(copy2));
         assertTrue(hashesMatch(src1, copy1));
         assertTrue(hashesMatch(src2, copy2));
 
