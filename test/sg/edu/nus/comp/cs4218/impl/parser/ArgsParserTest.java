@@ -1,17 +1,16 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
 
 /**
  * Tests for ArgsParser
@@ -43,7 +42,7 @@ class ArgsParserTest {
 
 
     @Test
-    void testParseNoFlags() {
+    void testParseNoFlags() throws InvalidArgsException {
 
         ArgsParser argsParser = new ArgsParser();
 
