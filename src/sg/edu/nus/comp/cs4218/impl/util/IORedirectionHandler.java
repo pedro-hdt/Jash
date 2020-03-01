@@ -14,7 +14,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
 
-public class IORedirectionHandler {
+public class IORedirectionHandler { // TODO needs javadoc
     private final List<String> argsList;
     private final ArgumentResolver argumentResolver;
     private final InputStream origInputStream;
@@ -52,9 +52,9 @@ public class IORedirectionHandler {
             }
 
             // if current arg is < or >, fast-forward to the next arg to extract the specified file
-            String file = argsIterator.next();
+            String file = argsIterator.next(); // TODO no check for hasNext()
 
-            if (isRedirOperator(file)) {
+            if (isRedirOperator(file)) { // TODO remove this, but why is it here in the first place?
             }
 
             // handle quoting + globing + command substitution in file arg
