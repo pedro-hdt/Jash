@@ -1,21 +1,27 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.app.MvInterface;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CANNOT_OVERWRITE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_MOVABLE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import sg.edu.nus.comp.cs4218.app.MvInterface;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.exception.LsException;
+import sg.edu.nus.comp.cs4218.exception.MvException;
+import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 public class MvApplication implements MvInterface {
 
@@ -23,11 +29,13 @@ public class MvApplication implements MvInterface {
 
     @Override
     public String mvSrcFileToDestFile(String srcFile, String destFile) throws Exception {
-        Path source = IOUtils.resolveFilePath(srcFile);
-        if (!Files.exists(source)) {
-            throw new MvException(ERR_NO_FILE_ARGS);
+        try {
+            Path source = IOUtils.resolveFilePath(srcFile);
+            Files.move(source, source.resolveSibling(destFile));
+        } catch (Exception e) {
+            throw (LsException) new LsException(ERR_FILE_NOT_FOUND).initCause(e);
         }
-        Files.move(source, source.resolveSibling(destFile));
+
         return null;
     }
 
@@ -45,17 +53,23 @@ public class MvApplication implements MvInterface {
                     Files.delete(IOUtils.resolveFilePath(srcPath));
                     return null;
                 }
-                // Assumption: Replacement doesn't work when a directory is being moved and target directory is non-empty and same name
-                Files.move(IOUtils.resolveFilePath(srcPath),
-                        Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
-                                IOUtils.resolveFilePath(srcPath).getFileName().toString()),
-                        StandardCopyOption.REPLACE_EXISTING);
+                try {
+                    // Assumption: Replacement doesn't work when a directory is being moved and target directory is non-empty and same name
+                    Files.move(IOUtils.resolveFilePath(srcPath),
+                            Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
+                                    IOUtils.resolveFilePath(srcPath).getFileName().toString()),
+                            StandardCopyOption.REPLACE_EXISTING);
+                } catch (DirectoryNotEmptyException dnee) {
+                    throw (LsException) new LsException(ERR_CANNOT_OVERWRITE).initCause(dnee);
+                }
+
             } else {
                 // if overwriting is not allowed then only allow possibility of moving if its directory
                 if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
                     Files.move(IOUtils.resolveFilePath(srcPath),
                             Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
-
+                } else {
+                    throw new LsException(ERR_NOT_MOVABLE);
                 }
             }
         }
@@ -89,6 +103,12 @@ public class MvApplication implements MvInterface {
             throw new MvException(ERR_NO_FILE_ARGS);
         }
 
+        for (String sourceOperand : sourceOperands) {
+            if (!Files.exists(IOUtils.resolveFilePath(sourceOperand))) {
+                throw new MvException(ERR_FILE_NOT_FOUND + ": " + sourceOperand);
+            }
+        }
+
         try {
             if (Files.exists(IOUtils.resolveFilePath(targetOperand))) {
                 mvFilesToFolder(targetOperand, sourceOperands.toArray(new String[0]));
@@ -96,7 +116,7 @@ public class MvApplication implements MvInterface {
                 mvSrcFileToDestFile(sourceOperands.get(0), targetOperand);
             }
         }  catch (Exception e) {
-            throw (MvException) new MvException(ERR_FILE_NOT_FOUND).initCause(e);
+            throw (MvException) new MvException(e.getMessage()).initCause(e);
         }
 
     }

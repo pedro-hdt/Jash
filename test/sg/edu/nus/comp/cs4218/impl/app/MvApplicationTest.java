@@ -1,13 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CANNOT_OVERWRITE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_MOVABLE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,11 +17,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.MvException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for mv command
+ *
+ * NOTE: This must be run as a suite for effective testing
  *
  * <p>
  *     Contains negative and positive test cases testing mv in isolation
@@ -74,20 +84,12 @@ public class MvApplicationTest {
         Files.createFile(IOUtils.resolveFilePath(OLD_NAME_FILE));
         Files.deleteIfExists(IOUtils.resolveFilePath(NEW_NAME_FILE));
 
-        // Reset for test renaming directory
-        Files.createDirectory(IOUtils.resolveFilePath(OLD_DIR));
-        Files.deleteIfExists(IOUtils.resolveFilePath(NEW_DIR));
-
 
         // Reset after moving file to dir
         Files.createFile(IOUtils.resolveFilePath(FILE_TO_MOVE_TXT));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + FILE_TO_MOVE_TXT));
 
-        // Reset after moving dir to dir
-        Files.createDirectory(IOUtils.resolveFilePath(INIT_DIR));
-        Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR));
 
         // Reset after overwriting
         Files.createFile(Paths.get(Environment.getCurrentDirectory()
@@ -197,14 +199,15 @@ public class MvApplicationTest {
      * Tests renaming an existing directory
      */
     @Test
-    public void testRenameExistingDirectory() {
-        try {
-            mvApp.run(new String[] {OLD_DIR, NEW_DIR}, null, null);
+    public void testRenameExistingDirectory() throws Exception {
 
-            assertTrue(Files.exists(IOUtils.resolveFilePath(NEW_DIR)));
-        } catch (MvException e) {
-            fail("should not fail:" + e);
-        }
+        Files.createDirectory(IOUtils.resolveFilePath(OLD_DIR));
+
+        mvApp.run(new String[] {OLD_DIR, NEW_DIR}, null, null);
+        assertTrue(Files.exists(IOUtils.resolveFilePath(NEW_DIR)));
+
+        Files.deleteIfExists(IOUtils.resolveFilePath(NEW_DIR));
+
     }
 
 
@@ -226,32 +229,54 @@ public class MvApplicationTest {
 
     /**
      * Tests moving of a directory to another directory
-     * @throws MvException
+     * @throws Exception
      */
     @Test
-    public void testMoveDirToAnotherDir() throws MvException {
+    public void testMoveDirToAnotherDir() throws Exception {
+        // Reset after moving dir to dir
+        Files.createDirectory(IOUtils.resolveFilePath(INIT_DIR));
+
         mvApp.run(new String[] {INIT_DIR, DEST_DIR}, null, null);
 
         assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR)));
         assertTrue(!Files.exists(IOUtils.resolveFilePath(INIT_DIR)));
+
+        // Cleanup
+        Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
+                + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR));
     }
 
     /**
      * Tests if -n passed to not overwrite a file
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testDontOverwriteFile() throws IOException {
-        try {
-            mvApp.run(new String[] {"-n", DEST_DIR + StringUtils.fileSeparator() + NO_OVERWRITE_FILE, NO_OVERWRITE_FILE}, null, null);
+    public void testDontOverwriteFile() throws Exception {
 
-            assertFalse(Arrays.equals(Files.readAllBytes(IOUtils.resolveFilePath(NO_OVERWRITE_FILE)),
-                    Files.readAllBytes(Paths.get(Environment.getCurrentDirectory()
-                            + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + NO_OVERWRITE_FILE))));
-        } catch (MvException e) {
-            fail("should not fail:" + e);
-        }
+        assertFalse(Arrays.equals(Files.readAllBytes(IOUtils.resolveFilePath(NO_OVERWRITE_FILE)),
+                Files.readAllBytes(Paths.get(Environment.getCurrentDirectory()
+                        + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + NO_OVERWRITE_FILE))));
+
+        Exception expectedException = assertThrows(MvException.class, ()
+                -> mvApp.run(new String[] {"-n", DEST_DIR + StringUtils.fileSeparator()
+                    + NO_OVERWRITE_FILE, NO_OVERWRITE_FILE}, null, null));
+        assertTrue(expectedException.getMessage().contains(ERR_NOT_MOVABLE));
+
+    }
+
+    /**
+     * Tests if directory being moved overwrite non-empty directory
+     * @throws Exception
+     */
+    @Test
+    public void testCantMoveToNonEmptyDir() {
+
+        Exception expectedException = assertThrows(MvException.class, ()
+                -> mvApp.run(new String[] {"toBeMoved", "abc"}, null, null));
+        System.out.println(expectedException.getMessage());
+        assertTrue(expectedException.getMessage().contains(ERR_CANNOT_OVERWRITE));
+
     }
 
     /**

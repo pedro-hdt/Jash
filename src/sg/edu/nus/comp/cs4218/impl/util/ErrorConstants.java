@@ -30,11 +30,6 @@ public class ErrorConstants {
     public static final String ERR_IS_NOT_DIR = "Not a directory";
     public static final String ERR_NO_PERM = "Permission denied";
 
-    // `date` related
-    public static final String ERR_INVALID_FORMAT_PREFIX = "Invalid format. Date format must start with '+'";
-    public static final String ERR_INVALID_FORMAT_FIELD = "Invalid format. Missing or unknown character after '%'";
-    public static final String ERR_MISSING_FIELD = "Invalid format";
-
     // `find` related
     public static final String ERR_INVALID_FILE = "Invalid Filename";
     public static final String ERR_NAME_FLAG = "Paths must precede -name";
@@ -49,10 +44,10 @@ public class ErrorConstants {
     // `grep` related
     public static final String ERR_NO_REGEX = "No regular expression supplied";
 
-    // `mkdir` related
-    public static final String ERR_NO_FOLDERS = "No folder names are supplied";
-    public static final String ERR_FILE_EXISTS = "File or directory already exists";
-    public static final String ERR_TOP_LEVEL_MISSING = "Top level folders do not exist";
+    // `mv` related
+    public static final String ERR_CANNOT_OVERWRITE = "Cannot overwrite non-empty directory";
+    public static final String ERR_NOT_MOVABLE = "Cannot move to a file with no overwrite";
+
 
     // General constants
     public static final String ERR_INVALID_APP = "Invalid app";
