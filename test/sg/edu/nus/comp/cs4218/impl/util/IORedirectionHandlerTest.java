@@ -13,8 +13,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import static TestUtils.assertMsgContains;
 import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;

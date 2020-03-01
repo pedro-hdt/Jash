@@ -1,4 +1,4 @@
-package sg.edu.nus.comp.cs4218.impl;
+package sg.edu.nus.comp.cs4218;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
