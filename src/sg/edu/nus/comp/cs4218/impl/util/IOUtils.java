@@ -51,13 +51,13 @@ public final class IOUtils {
         File file = new File(resolvedFileName);
 
         try { // TODO Not tested
-            // Pedro: currently ignoring boolean return values, would appreciate second opinion
+            // Currently ignoring boolean return values, would appreciate second opinion
             file.getParentFile().mkdirs(); // create all necessary parent directories
             file.createNewFile(); // creates file only if it does not exist
             fileOutputStream = new FileOutputStream(file);
         } catch (IOException e) {
             throw new ShellException(ERR_IO_EXCEPTION);
-            // Pedro: How do we want to handle this? I think the only plausible way to get here is if no permission?
+            // How do we want to handle this? I think the only plausible way to get here is if no permission?
         }
 
         return fileOutputStream;

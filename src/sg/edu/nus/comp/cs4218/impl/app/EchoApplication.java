@@ -26,7 +26,7 @@ public class EchoApplication implements EchoInterface {
             throw new EchoException(ERR_NULL_ARGS);
         }
 
-        // Pedro: for consistency, new lines at the end of output are added in the run function instead
+        // Note: For consistency, new lines at the end of output are added in the run function instead
         return String.join(" ", args);
 
     }
