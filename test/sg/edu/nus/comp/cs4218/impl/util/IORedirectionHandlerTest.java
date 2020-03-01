@@ -1,9 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,10 +18,11 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 /**
  * Tests for IO redirection
@@ -91,7 +97,7 @@ public class IORedirectionHandlerTest {
 
         // read the file and verify the byte we wrote is in fact there
         byte[] outFileBytes = Files.readAllBytes(outFile);
-        assertTrue(1 == outFileBytes.length);
+        assertEquals(1, outFileBytes.length);
         assertEquals(65, outFileBytes[0]);
 
     }
@@ -148,7 +154,7 @@ public class IORedirectionHandlerTest {
         assertEquals(65, byteRead);
 
         // verify there is nothing else there
-        assertTrue(-1 == inputStream.read());
+        assertEquals(-1, inputStream.read());
 
         inputStream.close();
 
@@ -204,7 +210,7 @@ public class IORedirectionHandlerTest {
         assertEquals(65, byteRead);
 
         // verify there is nothing else there
-        assertTrue(-1 == inputStream.read());
+        assertEquals(-1, inputStream.read());
 
         // get the out stream and use it to write a byte to the file so we can validate it goes
         // where it should go
@@ -214,7 +220,7 @@ public class IORedirectionHandlerTest {
 
         // read the file and verify the byte we wrote is in fact there
         byte[] outFileBytes = Files.readAllBytes(outFile);
-        assertTrue(1 == outFileBytes.length);
+        assertEquals(1, outFileBytes.length);
         assertEquals(65, outFileBytes[0]);
 
         inputStream.close();

@@ -1,15 +1,17 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 
 /**
  * Tests for ArgsParser
@@ -34,22 +36,24 @@ class ArgsParserTest {
 
         // assert non flag args are correct, there are no flags passed, and legal flags are as expcected
         assertEquals(Arrays.asList(), argsParser.nonFlagArgs);
-        assertTrue(argsParser.flags.size() == 0);
+        assertEquals(0, argsParser.flags.size());
         assertEquals(Arrays.asList('a', 'b', 'c'), new ArrayList<>(argsParser.legalFlags));
 
     }
 
 
     @Test
-    void testParseNoFlags() {
+    void testParseNoFlags() throws InvalidArgsException {
+
 
         ArgsParser argsParser = new ArgsParser();
 
         String[] args = {"echo", "testing"};//NOPMD
+        argsParser.parse(args);
 
         // assert non flag args are correct, there are no flags passed, and legal flags are as expcected
         assertEquals(Arrays.asList(args), argsParser.nonFlagArgs);
-        assertTrue(argsParser.flags.size() == 0);
+        assertEquals(0, argsParser.flags.size());
 
     }
 
@@ -66,7 +70,7 @@ class ArgsParserTest {
 
         // assert non flag args are correct, all flags are legal, and legal flags are as expected
         assertEquals(Arrays.asList("echo", "testing"), argsParser.nonFlagArgs);
-        assertTrue(argsParser.legalFlags.equals(argsParser.flags));
+        assertEquals(argsParser.legalFlags, argsParser.flags);
         assertEquals(flagsPassed, new ArrayList<>(argsParser.legalFlags));
 
 

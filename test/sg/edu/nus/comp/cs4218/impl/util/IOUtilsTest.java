@@ -1,8 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,8 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 /**
  * Tests for IOUtils, focusing only on the openOutputStream method as it was the only one
@@ -40,7 +40,7 @@ class IOUtilsTest {
         outputStream.write(65);
         outputStream.close();
         byte[] bytesRead = Files.readAllBytes(outFile);
-        assertTrue(1 == bytesRead.length);
+        assertEquals(1, bytesRead.length);
         assertEquals(65, bytesRead[0]);
 
     }
@@ -64,7 +64,7 @@ class IOUtilsTest {
         outputStream.write(65);
         outputStream.close();
         byte[] bytesRead = Files.readAllBytes(outFile);
-        assertTrue(1 == bytesRead.length);
+        assertEquals(1, bytesRead.length);
         assertEquals(65, bytesRead[0]);
 
     }
@@ -95,7 +95,7 @@ class IOUtilsTest {
         outputStream.write(65);
         outputStream.close();
         byte[] bytesRead = Files.readAllBytes(outFile);
-        assertTrue(1 == bytesRead.length);
+        assertEquals(1, bytesRead.length);
         assertEquals(65, bytesRead[0]);
 
     }
