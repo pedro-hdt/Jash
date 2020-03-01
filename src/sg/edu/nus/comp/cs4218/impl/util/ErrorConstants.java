@@ -23,6 +23,7 @@ public class ErrorConstants {
     public static final String ERR_BAD_REGEX = "Invalid pattern";
 
     // Files and folders related
+    public static final String ERR_FOLDER_NOT_FOUND = "No such folder or directory";
     public static final String ERR_FILE_NOT_FOUND = "No such file or directory";
     public static final String ERR_READING_FILE = "Could not read file";
     public static final String ERR_IS_DIR = "This is a directory";
