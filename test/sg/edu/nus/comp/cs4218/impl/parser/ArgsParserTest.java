@@ -43,8 +43,7 @@ class ArgsParserTest {
 
 
     @Test
-    void testParseNoFlags() throws InvalidArgsException {
-
+    void testParseNoFlags() {
 
         ArgsParser argsParser = new ArgsParser();
 
