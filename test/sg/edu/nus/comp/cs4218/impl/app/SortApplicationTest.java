@@ -103,7 +103,7 @@ public class SortApplicationTest {
                     "5" + StringUtils.STRING_NEWLINE +
                     "6"));
         } catch (SortException e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage()); // NOPMD
         }
     }
 
@@ -145,7 +145,7 @@ public class SortApplicationTest {
 
     @Test
     public void testNFlagMixedSort() {
-        String[] args = new String[] { "-n", "mixed.txt" };
+        String[] args = new String[] { "-n", "mixed.txt" }; // NOPMD
 
         try {
             sortApp.run(args, System.in, stdout);

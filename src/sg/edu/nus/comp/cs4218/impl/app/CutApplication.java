@@ -162,7 +162,7 @@ public class CutApplication implements CutInterface {
      * @throws CutException If an I/O exception occurs.
      */
     @Override
-    public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException {
+    public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException { // NOPMD
          if (stdout == null) {
             throw new CutException(ERR_NULL_STREAMS);
          }
