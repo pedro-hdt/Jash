@@ -1,19 +1,21 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="All Tests Class Forking" type="JUnit" factoryName="JUnit">
-    <useClassPathOnly />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" />
     <option name="PACKAGE_NAME" value="sg.edu.nus.comp.cs4218" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
+    <option name="VM_PARAMETERS" value="" />
     <option name="PARAMETERS" value="" />
-    <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <option name="PASS_PARENT_ENVS" value="true" />
     <option name="TEST_SEARCH_SCOPE">
       <value defaultName="wholeProject" />
     </option>
     <dir value="$PROJECT_DIR$/test" />
+    <patterns />
     <fork_mode value="class" />
-    <method v="2">
-      <option name="Make" enabled="true" />
-    </method>
+    <method />
   </configuration>
 </component>

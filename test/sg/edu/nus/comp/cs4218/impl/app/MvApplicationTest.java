@@ -41,6 +41,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
  * - Less than two arguments throws exception
  * - Fails when attempting to rename non-existent file
  * - Fails when moving non-existent file
+ * - Fails when overwriting to non-empty directory
  *
  * Positive
  * - Rename an existing file
