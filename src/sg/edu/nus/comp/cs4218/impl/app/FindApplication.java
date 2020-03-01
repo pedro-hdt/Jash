@@ -183,7 +183,7 @@ public class FindApplication implements FindInterface {
             File folder = new File(path);
 
             if (!folder.exists() || !folder.isDirectory()) {
-                stringJoiner.add("find: " + f + ": " + ERR_FILE_NOT_FOUND);
+                stringJoiner.add("find: " + f + ": " + ERR_FOLDER_NOT_FOUND);
                 continue;
             }
             if (!folder.canRead()) {
