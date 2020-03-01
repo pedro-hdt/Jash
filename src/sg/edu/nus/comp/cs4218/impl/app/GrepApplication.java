@@ -4,26 +4,22 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.GrepInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.impl.parser.GrepArgsParser;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class GrepApplication implements GrepInterface {
     public static final String INVALID_PATTERN = "Invalid pattern syntax";
@@ -63,12 +59,14 @@ public class GrepApplication implements GrepInterface {
      * Extract the lines and count number of lines for grep from files and insert them into
      * lineResults and countResults respectively.
      *
-     * @param pattern supplied by user
+     * @param pattern           supplied by user
      * @param isCaseInsensitive supplied by user
-     * @param lineResults a StringJoiner of the grep line results
-     * @param countResults a StringJoiner of the grep line count results
-     * @param fileNames a String Array of file names supplied by user
+     * @param lineResults       a StringJoiner of the grep line results
+     * @param countResults      a StringJoiner of the grep line count results
+     * @param fileNames         a String Array of file names supplied by user
      */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    // We considered there is no logical or really advantageous way to break the method down
     private void grepResultsFromFiles(String pattern, Boolean isCaseInsensitive, StringJoiner lineResults, StringJoiner countResults, String... fileNames) throws Exception {
         int count;
         boolean isSingleFile = (fileNames.length == 1);
