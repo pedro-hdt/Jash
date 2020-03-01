@@ -366,7 +366,7 @@ public class SedApplicationTest {
             sed.run(args, stdin, stdout);
             assertTrue(stdout.toString().contains(""));
         } catch (SedException e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage());//NOPMD - Suppressed since its a testing mechanism
         }
     }
 

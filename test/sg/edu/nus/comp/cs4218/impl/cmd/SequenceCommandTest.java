@@ -29,6 +29,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
  * Tests commands used in sequence
  */
 public class SequenceCommandTest {
+    public static final String ECHO_CMD = "echo";
     public SequenceCommand sequenceCommand;
     private static OutputStream stdout;
 
@@ -65,7 +66,7 @@ public class SequenceCommandTest {
     @Test
     public void testExitCommandWithEcho() {
         CallCommand exitCommand = new CallCommand(new ArrayList<>(Arrays.asList("exit")), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList("echo", "hi")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hi")), new ApplicationRunner(), new ArgumentResolver());
 
         sequenceCommand = new SequenceCommand(new ArrayList<>(Arrays.asList(echoCommand, exitCommand)));
         Exception exception = assertThrows(ExitException.class, () -> sequenceCommand.evaluate(System.in, stdout));
@@ -107,8 +108,8 @@ public class SequenceCommandTest {
      */
     @Test
     public void testSameCommandsInSequence() throws Exception {
-        CallCommand echoCommand1 = new CallCommand(new ArrayList<>(Arrays.asList("echo", "hello")), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCommand2 = new CallCommand(new ArrayList<>(Arrays.asList("echo", "hi")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCommand1 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hello")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCommand2 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hi")), new ApplicationRunner(), new ArgumentResolver());
 
         sequenceCommand = new SequenceCommand(new ArrayList<>(Arrays.asList(echoCommand1, echoCommand2)));
         sequenceCommand.evaluate(System.in, stdout);
