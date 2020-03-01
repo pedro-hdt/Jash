@@ -1,12 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -18,10 +17,8 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 
 /**
@@ -90,7 +87,7 @@ class CdApplicationTest {
     public void testNullArgs() {
         Exception exception = assertThrows(CdException.class, () -> cdApp.run(null, System.in, System.out));
 
-        TestUtils.assertMsgContains(exception, ERR_NULL_ARGS);
+        assertMsgContains(exception, ERR_NULL_ARGS);
 
     }
     /**

@@ -139,8 +139,7 @@ public class LsApplication implements LsInterface {
                 //
                 // However the user might have written a command like `ls invalid1 valid1 -R`, what
                 // do we do then?
-
-                // Shradheya: Effort has been put into solving the above issue however certain weird bugs
+                // NOTE: Effort has been put into solving the above issue and now works well however certain weird bugs
                 // may still remain due to earlier design decisions
                 result.append(e.getMessage());
                 result.append('\n');
