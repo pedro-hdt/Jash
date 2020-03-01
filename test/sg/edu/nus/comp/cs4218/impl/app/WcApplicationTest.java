@@ -81,7 +81,7 @@ public class WcApplicationTest {
         String[] args = new String[] { WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1       2      14 wc1.txt\n", stdout.toString());
+            assertEquals("       1       2      14 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -92,7 +92,7 @@ public class WcApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(null, inputStream, stdout);
-            assertEquals("       1       2      14\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -103,7 +103,7 @@ public class WcApplicationTest {
         String[] args = new String[] { "-c", WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("      14 wc1.txt\n", stdout.toString());
+            assertEquals("      14 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -115,7 +115,7 @@ public class WcApplicationTest {
             String[] args = new String[] { "-c" };
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
-            assertEquals("      14\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("      14"  + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -126,7 +126,7 @@ public class WcApplicationTest {
         String[] args = new String[] { "-l", WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1 wc1.txt\n", stdout.toString());
+            assertEquals("       1 wc1.txt"  + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -138,7 +138,7 @@ public class WcApplicationTest {
             String[] args = new String[] { "-l" };
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
-            assertEquals("       1\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       1"  + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -149,7 +149,7 @@ public class WcApplicationTest {
         String[] args = new String[] { "-w", WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       2 wc1.txt\n", stdout.toString());
+            assertEquals("       2 wc1.txt"  + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -161,7 +161,7 @@ public class WcApplicationTest {
             String[] args = new String[] { "-w" };
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
-            assertEquals("       2\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       2"  + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -172,7 +172,7 @@ public class WcApplicationTest {
         String[] args = new String[] { "-cl", WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1      14 wc1.txt\n", stdout.toString());
+            assertEquals("       1      14 wc1.txt"  + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -184,7 +184,7 @@ public class WcApplicationTest {
             String[] args = new String[] { "-cl" };
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
-            assertEquals("       1      14\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       1      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -195,7 +195,7 @@ public class WcApplicationTest {
         String[] args = new String[] { "-lw", WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1       2 wc1.txt\n", stdout.toString());
+            assertEquals("       1       2 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -207,7 +207,7 @@ public class WcApplicationTest {
             String[] args = new String[] { "-lw" };
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
-            assertEquals("       1       2\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       1       2" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -219,7 +219,7 @@ public class WcApplicationTest {
         try {
             wcApp.run(args, System.in, stdout);
 
-            assertEquals("       2      14 wc1.txt\n", stdout.toString());
+            assertEquals("       2      14 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -232,7 +232,7 @@ public class WcApplicationTest {
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
 
-            assertEquals("       2      14\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       2      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -243,7 +243,7 @@ public class WcApplicationTest {
         String[] args = new String[] { "-clw", WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1       2      14 wc1.txt\n", stdout.toString());
+            assertEquals("       1       2      14 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -255,7 +255,7 @@ public class WcApplicationTest {
             String[] args = new String[] { "-clw" };
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
-            assertEquals("       1       2      14\n", stdout.toString()); // filename is empty for standard input
+            assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -266,9 +266,9 @@ public class WcApplicationTest {
         String[] args = new String[] { WC1_FILE, WC2_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1       2      14 wc1.txt\n" +
-                    "       2       5      41 wc2.txt\n" +
-                    "       3       7      55 total\n", stdout.toString());
+            assertEquals("       1       2      14 wc1.txt" + StringUtils.STRING_NEWLINE +
+                    "       2       5      41 wc2.txt" + StringUtils.STRING_NEWLINE +
+                    "       3       7      55 total" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -279,9 +279,9 @@ public class WcApplicationTest {
         String[] args = new String[] { "-clw", WC1_FILE, WC2_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1       2      14 wc1.txt\n" +
-                    "       2       5      41 wc2.txt\n" +
-                    "       3       7      55 total\n", stdout.toString());
+            assertEquals("       1       2      14 wc1.txt" + StringUtils.STRING_NEWLINE +
+                    "       2       5      41 wc2.txt" + StringUtils.STRING_NEWLINE +
+                    "       3       7      55 total" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (WcException e) {
             fail("should not fail: " + e.getMessage());
         }
