@@ -1,7 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -90,19 +90,18 @@ class CpApplicationTest {
     }
 
 
-    @BeforeAll
-    public static void setUp() throws IOException {
+    @BeforeEach
+    public void init() {
+        cpApp = new CpApplication();
         Environment.setCurrentDirectory(ORIGINAL_DIR
                 + StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "CpTestFolder");
     }
 
-
-    @BeforeEach
-    public void init() {
-        cpApp = new CpApplication();
+    @AfterEach
+    public void resetCurrentDirectory() {
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
-
 
     @AfterAll
     public static void cleanUp() throws IOException {

@@ -72,6 +72,7 @@ public class DiffApplicationTest {
     @AfterEach
     void tearDown() throws IOException {
         stdout.flush();
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     @AfterAll
