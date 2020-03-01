@@ -28,6 +28,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
  * - "-w" flag used with file/stdin
  * - "cl" flags used with file/stdin
  * - "lw" flags used with file/stdin
+ * - "cw" flags used with file/stdin
  * - "clw" flags used with file/stdin
  * - No flags used with multiple files
  * - "clw" flags used with multiple files
@@ -206,6 +207,31 @@ public class WcApplicationTest {
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + File.separator + WC1_FILE));
             wcApp.run(args, inputStream, stdout);
             assertEquals("       1       2\n", stdout.toString()); // filename is empty for standard input
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testWcOfFileUsingFlagCW() {
+        String[] args = new String[] { "-cw", WC1_FILE };
+        try {
+            wcApp.run(args, System.in, stdout);
+            System.out.println(stdout.toString());
+            assertEquals("       2      14 wc1.txt\n", stdout.toString());
+        } catch (WcException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testWcOfStdinUsingFlagCW() {
+        try {
+            String[] args = new String[] { "-cw" };
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + File.separator + WC1_FILE));
+            wcApp.run(args, inputStream, stdout);
+            System.out.println(stdout.toString());
+            assertEquals("       2      14\n", stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
