@@ -64,6 +64,8 @@ Here is a list of all the bugs that we believe have been injected in the code pr
  
 * Fixed negation to add result of subCommand
 
+* When sub command is evaluated, in the result the new line is removed and replaced by "" instead of space
+
 
 
 # Notes

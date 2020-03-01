@@ -14,6 +14,11 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
 
+
+/**
+ * Utility class responsible for extracting the input and output streams appropriate for IO redirection,
+ * and separates arguments (tokens) which are not redirection related
+ */
 public class IORedirectionHandler {
     private final List<String> argsList;
     private final ArgumentResolver argumentResolver;
@@ -51,11 +56,12 @@ public class IORedirectionHandler {
                 continue;
             }
 
-            // if current arg is < or >, fast-forward to the next arg to extract the specified file
-            String file = argsIterator.next();
-
-            if (isRedirOperator(file)) {
+            // if current arg is < or >, check if there is another argument
+            // if so fast-forward to the next arg to extract the specified file
+            if (!argsIterator.hasNext()) {
+                throw new ShellException(ERR_SYNTAX); // otherwise ther was a syntac error
             }
+            String file = argsIterator.next();
 
             // handle quoting + globing + command substitution in file arg
             List<String> fileSegment = argumentResolver.resolveOneArgument(file);

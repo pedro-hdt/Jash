@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 
 /**

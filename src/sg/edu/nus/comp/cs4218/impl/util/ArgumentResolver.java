@@ -173,8 +173,13 @@ public class ArgumentResolver {
         Command command = CommandBuilder.parseCommand(commandString, getAppRunner());
         command.evaluate(System.in, outputStream);
 
-        // replace newlines with spaces
-        return outputStream.toString().replace(STRING_NEWLINE, String.valueOf(CHAR_SPACE));
+        String result = outputStream.toString().replace(STRING_NEWLINE, " ");
+        if (result.endsWith(" ")) {
+            result = result.substring(0, result.length() - 1);
+        }
+
+        // replace newlines with empty string and last space removed
+        return result;
     }
 
     /**
