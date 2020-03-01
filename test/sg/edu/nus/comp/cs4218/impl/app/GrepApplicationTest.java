@@ -205,7 +205,7 @@ public class GrepApplicationTest {
      */
     @Test
     public void testGrepWithSensitivePattern() throws AbstractApplicationException {
-        grepApplication.run(new String[] {PATTERN, FOLDER1 + StringUtils.fileSeparator() + TEXTFILE}, null, stdout);
+        grepApplication.run(new String[] {"Pattern", FOLDER1 + StringUtils.fileSeparator() + TEXTFILE}, null, stdout);
         assertEquals("", stdout.toString());
     }
 
