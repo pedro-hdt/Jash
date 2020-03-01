@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +45,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
  */
 public class DiffApplicationTest {
     private static DiffApplication diffApp;
-    private static final String originalDir = Environment.getCurrentDirectory();
-    private static final String DIFF_TEST_DIR = originalDir + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    private static final String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
     private static OutputStream stdout;
 
     private static final String DIFF1_FILE = "diff1.txt";
@@ -73,23 +74,25 @@ public class DiffApplicationTest {
         stdout.flush();
     }
 
+    @AfterAll
+    static void reset() {
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
+    }
+
     @Test
     public void testFailsWithInvalidFile() {
-        // TODO: Instantiate diffApp when there is actual implementation
-        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidFile.txt", "invalidFile.txt", false ,false, false));
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidFile.txt", "invalidFile.txt", false, false, false));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
     }
 
     @Test
     public void testFailsWithInvalidDir() {
-        // TODO: Instantiate diffApp when there is actual implementation
-        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidDir", "invalidDir", false ,false, false));
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidDir", "invalidDir", false, false, false));
         assertTrue(expectedException.getMessage().contains(ERR_IS_DIR));
     }
 
     @Test
     public void testFailsWithDirWithoutFiles() {
-        // TODO: Instantiate diffApp when there is actual implementation
         Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoDir("dummyDir", "dummyDir", false ,false, false));
         assertTrue(expectedException.getMessage().contains(ERR_IS_DIR));
     }
