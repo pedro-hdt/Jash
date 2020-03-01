@@ -25,7 +25,7 @@ public class PasteApplication implements PasteInterface {
     public String mergeStdin(InputStream stdin) throws PasteException {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();//NOPMD
 
         String line;
         try {
@@ -47,7 +47,7 @@ public class PasteApplication implements PasteInterface {
     public String mergeFile(String... fileName) throws PasteException {
 
         List<BufferedReader> readers = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();//NOPMD
 
         for (String f : fileName) {
             try {
@@ -91,7 +91,7 @@ public class PasteApplication implements PasteInterface {
     public String mergeFileAndStdin(InputStream stdin, String... fileName) throws PasteException {
 
         List<BufferedReader> fileReaders = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();//NOPMD
 
         for (String f : fileName) {
             try {
@@ -108,7 +108,7 @@ public class PasteApplication implements PasteInterface {
         try {
             ListIterator<String> stdinLines = Arrays.asList(mergeStdin(stdin).split(STRING_NEWLINE)).listIterator();
             int columns = fileName.length;
-            int i = 0;
+            int i = 0;//NOPMD
             String line = "";
             while (stdinLines.hasNext() || line != null) {
 
@@ -161,7 +161,7 @@ public class PasteApplication implements PasteInterface {
                 result = mergeFileAndStdin(stdin, args);
             } else {
                 String[] lines = mergeStdin(stdin).split(STRING_NEWLINE);
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();//NOPMD
                 int columns = args.length;
                 for (int i = 0; i < lines.length; i++) {
                     sb.append(lines[i]);

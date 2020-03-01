@@ -25,6 +25,6 @@ public class DiffApplication implements DiffInterface {
 
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
-
+        // TODO implement me! (EF1)
     }
 }

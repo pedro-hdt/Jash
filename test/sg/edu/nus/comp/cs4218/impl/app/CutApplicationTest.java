@@ -4,12 +4,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CutException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -30,7 +34,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
  * - "-c" flag used + comma separated numbers with file/stdin
  * - "-c" flag used + range of numbers with file/stdin
  * - "-c" flag used + range of numbers with multiple files
-
  * - "-b" flag used + single number with file/stdin
  * - "-b" flag used + comma separated numbers with file/stdin
  * - "-b" flag used + range of numbers with file/stdin
@@ -40,8 +43,8 @@ public class CutApplicationTest {
     private static CutApplication cutApp;
     private static OutputStream stdout;
 
-    private static final String originalDir = Environment.getCurrentDirectory();
-    private static final String CUT_TEST_DIR = originalDir + File.separator + "dummyTestFolder" + File.separator + "CutTestFolder";
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    private static final String CUT_TEST_DIR = ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "CutTestFolder";
     private static final String CUT1_FILE = "cut1.txt";
     private static final String CUT2_FILE = "cut2.txt";
 

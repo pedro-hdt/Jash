@@ -39,6 +39,9 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  */
 public class IORedirectionHandlerTest {
 
+    private static final String INFILE = "infile.txt";
+    private static final String OUTFILE = "outfile.txt";
+
     /**
      * Tests the IO redirection of the output of the command "echo hello > outfile.txt"
      * <ul>
@@ -56,33 +59,33 @@ public class IORedirectionHandlerTest {
     public void testRedirOutputToFile() throws AbstractApplicationException, ShellException, IOException {
 
         // file to be used as output redirection
-        Path outFile = IOUtils.resolveFilePath("outfile.txt");
+        Path outFile = IOUtils.resolveFilePath(OUTFILE);
         outFile.toFile().deleteOnExit();
 
         // instantiate a redirection handler for the command
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
-                Arrays.asList("echo", "hello", ">", outFile.toString()),
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
+                Arrays.asList("echo", "hello", ">", outFile.toString()),//NOPMD
                 System.in,
                 System.out,
                 new ArgumentResolver()
         );
 
         // let the handler run
-        ioRedirectionHandler.extractRedirOptions();
+        ioRedirHandler.extractRedirOptions();
 
         // validate arguments not related to redirection were correctly identified
-        List<String> expectedNoRedirArgs = Arrays.asList("echo", "hello");
-        assertEquals(expectedNoRedirArgs, ioRedirectionHandler.getNoRedirArgsList());
+        List<String> expectNoRedirArgs = Arrays.asList("echo", "hello");
+        assertEquals(expectNoRedirArgs, ioRedirHandler.getNoRedirArgsList());
 
         // validate the input stream is still stdin as it should
-        assertEquals(System.in, ioRedirectionHandler.getInputStream());
+        assertEquals(System.in, ioRedirHandler.getInputStream());
 
         // validate the output stream is into a file
-        assertTrue(ioRedirectionHandler.getOutputStream() instanceof FileOutputStream);
+        assertTrue(ioRedirHandler.getOutputStream() instanceof FileOutputStream);
 
         // get the out stream and use it to write a byte to the file so we can validate it goes
         // where it should go
-        FileOutputStream outputStream = (FileOutputStream) ioRedirectionHandler.getOutputStream();
+        FileOutputStream outputStream = (FileOutputStream) ioRedirHandler.getOutputStream();
         outputStream.write(65);
         outputStream.close();
 
@@ -112,37 +115,37 @@ public class IORedirectionHandlerTest {
     public void testRedirInputFromFile() throws AbstractApplicationException, ShellException, IOException {
 
         // file to be used as output redirection
-        Path inFile = IOUtils.resolveFilePath("infile.txt");
+        Path inFile = IOUtils.resolveFilePath(INFILE);
         inFile.toFile().deleteOnExit();
         Files.write(inFile, new byte[]{65}); // write an A (byte 65 in ASCII) into the file for validation
 
         // instantiate a redirection handler for the command
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
-                Arrays.asList("paste", "-", "<", inFile.toString()),
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
+                Arrays.asList("paste", "-", "<", inFile.toString()),//NOPMD
                 System.in,
                 System.out,
                 new ArgumentResolver()
         );
 
         // let the handler run
-        ioRedirectionHandler.extractRedirOptions();
+        ioRedirHandler.extractRedirOptions();
 
         // validate arguments not related to redirection were correctly identified
-        List<String> expectedNoRedirArgs = Arrays.asList("paste", "-");
-        assertEquals(expectedNoRedirArgs, ioRedirectionHandler.getNoRedirArgsList());
+        List<String> expectNoRedirArgs = Arrays.asList("paste", "-");
+        assertEquals(expectNoRedirArgs, ioRedirHandler.getNoRedirArgsList());
 
         // validate the output stream is still stdout as it should
-        assertEquals(System.out, ioRedirectionHandler.getOutputStream());
+        assertEquals(System.out, ioRedirHandler.getOutputStream());
 
         // validate the input stream is from a file
-        assertTrue(ioRedirectionHandler.getInputStream() instanceof FileInputStream);
+        assertTrue(ioRedirHandler.getInputStream() instanceof FileInputStream);
 
         // get the in stream and use it to read from the file so we can validate it came from the right place
-        FileInputStream inputStream = (FileInputStream) ioRedirectionHandler.getInputStream();
+        FileInputStream inputStream = (FileInputStream) ioRedirHandler.getInputStream();
 
         // read the input stream and verify the byte we put in the file is there
-        int b = inputStream.read();
-        assertEquals(65, b);
+        int byteRead = inputStream.read();
+        assertEquals(65, byteRead);
 
         // verify there is nothing else there
         assertTrue(-1 == inputStream.read());
@@ -161,19 +164,21 @@ public class IORedirectionHandlerTest {
      * @throws IOException
      */
     @Test
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    // this test case just requires a lot of command decompsotition but makes no sense to break it, as it is 1 command
     public void testRedirInputAndOuputFromAndToFiles() throws AbstractApplicationException, ShellException, IOException {
 
         // file to be used as output redirection
-        Path inFile = IOUtils.resolveFilePath("infile.txt");
+        Path inFile = IOUtils.resolveFilePath(INFILE);
         inFile.toFile().deleteOnExit();
         Files.write(inFile, new byte[]{65}); // write an A (byte 65 in ASCII) into the file for validation
 
         // file to be used as output redirection
-        Path outFile = IOUtils.resolveFilePath("outfile.txt");
+        Path outFile = IOUtils.resolveFilePath(OUTFILE);
         outFile.toFile().deleteOnExit();
 
         // instantiate a redirection handler for the command
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
                 Arrays.asList("paste", "-", "<", inFile.toString(), ">", outFile.toString()),
                 System.in,
                 System.out,
@@ -181,29 +186,29 @@ public class IORedirectionHandlerTest {
         );
 
         // let the handler run
-        ioRedirectionHandler.extractRedirOptions();
+        ioRedirHandler.extractRedirOptions();
 
         // validate arguments not related to redirection were correctly identified
-        List<String> expectedNoRedirArgs = Arrays.asList("paste", "-");
-        assertEquals(expectedNoRedirArgs, ioRedirectionHandler.getNoRedirArgsList());
+        List<String> expectNoRedirArgs = Arrays.asList("paste", "-");
+        assertEquals(expectNoRedirArgs, ioRedirHandler.getNoRedirArgsList());
 
         // validate the both streams are into or from files
-        assertTrue(ioRedirectionHandler.getInputStream() instanceof FileInputStream);
-        assertTrue(ioRedirectionHandler.getOutputStream() instanceof FileOutputStream);
+        assertTrue(ioRedirHandler.getInputStream() instanceof FileInputStream);
+        assertTrue(ioRedirHandler.getOutputStream() instanceof FileOutputStream);
 
         // get the in stream and use it to read from the file so we can validate it came from the right place
-        FileInputStream inputStream = (FileInputStream) ioRedirectionHandler.getInputStream();
+        FileInputStream inputStream = (FileInputStream) ioRedirHandler.getInputStream();
 
         // read the input stream and verify the byte we put in the file is there
-        int b = inputStream.read();
-        assertEquals(65, b);
+        int byteRead = inputStream.read();
+        assertEquals(65, byteRead);
 
         // verify there is nothing else there
         assertTrue(-1 == inputStream.read());
 
         // get the out stream and use it to write a byte to the file so we can validate it goes
         // where it should go
-        FileOutputStream outputStream = (FileOutputStream) ioRedirectionHandler.getOutputStream();
+        FileOutputStream outputStream = (FileOutputStream) ioRedirHandler.getOutputStream();
         outputStream.write(65);
         outputStream.close();
 
@@ -228,14 +233,14 @@ public class IORedirectionHandlerTest {
     public void testIntegrationOuputToFile() throws AbstractApplicationException, ShellException, IOException {
 
         // file to be used as output redirection
-        Path outFile = IOUtils.resolveFilePath("outfile.txt");
+        Path outFile = IOUtils.resolveFilePath(OUTFILE);
         outFile.toFile().deleteOnExit();
 
         ShellImpl shellImpl = new ShellImpl();
         shellImpl.parseAndEvaluate("echo hello > " + outFile.toString(), System.out);
 
         // read the file and verify the bytes were written there
-        byte[] outFileBytes = Files.readAllBytes(IOUtils.resolveFilePath("outfile.txt"));
+        byte[] outFileBytes = Files.readAllBytes(IOUtils.resolveFilePath(OUTFILE));
         assertTrue(5 + STRING_NEWLINE.length() == outFileBytes.length); // 5 chars in hello + newline
         assertArrayEquals(("hello" + STRING_NEWLINE).getBytes(), outFileBytes);
 
@@ -249,7 +254,7 @@ public class IORedirectionHandlerTest {
     @Test
     public void testFailsEmptyArgs() {
 
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
                 Arrays.asList(),
                 System.in,
                 System.out,
@@ -257,7 +262,7 @@ public class IORedirectionHandlerTest {
         );
 
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
@@ -271,7 +276,7 @@ public class IORedirectionHandlerTest {
     @Test
     public void testFailsNullArgs() {
 
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
                 null,
                 System.in,
                 System.out,
@@ -279,7 +284,7 @@ public class IORedirectionHandlerTest {
         );
 
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
@@ -295,7 +300,7 @@ public class IORedirectionHandlerTest {
     @Test
     public void testFailsRedirOutputNoDest() throws AbstractApplicationException, ShellException {
 
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
                 Arrays.asList("echo", "hello", ">"),
                 System.in,
                 System.out,
@@ -304,7 +309,7 @@ public class IORedirectionHandlerTest {
 
 
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
     }
@@ -323,7 +328,7 @@ public class IORedirectionHandlerTest {
         Path outFile2 = IOUtils.resolveFilePath("outfile2.txt");
         outFile1.toFile().deleteOnExit();
 
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
                 Arrays.asList("echo", "hello", ">", outFile1.toString(), ">", outFile2.toString()),
                 System.in,
                 System.out,
@@ -332,7 +337,7 @@ public class IORedirectionHandlerTest {
 
 
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_MULTIPLE_STREAMS);
 
@@ -350,7 +355,7 @@ public class IORedirectionHandlerTest {
         // creates path but does not create the file
         Path inFile = IOUtils.resolveFilePath("ghost-infile.txt");
 
-        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
                 Arrays.asList("paste", "-", "<", inFile.toString()),
                 System.in,
                 System.out,
@@ -359,7 +364,7 @@ public class IORedirectionHandlerTest {
 
 
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_FILE_NOT_FOUND);
 

@@ -23,19 +23,19 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class GrepApplicationTest {
 
-    static final String originalDir = Environment.getCurrentDirectory();
+    static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
     private static GrepApplication grepApplication;
     private static OutputStream stdout;
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(originalDir + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() +
-            "GrepTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() +
+                "GrepTestFolder");
     }
 
     @AfterAll
     static void reset() {
-        Environment.setCurrentDirectory(originalDir);
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
 

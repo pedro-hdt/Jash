@@ -19,6 +19,6 @@ public class CpApplication implements CpInterface {
 
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CpException {
-
+        // TODO implement me! (EF1)
     }
 }

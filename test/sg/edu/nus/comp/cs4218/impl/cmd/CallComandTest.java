@@ -41,7 +41,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 public class CallComandTest {
 
     public CallCommand cmd;
-    private static ByteArrayOutputStream stdout;
+    static ByteArrayOutputStream stdout;
 
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
@@ -71,7 +71,8 @@ public class CallComandTest {
     @Test
     public void testEchoCall() throws ShellException, AbstractApplicationException {
 
-        String expectedResult = "hello" + STRING_NEWLINE;
+        String hello = "hello";
+        String expectedResult = hello + STRING_NEWLINE;
 
         doAnswer(new Answer() {
             @Override
@@ -79,17 +80,17 @@ public class CallComandTest {
                 stdout.write(expectedResult.getBytes());
                 return null;
             }
-        }).when(mockAppRunner).runApp("echo", new String[]{"hello"}, System.in, stdout);
+        }).when(mockAppRunner).runApp("echo", new String[]{hello}, System.in, stdout);
 
         cmd = new CallCommand(
-                Arrays.asList("echo", "hello"),
+                Arrays.asList("echo", hello),
                 mockAppRunner,
                 new ArgumentResolver());
         cmd.evaluate(System.in, stdout);
 
         assertEquals(expectedResult, stdout.toString());
 
-        verify(mockAppRunner).runApp("echo", new String[]{"hello"}, System.in, stdout);
+        verify(mockAppRunner).runApp("echo", new String[]{hello}, System.in, stdout);
 
     }
 

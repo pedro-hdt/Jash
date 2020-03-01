@@ -53,7 +53,7 @@ public class RmApplication implements RmInterface {
         }
 
         if (!missingFiles.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();//NOPMD
             for (String f : missingFiles) {
                 sb.append(f);
                 sb.append(" skipped: ");

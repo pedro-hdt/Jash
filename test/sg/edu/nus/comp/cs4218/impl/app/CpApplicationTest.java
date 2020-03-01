@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
 
@@ -56,6 +57,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
 class CpApplicationTest {
 
     private static CpApplication cpApp;
+    private static final String DEST_DIR = "destDir";
+    private static final String SRC1 = "src1";
 
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
@@ -72,15 +75,15 @@ class CpApplicationTest {
         try {
 
             // SHA-256 is probably overkill but fine with such small files
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest msgDigest = MessageDigest.getInstance("SHA-256");
 
-            md.update(Files.readAllBytes(file1));
-            hash1 = md.digest();
+            msgDigest.update(Files.readAllBytes(file1));
+            hash1 = msgDigest.digest();
 
-            md.reset();
+            msgDigest.reset();
 
-            md.update(Files.readAllBytes(file2));
-            hash2 = md.digest();
+            msgDigest.update(Files.readAllBytes(file2));
+            hash2 = msgDigest.digest();
 
         } catch (NoSuchAlgorithmException e) {
             fail(e.getMessage());
@@ -105,7 +108,7 @@ class CpApplicationTest {
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        for (File f : (new File("destDir")).listFiles()) {
+        for (File f : (new File(DEST_DIR)).listFiles()) {
             f.delete();
         }
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
@@ -120,10 +123,10 @@ class CpApplicationTest {
     @Test
     public void testFailsWithSingleArg() {
 
-        CpException e =
+        CpException cpException =
                 assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
 
-        assertTrue(e.getMessage().contains(ERR_NO_ARGS));
+        assertMsgContains(cpException, ERR_NO_ARGS);
 
     }
 
@@ -135,13 +138,13 @@ class CpApplicationTest {
     @Test
     public void testFailsSingleFileToSameDir() {
 
-        String[] args = {"src1", Environment.getCurrentDirectory()};
-        CpException e =
+        String[] args = {SRC1, Environment.getCurrentDirectory()};
+        CpException cpException =
                 assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
 
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we
         // assume this replicates such behavior
-        assertTrue(e.getMessage().contains("same file"));
+        assertMsgContains(cpException, "same file");
 
     }
 
@@ -153,11 +156,11 @@ class CpApplicationTest {
     @Test
     public void testFailsNonexistentFile() {
 
-        String[] args = {"inexistent1", "destDir"};
-        CpException e =
+        String[] args = {"inexistent1", DEST_DIR};
+        CpException cpException =
                 assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
 
-        assertTrue(e.getMessage().contains(ERR_FILE_NOT_FOUND));
+        assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
 
     }
 
@@ -168,10 +171,10 @@ class CpApplicationTest {
     @Test
     public void testSingleFileToOtherDir() throws CpException, IOException {
 
-        Path src = IOUtils.resolveFilePath("src1");
+        Path src = IOUtils.resolveFilePath(SRC1);
         Path dest = IOUtils.resolveFilePath("destDir/src1");
 
-        String[] args = {src.toString(), "destDir"};
+        String[] args = {src.toString(), DEST_DIR};
         cpApp.run(args, System.in, System.out);
 
         assertTrue(Files.exists(dest));
@@ -186,7 +189,7 @@ class CpApplicationTest {
     @Test
     public void testSingleFileToNewFile() throws IOException, AbstractApplicationException {
 
-        Path src = IOUtils.resolveFilePath("src1");
+        Path src = IOUtils.resolveFilePath(SRC1);
         Path dest = IOUtils.resolveFilePath("inexistent2");
 
         String[] args = {src.toString(), dest.toString()};
@@ -204,7 +207,7 @@ class CpApplicationTest {
     @Test
     public void testSingleFileToExistentFile() throws IOException, AbstractApplicationException {
 
-        Path src = IOUtils.resolveFilePath("src1");
+        Path src = IOUtils.resolveFilePath(SRC1);
         Path dest = IOUtils.resolveFilePath("destFile");
 
         String[] args = {src.toString(), dest.toString()};
@@ -221,9 +224,9 @@ class CpApplicationTest {
     @Test
     public void testMultFilesToDir() throws IOException, AbstractApplicationException {
 
-        Path src1 = IOUtils.resolveFilePath("src1");
+        Path src1 = IOUtils.resolveFilePath(SRC1);
         Path src2 = IOUtils.resolveFilePath("src2");
-        Path dest = IOUtils.resolveFilePath("destDir");
+        Path dest = IOUtils.resolveFilePath(DEST_DIR);
 
         String[] args = {src1.toString(), src2.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);

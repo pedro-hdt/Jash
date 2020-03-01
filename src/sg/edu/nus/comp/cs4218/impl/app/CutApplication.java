@@ -1,15 +1,19 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.CutInterface;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.CutException;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.impl.parser.CutArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * The cut command Cuts out selected portions of each line (as specified by list) from each file and writes them to the standard output.
@@ -109,7 +113,7 @@ public class CutApplication implements CutInterface {
         for (String srcPath : fileName) {
             // If not the first file, add carriage return
             if (output.length() != 0) {
-                output.append("\n");
+                output.append(STRING_NEWLINE);
             }
             File node = IOUtils.resolveFilePath(srcPath).toFile();
             if (!node.exists()) {
@@ -217,7 +221,7 @@ public class CutApplication implements CutInterface {
                 stdout.write(result.getBytes());
             }
         } catch (Exception e) {
-            throw new CutException(e.getMessage());
+            throw (CutException) new CutException(e.getMessage()).initCause(e);
         }
     }
 }

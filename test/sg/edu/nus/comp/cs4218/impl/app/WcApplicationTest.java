@@ -5,15 +5,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_GENERAL;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
 
 /**
  * Tests for wc command.
@@ -38,8 +43,8 @@ public class WcApplicationTest {
     private static WcApplication wcApp;
     private static OutputStream stdout;
 
-    private static final String originalDir = Environment.getCurrentDirectory();
-    private static final String WC_TEST_DIR = originalDir + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "WcTestFolder";
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    private static final String WC_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "WcTestFolder";
     private static final String WC1_FILE = "wc1.txt";
     private static final String WC2_FILE = "wc2.txt";
 
@@ -50,7 +55,7 @@ public class WcApplicationTest {
 
     @AfterAll
     static void reset() {
-        Environment.setCurrentDirectory(originalDir);
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     @BeforeEach
