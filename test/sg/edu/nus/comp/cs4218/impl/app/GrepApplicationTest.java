@@ -1,14 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.EMPTY_PATTERN;
-import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
-import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.GrepException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,16 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 
 public class GrepApplicationTest {
@@ -72,7 +65,7 @@ public class GrepApplicationTest {
      */
     @Test
     public void testGrepWithNullPatternAndFileName() {
-        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromFiles(null, false, false, null));
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromFiles(null, false, false));
         assertTrue(expectedException.getMessage().contains(NULL_POINTER));
     }
 
