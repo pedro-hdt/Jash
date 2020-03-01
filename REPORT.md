@@ -39,6 +39,8 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Fixed implementation of LS command. The implementation bug was mentioned in comment in `sg.edu.nus.comp.cs4218.impl.app.LsApplication#buildResult()`
 
+* Corrected use of String.format in `CdApplication.java`
+
 * Performance improvement by using `StringBuilder` in `RegexArgument#globFiles()`
 
 ### Commit []()
@@ -53,18 +55,12 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Fixed broken check in `IORedirectionHandler.isRedirOperator()`
 
-
 ### Commit []()
 
 * SedApplication fix indexing and matching to replace the expected match
 
 * SedApplication write the result by replacing the file's content with result
 
-* Fixed indexing bug in `PipeCommand`
- 
-* Fixed negation to add result of subCommand
-
-* When sub command is evaluated, in the result the new line is removed and replaced by "" instead of space
 
 
 
