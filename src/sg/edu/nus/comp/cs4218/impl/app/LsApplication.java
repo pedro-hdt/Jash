@@ -115,7 +115,7 @@ public class LsApplication implements LsInterface {
 
                 if (Files.isDirectory(path)) {
                     String formatted = formatContents(contents);
-                    result.append(":\n");
+                    result.append(":").append(System.lineSeparator());
                     result.append(formatted);
 
                     if (!formatted.isEmpty()) {
@@ -142,7 +142,7 @@ public class LsApplication implements LsInterface {
                 // NOTE: Effort has been put into solving the above issue and now works well however certain weird bugs
                 // may still remain due to earlier design decisions
                 result.append(e.getMessage());
-                result.append('\n');
+                result.append(System.lineSeparator());
             }
         }
 
@@ -164,7 +164,7 @@ public class LsApplication implements LsInterface {
         StringBuilder result = new StringBuilder();
         for (String fileName : fileNames) {
             result.append(fileName);
-            result.append('\n');
+            result.append(System.lineSeparator());
         }
 
         return result.toString().trim();

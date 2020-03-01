@@ -1,12 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.CutException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,8 +17,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.CutException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for cut command.
@@ -44,7 +52,7 @@ public class CutApplicationTest {
     private static OutputStream stdout;
 
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
-    private static final String CUT_TEST_DIR = ORIGINAL_DIR + File.separator + "dummyTestFolder" + File.separator + "CutTestFolder";
+    private static final String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
     private static final String CUT1_FILE = "cut1.txt";
     private static final String CUT2_FILE = "cut2.txt";
 
@@ -121,7 +129,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + File.separator + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
             cutApp.run(args, inputStream, stdout);
             assertEquals("y", stdout.toString());
         } catch (Exception e) {
@@ -145,7 +153,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5,10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + File.separator + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
             cutApp.run(args, inputStream, stdout);
             assertEquals("yT", stdout.toString());
         } catch (Exception e) {
@@ -169,7 +177,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5-10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + File.separator + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
             cutApp.run(args, inputStream, stdout);
             assertEquals("y is T", stdout.toString());
         } catch (Exception e) {
@@ -205,7 +213,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + File.separator + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
             cutApp.run(args, inputStream, stdout);
             assertEquals("y", stdout.toString());
         } catch (Exception e) {
@@ -229,7 +237,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5,10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + File.separator + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
             cutApp.run(args, inputStream, stdout);
             assertEquals("yT", stdout.toString());
         } catch (Exception e) {
@@ -253,7 +261,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5-10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + File.separator + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
             cutApp.run(args, inputStream, stdout);
             assertEquals("y is T", stdout.toString());
         } catch (Exception e) {
