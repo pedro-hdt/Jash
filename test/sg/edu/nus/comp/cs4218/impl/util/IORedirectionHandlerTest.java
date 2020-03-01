@@ -285,4 +285,28 @@ public class IORedirectionHandlerTest {
 
     }
 
+    /**
+     * Attempts to call "echo hello >" without a destination for the output redirection
+     * This should cause an exception of syntax error
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     */
+    @Test
+    public void testFailsRedirOutputNoDest() throws AbstractApplicationException, ShellException {
+
+        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+                Arrays.asList("echo", "hello", ">"),
+                System.in,
+                System.out,
+                new ArgumentResolver()
+        );
+
+
+        ShellException shellException =
+                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+
+        assertMsgContains(shellException, ERR_SYNTAX);
+    }
+
 }

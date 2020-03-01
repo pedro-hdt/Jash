@@ -51,11 +51,12 @@ public class IORedirectionHandler { // TODO needs javadoc
                 continue;
             }
 
-            // if current arg is < or >, fast-forward to the next arg to extract the specified file
-            String file = argsIterator.next(); // TODO no check for hasNext()
-
-            if (isRedirOperator(file)) { // TODO remove this, but why is it here in the first place?
+            // if current arg is < or >, check if there is another argument
+            // if so fast-forward to the next arg to extract the specified file
+            if (!argsIterator.hasNext()) {
+                throw new ShellException(ERR_SYNTAX); // otherwise ther was a syntac error
             }
+            String file = argsIterator.next();
 
             // handle quoting + globing + command substitution in file arg
             List<String> fileSegment = argumentResolver.resolveOneArgument(file);
