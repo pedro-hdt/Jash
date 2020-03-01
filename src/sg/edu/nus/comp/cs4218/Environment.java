@@ -4,7 +4,7 @@ import java.nio.file.Files;
 
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
-public final class Environment {
+public final class Environment {//NOPMD - Suppressed as it's fine to name like a util class given its a workaround and meaningful
 
     /**
      * Java VM does not support changing the current working directory.

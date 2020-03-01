@@ -1,42 +1,49 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.LsException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+
+/**
+ * Test Suite for ls command
+ * <p>
+ * Contains negative and positive test cases
+ */
 class LsApplicationTest {
 
+    public static final String TEXTFILE_TXT = "textfile.txt";
+    public static final String FOLDER1 = "folder1";
+    public static final String FOLDER2 = "folder2";
+    public static final String FILE1_FOLDER2 = "file1Folder2.txt";
     private static LsApplication lsApp;
     private static OutputStream stdout;
 
-    private static final String originalDir = Environment.getCurrentDirectory();
+    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
 
     @BeforeAll
     static void setupAll() {
-        Environment.setCurrentDirectory(originalDir + File.separator + "dummyTestFolder" + File.separator + "LsTestFolder");
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "LsTestFolder");
     }
 
     @AfterAll
     static void reset() {
-        Environment.setCurrentDirectory(originalDir);
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
 
@@ -51,6 +58,9 @@ class LsApplicationTest {
         stdout.flush();
     }
 
+    /**
+     *  Tests if fails properly when null stdout or no args passed
+     */
     @Test
     public void testFailsWithNullArgsOrStream() {
         Exception expectedException = assertThrows(LsException.class, () -> lsApp.run(null, null, stdout));
@@ -61,11 +71,25 @@ class LsApplicationTest {
 
     }
 
+    /**
+     * Throws error when no existent directory with that name
+     * @throws LsException
+     */
     @Test
     public void testNonExistentDirectory() throws LsException {
         lsApp.run(new String[]{"no-folder-named-like-this" }, System.in, stdout);
 
         assertTrue(stdout.toString().contains("ls: cannot access 'no-folder-named-like-this': No such file or directory"));
+
+    }
+
+    /**
+     * Test with illegal flag -o
+     */
+    @Test
+    public void testIllegalFlagGiven() {
+        Exception expectedException = assertThrows(LsException.class, () -> lsApp.run(new String[]{"-o"}, null, stdout));
+        assertTrue(expectedException.getMessage().contains("illegal option"));
 
     }
 
@@ -78,7 +102,7 @@ class LsApplicationTest {
     void testLsWithNoArgs() {
         try {
             lsApp.run(new String[0], System.in, stdout);
-            assertTrue(stdout.toString().contains("textfile.txt"));
+            assertTrue(stdout.toString().contains(TEXTFILE_TXT));
         } catch (LsException e) {
             fail("should not fail:" + e.getMessage());
         }
@@ -93,7 +117,7 @@ class LsApplicationTest {
 
         lsApp.run(new String[]{"-d"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("folder1\nfolder2"));
+        assertTrue(stdout.toString().contains(FOLDER1 + StringUtils.STRING_NEWLINE + FOLDER2));
     }
 
     /**
@@ -105,8 +129,8 @@ class LsApplicationTest {
 
         lsApp.run(new String[]{"-R"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("folder2:\nfile1Folder2.txt"));
-        assertTrue(stdout.toString().contains("folder1"));
+        assertTrue(stdout.toString().contains("folder2:"  + StringUtils.STRING_NEWLINE + FILE1_FOLDER2));
+        assertTrue(stdout.toString().contains(FOLDER1));
     }
 
     /**
@@ -118,8 +142,8 @@ class LsApplicationTest {
 
         lsApp.run(new String[]{"-R", "-d"}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("folder1\nfolder2"));
-        assertFalse(stdout.toString().contains("file1Folder2.txt"));
+        assertTrue(stdout.toString().contains(FOLDER1 + StringUtils.STRING_NEWLINE + FOLDER2));
+        assertFalse(stdout.toString().contains(FILE1_FOLDER2));
     }
 
     /**
@@ -129,9 +153,46 @@ class LsApplicationTest {
     @Test
     void testLsAtAnotherDirectory() throws LsException {
 
-        lsApp.run(new String[]{"folder2"}, System.in, stdout);
+        lsApp.run(new String[]{FOLDER2}, System.in, stdout);
 
-        assertTrue(stdout.toString().contains("file1Folder2.txt"));
+        assertTrue(stdout.toString().contains(FILE1_FOLDER2));
+    }
+
+    /**
+     * LS command with file specified
+     * @throws LsException
+     */
+    @Test
+    void testLsWithFileSpecified() throws LsException {
+
+        lsApp.run(new String[]{TEXTFILE_TXT}, System.in, stdout);
+
+        assertTrue(stdout.toString().contains(TEXTFILE_TXT));
+    }
+
+    /**
+     * LS command with file name having spaces
+     * @throws LsException
+     */
+    @Test
+    void testLsWithFileNameSpaces() throws LsException {
+
+        lsApp.run(new String[]{"file with spaces.txt"}, System.in, stdout);
+
+        assertTrue(stdout.toString().contains("file with spaces.txt"));
+    }
+
+    /**
+     * Tests helper function listFolderContent() recursively
+     * @throws LsException
+     */
+    @Test
+    public void testListFolderContent() throws LsException {
+        String result = lsApp.listFolderContent(false, true, "folderRecursive");
+        assertTrue(result.contains("folderRecursive:" + StringUtils.STRING_NEWLINE
+                + "firstFile.txt" + StringUtils.STRING_NEWLINE + "innerFolder"));
+
+        assertTrue(result.contains("folderRecursive/innerFolder:" + StringUtils.STRING_NEWLINE + "innerFile.txt"));
     }
 
 
