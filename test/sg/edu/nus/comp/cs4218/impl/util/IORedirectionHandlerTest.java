@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.util;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * Tests for IO redirection
@@ -211,6 +213,32 @@ public class IORedirectionHandlerTest {
         Files.delete(inFile);
         Files.delete(outFile);
 
+    }
+
+
+    /**
+     * Test integration of redirecting output with command "echo hello > outfile.txt"
+     * The file is read to check that it contains "hello" followed by a (platform indepentent) newline
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     * @throws IOException
+     */
+    @Test
+    public void testIntegrationOuputToFile() throws AbstractApplicationException, ShellException, IOException {
+
+        // file to be used as output redirection
+        Path outFile = IOUtils.resolveFilePath("outfile.txt");
+
+        ShellImpl shellImpl = new ShellImpl();
+        shellImpl.parseAndEvaluate("echo hello > " + outFile.toString(), System.out);
+
+        // read the file and verify the bytes were written there
+        byte[] outFileBytes = Files.readAllBytes(IOUtils.resolveFilePath("outfile.txt"));
+        assertTrue(5 + STRING_NEWLINE.length() == outFileBytes.length); // 5 chars in hello + newline
+        assertArrayEquals(("hello" + STRING_NEWLINE).getBytes(), outFileBytes);
+
+        Files.delete(outFile); // cleanup
     }
 
 
