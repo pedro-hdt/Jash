@@ -14,9 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+
+import static sg.edu.nus.comp.cs4218.impl.app.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
@@ -36,6 +36,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  * - Null args
  * - Output redirection without destination (eg "echo hello >")
  * - Output redirection to multiple different files (eg "echo hello > f1 > f2")
+ * - Input redirection from inexistent file throws an exception
  */
 public class IORedirectionHandlerTest {
 
@@ -335,6 +336,33 @@ public class IORedirectionHandlerTest {
                 assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_MULTIPLE_STREAMS);
+
+    }
+
+    /**
+     * Attempts to call redirect inexistent file into stdin
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     */
+    @Test
+    public void testFailsRedirNonExistentInput() {
+
+        // creates path but does not create the file
+        Path inFile = IOUtils.resolveFilePath("ghost-infile.txt");
+
+        IORedirectionHandler ioRedirectionHandler = new IORedirectionHandler(
+                Arrays.asList("paste", "-", "<", inFile.toString()),
+                System.in,
+                System.out,
+                new ArgumentResolver()
+        );
+
+
+        ShellException shellException =
+                assertThrows(ShellException.class, () -> ioRedirectionHandler.extractRedirOptions());
+
+        assertMsgContains(shellException, ERR_FILE_NOT_FOUND);
 
     }
 
