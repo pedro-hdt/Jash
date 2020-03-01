@@ -86,9 +86,9 @@ public class WcApplicationTest {
         String[] args = new String[] { WC1_FILE };
         try {
             wcApp.run(args, System.in, stdout);
-            assertEquals("       1       2      14 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
+            assertEquals("       1       2      14 wc1.txt" + StringUtils.STRING_NEWLINE, stdout.toString()); // NOPMD
         } catch (WcException e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage()); // NOPMD
         }
     }
 

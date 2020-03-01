@@ -120,7 +120,7 @@ public class CutApplicationTest {
             cutApp.run(args, System.in, stdout);
             assertEquals("y", stdout.toString());
         } catch (CutException e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage()); // NOPMD
         }
     }
 
@@ -133,18 +133,18 @@ public class CutApplicationTest {
             cutApp.run(args, inputStream, stdout);
             assertEquals("y", stdout.toString());
         } catch (Exception e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage()); // NOPMD
         }
     }
 
     @Test
     public void testCutOnFileWithCommaSeparatedNumbersUsingFlagC() {
-        String[] args = new String[] { "-c", "5,10", CUT1_FILE };
+        String[] args = new String[] { "-c", "5,10", CUT1_FILE }; // NOPMD
         try {
             cutApp.run(args, System.in, stdout);
             assertEquals("yT", stdout.toString());
         } catch (CutException e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage()); // NOPMD
         }
     }
 
@@ -163,12 +163,12 @@ public class CutApplicationTest {
 
     @Test
     public void testCutOnFileWithRangeOfNumbersUsingFlagC() {
-        String[] args = new String[] { "-c", "5-10", CUT1_FILE };
+        String[] args = new String[] { "-c", "5-10", CUT1_FILE }; // NOPMD
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y is T", stdout.toString());
+            assertEquals("y is T", stdout.toString()); // NOPMD
         } catch (CutException e) {
-            fail("should not fail: " + e.getMessage());
+            fail("should not fail: " + e.getMessage()); // NOPMD
         }
     }
 
