@@ -1,18 +1,16 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.ByteArrayOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
@@ -44,30 +42,6 @@ public class EchoApplicationTest {
         out.reset();
     }
 
-
-    /**
-     * Call echo with null arg for constructResult()
-     */
-    @Test
-    public void testNullArgs() {
-        Exception exception = assertThrows(EchoException.class, () -> echo.constructResult(null));
-
-        assertMsgContains(exception, ERR_NULL_ARGS);
-
-    }
-
-    /**
-     * Call echo with null stream
-     */
-    @Test
-    public void testNullOutputStream() {
-
-        Exception exception = assertThrows(EchoException.class, () -> echo.run(new String[]{"test"}, System.in, null));
-
-        assertMsgContains(exception, ERR_NO_OSTREAM);
-
-    }
-
     /**
      * Call echo without any arguments
      */
@@ -91,18 +65,6 @@ public class EchoApplicationTest {
         echo.run(new String[]{"hello"}, System.in, out);
 
         assertEquals("hello" + STRING_NEWLINE, out.toString());
-
-    }
-
-    /**
-     * Call echo with a single argument as space
-     */
-    @Test
-    public void singleArgAsSpace() throws EchoException {
-
-        echo.run(new String[]{" "}, System.in, out);
-
-        assertEquals(" " + STRING_NEWLINE, out.toString());
 
     }
 

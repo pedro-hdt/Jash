@@ -43,14 +43,6 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 
 * Performance improvement by using `StringBuilder` in `RegexArgument#globFiles()`
 
-* Fixed sequence commands: tokens of previous commands were being used for the ones following because the tokens list was not cleaned in `CommandBuilder`
-
-### Commit []()
-
-* Fixed ignored `<` for input redirection in `CommandBuilder`
-
-* Fixed broken check in `IORedirectionHandler.isRedirOperator()`
-
 ### Commit []()
 
 * ArrayIndexOutOfBounds exception when calling cd without args. Error message printed is just 0. Created a test case for this but not up to us to fix.
@@ -62,16 +54,6 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 * Fixed ignored `<` for input redirection in `CommandBuilder`
 
 * Fixed broken check in `IORedirectionHandler.isRedirOperator()`
-
-
-### Commit []()
-
-* Fixed indexing bug in `PipeCommand`
- 
-* Fixed negation to add result of subCommand
-
-* When sub command is evaluated, in the result the new line is removed and replaced by "" instead of space
-
 
 ### Commit []()
 

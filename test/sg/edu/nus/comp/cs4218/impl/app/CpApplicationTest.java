@@ -71,7 +71,7 @@ class CpApplicationTest {
         byte[] hash1 = null, hash2 = null;
         try {
 
-            // SHA-256 is probably overkill but not so bad with small files
+            // TODO SHA-256 is probably overkill
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
             md.update(Files.readAllBytes(file1));
@@ -106,7 +106,6 @@ class CpApplicationTest {
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        Environment.setCurrentDirectory(ORIGINAL_DIR);
         for (File f : (new File("destDir")).listFiles()) {
             f.delete();
         }
@@ -152,7 +151,7 @@ class CpApplicationTest {
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_FILE_NOT_FOUND string
      */
     @Test
-    public void testFailsNonExistentFile() {
+    public void testFailsNonexistentFile() {
 
         String[] args = {"inexistent1", "destDir"};
         CpException e =
@@ -206,7 +205,7 @@ class CpApplicationTest {
     public void testSingleFileToExistentFile() throws IOException, AbstractApplicationException {
 
         Path src = IOUtils.resolveFilePath("src1");
-        Path dest = IOUtils.resolveFilePath("destFile");
+        Path dest = Files.createFile(IOUtils.resolveFilePath("destFile"));
 
         String[] args = {src.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);
@@ -232,8 +231,6 @@ class CpApplicationTest {
         Path copy1 = IOUtils.resolveFilePath("destDir/src1");
         Path copy2 = IOUtils.resolveFilePath("destDir/src2");
 
-        assertTrue(Files.exists(copy1));
-        assertTrue(Files.exists(copy2));
         assertTrue(hashesMatch(src1, copy1));
         assertTrue(hashesMatch(src2, copy2));
 
