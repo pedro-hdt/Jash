@@ -4,14 +4,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.DiffException;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 
 /**
  * Tests for diff command.
@@ -37,7 +42,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
  * - "-q" flag used + Directories containing Files with different content
  */
 public class DiffApplicationTest {
-    // TODO: Instantiate this when there is actual implementation
     private static DiffApplication diffApp;
     private static final String originalDir = Environment.getCurrentDirectory();
     private static final String DIFF_TEST_DIR = originalDir + File.separator + "dummyTestFolder" + File.separator + "DiffTestFolder";
@@ -59,8 +63,7 @@ public class DiffApplicationTest {
 
     @BeforeEach
     void setUp() {
-        // TODO: Instantiate this when there is actual implementation
-        DiffApplication = new DiffApplication();
+        diffApp = new DiffApplication();
         stdout = new ByteArrayOutputStream();
     }
 
@@ -101,7 +104,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithSameContent() {
+    public void testDiffFileAndStdinWithSameContent() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF1_FILE));
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, false, false);
@@ -122,7 +125,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithSameContentUsingFlagS() {
+    public void testDiffFileAndStdinWithSameContentUsingFlagS() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF1_FILE));
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, true, false, false);
@@ -143,7 +146,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithSameContentUsingFlagB() {
+    public void testDiffFileAndStdinWithSameContentUsingFlagB() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF1_BLANK_LINES_FILE));
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, true, false);
@@ -200,7 +203,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithDifferentContent() {
+    public void testDiffFileAndStdinWithDifferentContent() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF2_FILE));
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, false, false);
@@ -226,7 +229,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithDifferentContentUsingFlagQ() {
+    public void testDiffFileAndStdinWithDifferentContentUsingFlagQ() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF2_FILE));
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, false, true);
@@ -247,7 +250,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithDifferentContentUsingFlagBQ() {
+    public void testDiffFileAndStdinWithDifferentContentUsingFlagBQ() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF1_BLANK_LINES_FILE));
             diffApp.diffFileAndStdin(DIFF2_FILE, inputStream, false, true, true);
@@ -268,7 +271,7 @@ public class DiffApplicationTest {
     }
 
     @Test
-    public void testDiffFileAndStdinWithDifferentContentUsingFlagSBQ() {
+    public void testDiffFileAndStdinWithDifferentContentUsingFlagSBQ() throws DiffException {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + File.separator + DIFF1_BLANK_LINES_FILE));
             diffApp.diffFileAndStdin(DIFF2_FILE, inputStream, true, true, true);
