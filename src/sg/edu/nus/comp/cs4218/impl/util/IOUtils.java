@@ -3,7 +3,15 @@ package sg.edu.nus.comp.cs4218.impl.util;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -50,14 +58,12 @@ public final class IOUtils {
 
         File file = new File(resolvedFileName);
 
-        try { // TODO Not tested
-            // Pedro: currently ignoring boolean return values, would appreciate second opinion
+        try {
             file.getParentFile().mkdirs(); // create all necessary parent directories
             file.createNewFile(); // creates file only if it does not exist
             fileOutputStream = new FileOutputStream(file);
         } catch (IOException e) {
-            throw new ShellException(ERR_IO_EXCEPTION);
-            // Pedro: How do we want to handle this? I think the only plausible way to get here is if no permission?
+            throw (ShellException) new ShellException(ERR_IO_EXCEPTION).initCause(e);
         }
 
         return fileOutputStream;
