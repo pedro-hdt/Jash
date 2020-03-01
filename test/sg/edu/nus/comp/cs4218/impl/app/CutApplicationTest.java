@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CutException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.*;
 
@@ -178,7 +179,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5-10", CUT1_FILE, CUT2_FILE };
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y is T\n" +
+            assertEquals("y is T" + StringUtils.STRING_NEWLINE +
                     "y is W", stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
@@ -262,7 +263,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5-10", CUT1_FILE, CUT2_FILE };
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y is T\n" +
+            assertEquals("y is T" + StringUtils.STRING_NEWLINE +
                     "y is W", stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
