@@ -91,10 +91,11 @@ class CpApplicationTest {
 
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         Environment.setCurrentDirectory(ORIGINAL_DIR
                 + StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "CpTestFolder");
+        Files.createDirectory(IOUtils.resolveFilePath("destDir"));
     }
 
 
@@ -109,6 +110,7 @@ class CpApplicationTest {
         for (File f : (new File("destDir")).listFiles()) {
             f.delete();
         }
+        Files.delete(IOUtils.resolveFilePath("destDir"));
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
