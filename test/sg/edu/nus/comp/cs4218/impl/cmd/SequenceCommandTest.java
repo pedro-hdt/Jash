@@ -1,10 +1,21 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.TestUtils;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -14,16 +25,6 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 /**
  * Tests commands used in sequence
@@ -66,12 +67,12 @@ public class SequenceCommandTest {
     @Test
     public void testExitCommandWithEcho() {
         CallCommand exitCommand = new CallCommand(new ArrayList<>(Arrays.asList("exit")), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hi")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "shout")), new ApplicationRunner(), new ArgumentResolver());
 
         sequenceCommand = new SequenceCommand(new ArrayList<>(Arrays.asList(echoCommand, exitCommand)));
         Exception exception = assertThrows(ExitException.class, () -> sequenceCommand.evaluate(System.in, stdout));
 
-        assertTrue(stdout.toString().contains("hi"));
+        assertTrue(stdout.toString().contains("shout"));
         assertTrue(exception.toString().contains("terminating"));
 
     }
@@ -108,13 +109,13 @@ public class SequenceCommandTest {
      */
     @Test
     public void testSameCommandsInSequence() throws Exception {
-        CallCommand echoCommand1 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hello")), new ApplicationRunner(), new ArgumentResolver());
-        CallCommand echoCommand2 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hi")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCommand1 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "abc")), new ApplicationRunner(), new ArgumentResolver());
+        CallCommand echoCommand2 = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "def")), new ApplicationRunner(), new ArgumentResolver());
 
         sequenceCommand = new SequenceCommand(new ArrayList<>(Arrays.asList(echoCommand1, echoCommand2)));
         sequenceCommand.evaluate(System.in, stdout);
 
-        assertTrue(stdout.toString().contains("hello" + StringUtils.STRING_NEWLINE + "hi"));
+        assertTrue(stdout.toString().contains("abc" + StringUtils.STRING_NEWLINE + "def"));
 
     }
 
@@ -139,9 +140,9 @@ public class SequenceCommandTest {
     public void testSequenceWithPipeOnShell() throws Exception {
 
         ShellImpl shell = new ShellImpl();
-        shell.parseAndEvaluate("echo hello; ls | grep present", stdout);
+        shell.parseAndEvaluate("echo piping; ls | grep present", stdout);
 
-        assertTrue(stdout.toString().contains("hello" + StringUtils.STRING_NEWLINE + "present.txt"));
+        assertTrue(stdout.toString().contains("piping" + StringUtils.STRING_NEWLINE + "present.txt"));
 
     }
 
@@ -152,9 +153,9 @@ public class SequenceCommandTest {
     public void testPipeWithSequence() throws Exception {
 
         ShellImpl shell = new ShellImpl();
-        shell.parseAndEvaluate("ls | grep present ; echo hello", stdout);
+        shell.parseAndEvaluate("ls | grep present ; echo boy", stdout);
 
-        assertTrue(stdout.toString().contains("present.txt" + StringUtils.STRING_NEWLINE + "hello"));
+        assertTrue(stdout.toString().contains("present.txt" + StringUtils.STRING_NEWLINE + "boy"));
 
     }
 }

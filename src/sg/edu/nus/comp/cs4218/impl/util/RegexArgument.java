@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
+import sg.edu.nus.comp.cs4218.Environment;
 
 @SuppressWarnings("PMD.AvoidStringBufferField")
 public final class RegexArgument {
@@ -129,10 +129,6 @@ public final class RegexArgument {
             matches.addAll(traverseAndFilter(regexPattern, nextNode, isAbsolute, onlyDirectories));
         }
         return matches;
-    }
-
-    public boolean isRegex() {
-        return isRegex;
     }
 
     public boolean isEmpty() {
