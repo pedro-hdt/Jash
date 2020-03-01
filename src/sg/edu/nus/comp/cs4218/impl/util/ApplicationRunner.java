@@ -88,7 +88,8 @@ public class ApplicationRunner {
 
                 // Extended Functionality 2 - EF2
             case APP_CUT:
-                throw new ShellException(app + ": " + ERR_NOT_SUPPORTED); // TODO implement CutApplication
+                application = new CutApplication();
+                break;
             case APP_LS:
                 application = new LsApplication();
                 break;
