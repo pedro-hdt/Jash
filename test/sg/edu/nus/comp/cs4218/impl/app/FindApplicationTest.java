@@ -1,29 +1,22 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.MULTIPLE_FILES;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NO_FILE;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NO_FOLDER;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NULL_POINTER;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.WRONG_FLAG_SUFFIX;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_NOT_FOUND;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.FindException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_NOT_FOUND;
 
 /**
  * Test Suite for find command

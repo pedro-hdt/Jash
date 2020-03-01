@@ -14,11 +14,8 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 public class FindApplication implements FindInterface {
     public static final String FILE_IDENT = CHAR_FLAG_PREFIX + "name";
