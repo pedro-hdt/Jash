@@ -97,10 +97,10 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("1\n" +
-                    "3\n" +
-                    "4\n" +
-                    "5\n" +
+            assertTrue(stdout.toString().contains("1" + StringUtils.STRING_NEWLINE +
+                    "3" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "5" + StringUtils.STRING_NEWLINE +
                     "6"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -113,12 +113,12 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("!\n" +
-                    "#\n" +
-                    "$\n" +
-                    "%\n" +
-                    "&\n" +
-                    "@\n" +
+            assertTrue(stdout.toString().contains("!" + StringUtils.STRING_NEWLINE +
+                    "#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "%" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "@" + StringUtils.STRING_NEWLINE +
                     "^"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -131,12 +131,12 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("A\n" +
-                    "C\n" +
-                    "E\n" +
-                    "G\n" +
-                    "b\n" +
-                    "d\n" +
+            assertTrue(stdout.toString().contains("A" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
                     "f"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -149,20 +149,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("#\n" +
-                    "$\n" +
-                    "&\n" +
-                    "*\n" +
-                    "1\n" +
-                    "4\n" +
-                    "6\n" +
-                    "8\n" +
-                    "A\n" +
-                    "C\n" +
-                    "E\n" +
-                    "G\n" +
-                    "b\n" +
-                    "d\n" +
+            assertTrue(stdout.toString().contains("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
                     "f"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -175,10 +175,10 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("6\n" +
-                    "5\n" +
-                    "4\n" +
-                    "3\n" +
+            assertTrue(stdout.toString().contains("6" + StringUtils.STRING_NEWLINE +
+                    "5" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "3" + StringUtils.STRING_NEWLINE +
                     "1"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -191,12 +191,12 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("^\n" +
-                    "@\n" +
-                    "&\n" +
-                    "%\n" +
-                    "$\n" +
-                    "#\n" +
+            assertTrue(stdout.toString().contains("^" + StringUtils.STRING_NEWLINE +
+                    "@" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "%" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#" + StringUtils.STRING_NEWLINE +
                     "!"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -209,12 +209,12 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("f\n" +
-                    "d\n" +
-                    "b\n" +
-                    "G\n" +
-                    "E\n" +
-                    "C\n" +
+            assertTrue(stdout.toString().contains("f" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
                     "A"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -227,20 +227,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("f\n" +
-                    "d\n" +
-                    "b\n" +
-                    "G\n" +
-                    "E\n" +
-                    "C\n" +
-                    "A\n" +
-                    "8\n" +
-                    "6\n" +
-                    "4\n" +
-                    "1\n" +
-                    "*\n" +
-                    "&\n" +
-                    "$\n" +
+            assertTrue(stdout.toString().contains("f" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
                     "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -253,12 +253,12 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("A\n" +
-                    "b\n" +
-                    "C\n" +
-                    "d\n" +
-                    "E\n" +
-                    "f\n" +
+            assertTrue(stdout.toString().contains("A" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
                     "G"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -271,20 +271,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("#\n" +
-                    "$\n" +
-                    "&\n" +
-                    "*\n" +
-                    "1\n" +
-                    "4\n" +
-                    "6\n" +
-                    "8\n" +
-                    "A\n" +
-                    "b\n" +
-                    "C\n" +
-                    "d\n" +
-                    "E\n" +
-                    "f\n" +
+            assertTrue(stdout.toString().contains("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
                     "G"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -297,20 +297,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("f\n" +
-                    "d\n" +
-                    "b\n" +
-                    "G\n" +
-                    "E\n" +
-                    "C\n" +
-                    "A\n" +
-                    "8\n" +
-                    "6\n" +
-                    "4\n" +
-                    "1\n" +
-                    "*\n" +
-                    "&\n" +
-                    "$\n" +
+            assertTrue(stdout.toString().contains("f" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
                     "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -323,20 +323,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("#\n" +
-                    "$\n" +
-                    "&\n" +
-                    "*\n" +
-                    "1\n" +
-                    "4\n" +
-                    "6\n" +
-                    "8\n" +
-                    "A\n" +
-                    "b\n" +
-                    "C\n" +
-                    "d\n" +
-                    "E\n" +
-                    "f\n" +
+            assertTrue(stdout.toString().contains("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
                     "G"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -349,20 +349,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("G\n" +
-                    "f\n" +
-                    "E\n" +
-                    "d\n" +
-                    "C\n" +
-                    "b\n" +
-                    "A\n" +
-                    "8\n" +
-                    "6\n" +
-                    "4\n" +
-                    "1\n" +
-                    "*\n" +
-                    "&\n" +
-                    "$\n" +
+            assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
                     "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -375,20 +375,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("G\n" +
-                    "f\n" +
-                    "E\n" +
-                    "d\n" +
-                    "C\n" +
-                    "b\n" +
-                    "A\n" +
-                    "8\n" +
-                    "6\n" +
-                    "4\n" +
-                    "1\n" +
-                    "*\n" +
-                    "&\n" +
-                    "$\n" +
+            assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
                     "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -401,25 +401,25 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, System.in, stdout);
-            assertTrue(stdout.toString().contains("G\n" +
-                    "f\n" +
-                    "E\n" +
-                    "d\n" +
-                    "C\n" +
-                    "b\n" +
-                    "A\n" +
-                    "8\n" +
-                    "6\n" +
-                    "6\n" +
-                    "5\n" +
-                    "4\n" +
-                    "4\n" +
-                    "3\n" +
-                    "1\n" +
-                    "1\n" +
-                    "*\n" +
-                    "&\n" +
-                    "$\n" +
+            assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "5" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "3" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
                     "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -428,20 +428,20 @@ public class SortApplicationTest {
 
     @Test
     public void testStdinSort() {
-        String stdInString = "&\n" +
-                "*\n" +
-                "$\n" +
-                "#\n" +
-                "A\n" +
-                "b\n" +
-                "C\n" +
-                "d\n" +
-                "E\n" +
-                "f\n" +
-                "G\n" +
-                "4\n" +
-                "6\n" +
-                "8\n" +
+        String stdInString = "&" + StringUtils.STRING_NEWLINE +
+                "*" + StringUtils.STRING_NEWLINE +
+                "$" + StringUtils.STRING_NEWLINE +
+                "#" + StringUtils.STRING_NEWLINE +
+                "A" + StringUtils.STRING_NEWLINE +
+                "b" + StringUtils.STRING_NEWLINE +
+                "C" + StringUtils.STRING_NEWLINE +
+                "d" + StringUtils.STRING_NEWLINE +
+                "E" + StringUtils.STRING_NEWLINE +
+                "f" + StringUtils.STRING_NEWLINE +
+                "G" + StringUtils.STRING_NEWLINE +
+                "4" + StringUtils.STRING_NEWLINE +
+                "6" + StringUtils.STRING_NEWLINE +
+                "8" + StringUtils.STRING_NEWLINE +
                 "1";
 
         InputStream stdin = new ByteArrayInputStream(stdInString.getBytes());
@@ -449,20 +449,20 @@ public class SortApplicationTest {
 
         try {
             sortApp.run(args, stdin, stdout);
-            assertTrue(stdout.toString().contains("G\n" +
-                    "f\n" +
-                    "E\n" +
-                    "d\n" +
-                    "C\n" +
-                    "b\n" +
-                    "A\n" +
-                    "8\n" +
-                    "6\n" +
-                    "4\n" +
-                    "1\n" +
-                    "*\n" +
-                    "&\n" +
-                    "$\n" +
+            assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
                     "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
