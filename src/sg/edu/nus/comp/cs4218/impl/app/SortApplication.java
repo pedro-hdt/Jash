@@ -1,9 +1,12 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.app.SortInterface;
-import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.impl.app.args.SortArguments;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +18,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.SortInterface;
+import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.app.args.SortArguments;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 public class SortApplication implements SortInterface {
 
@@ -85,7 +90,7 @@ public class SortApplication implements SortInterface {
             if (!node.canRead()) {
                 throw new Exception(ERR_NO_PERM);
             }
-            InputStream input = IOUtils.openInputStream(file);
+            InputStream input = IOUtils.openInputStream(file); //NOPMD
             lines.addAll(IOUtils.getLinesFromInputStream(input));
             IOUtils.closeInputStream(input);
         }

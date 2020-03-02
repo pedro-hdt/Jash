@@ -1,13 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.WcException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_GENERAL;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,9 +14,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_GENERAL;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for wc command.
@@ -95,7 +99,7 @@ public class WcApplicationTest {
     @Test
     public void testWcOfStdin() {
         try {
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(null, inputStream, stdout);
             assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
@@ -118,7 +122,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagC() {
         try {
             String[] args = new String[] { "-c" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
             assertEquals("      14"  + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
@@ -141,7 +145,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagL() {
         try {
             String[] args = new String[] { "-l" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
             assertEquals("       1"  + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
@@ -164,7 +168,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagW() {
         try {
             String[] args = new String[] { "-w" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
             assertEquals("       2"  + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
@@ -187,7 +191,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagCL() {
         try {
             String[] args = new String[] { "-cl" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
             assertEquals("       1      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
@@ -210,7 +214,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagLW() {
         try {
             String[] args = new String[] { "-lw" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
             assertEquals("       1       2" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {
@@ -234,7 +238,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagCW() {
         try {
             String[] args = new String[] { "-cw" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
 
             assertEquals("       2      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
@@ -258,7 +262,7 @@ public class WcApplicationTest {
     public void testWcOfStdinUsingFlagCLW() {
         try {
             String[] args = new String[] { "-clw" };
-            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE));
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             wcApp.run(args, inputStream, stdout);
             assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, stdout.toString()); // filename is empty for standard input
         } catch (Exception e) {

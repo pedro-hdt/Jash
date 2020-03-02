@@ -95,7 +95,7 @@ public class MvApplicationTest {
         // Reset after overwriting
         Files.createFile(Paths.get(Environment.getCurrentDirectory()
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE));
-        FileOutputStream outputStream = new FileOutputStream(new File(Paths.get(Environment.getCurrentDirectory()
+        FileOutputStream outputStream = new FileOutputStream(new File(Paths.get(Environment.getCurrentDirectory() //NOPMD
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE).toString()));
         byte[] strToBytes = "first".getBytes();
         outputStream.write(strToBytes);

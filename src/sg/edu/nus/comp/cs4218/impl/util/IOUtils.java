@@ -1,7 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +18,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 @SuppressWarnings("PMD.PreserveStackTrace")
 public final class IOUtils {
@@ -118,7 +120,7 @@ public final class IOUtils {
      */
     public static List<String> getLinesFromInputStream(InputStream input) throws Exception {
         List<String> output = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input)); //NOPMD
         String line;
         while ((line = reader.readLine()) != null) {
             output.add(line);

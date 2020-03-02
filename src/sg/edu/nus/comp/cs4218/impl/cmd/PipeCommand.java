@@ -1,14 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 /**
  * A Pipe Command is a sub-command consisting of two Call Commands separated with a pipe,
@@ -29,8 +29,8 @@ public class PipeCommand implements Command {
         AbstractApplicationException absAppException = null;
         ShellException shellException = null;
 
-        InputStream nextInputStream = stdin;
-        OutputStream nextOutputStream;
+        InputStream nextInputStream = stdin; //NOPMD
+        OutputStream nextOutputStream; //NOPMD
 
         for (int i = 0; i < callCommands.size(); i++) {
             CallCommand callCommand = callCommands.get(i);

@@ -91,7 +91,7 @@ public class IORedirectionHandlerTest {
 
         // get the out stream and use it to write a byte to the file so we can validate it goes
         // where it should go
-        FileOutputStream outputStream = (FileOutputStream) ioRedirHandler.getOutputStream();
+        FileOutputStream outputStream = (FileOutputStream) ioRedirHandler.getOutputStream(); //NOPMD
         outputStream.write(65);
         outputStream.close();
 
@@ -147,7 +147,7 @@ public class IORedirectionHandlerTest {
         assertTrue(ioRedirHandler.getInputStream() instanceof FileInputStream);
 
         // get the in stream and use it to read from the file so we can validate it came from the right place
-        FileInputStream inputStream = (FileInputStream) ioRedirHandler.getInputStream();
+        FileInputStream inputStream = (FileInputStream) ioRedirHandler.getInputStream(); //NOPMD
 
         // read the input stream and verify the byte we put in the file is there
         int byteRead = inputStream.read();
@@ -203,7 +203,7 @@ public class IORedirectionHandlerTest {
         assertTrue(ioRedirHandler.getOutputStream() instanceof FileOutputStream);
 
         // get the in stream and use it to read from the file so we can validate it came from the right place
-        FileInputStream inputStream = (FileInputStream) ioRedirHandler.getInputStream();
+        FileInputStream inputStream = (FileInputStream) ioRedirHandler.getInputStream(); //NOPMD
 
         // read the input stream and verify the byte we put in the file is there
         int byteRead = inputStream.read();
@@ -214,7 +214,7 @@ public class IORedirectionHandlerTest {
 
         // get the out stream and use it to write a byte to the file so we can validate it goes
         // where it should go
-        FileOutputStream outputStream = (FileOutputStream) ioRedirHandler.getOutputStream();
+        FileOutputStream outputStream = (FileOutputStream) ioRedirHandler.getOutputStream(); //NOPMD
         outputStream.write(65);
         outputStream.close();
 

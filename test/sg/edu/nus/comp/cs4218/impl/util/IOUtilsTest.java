@@ -34,7 +34,7 @@ class IOUtilsTest {
         outFile.toFile().deleteOnExit();
 
         // obtain stream
-        OutputStream outputStream = IOUtils.openOutputStream(outFile.toString());
+        OutputStream outputStream = IOUtils.openOutputStream(outFile.toString()); //NOPMD
 
         // validate stream overwrites file contents
         outputStream.write(65);
@@ -58,7 +58,7 @@ class IOUtilsTest {
         Path outFile = Paths.get("outfile.txt");
 
         // obtain stream
-        OutputStream outputStream = IOUtils.openOutputStream(outFile.toString());
+        OutputStream outputStream = IOUtils.openOutputStream(outFile.toString()); //NOPMD
 
         // validate stream writes to the file as expected
         outputStream.write(65);
@@ -89,7 +89,7 @@ class IOUtilsTest {
         outFile.toFile().deleteOnExit();
 
         // obtain stream
-        OutputStream outputStream = IOUtils.openOutputStream(outFile.toString());
+        OutputStream outputStream = IOUtils.openOutputStream(outFile.toString()); //NOPMD
 
         // validate stream writes to the file as expected
         outputStream.write(65);

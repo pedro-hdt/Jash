@@ -45,7 +45,7 @@ public class MvApplication implements MvInterface {
             if (shouldOverwrite) {
                 // Can avoid this with assumption that target operand is always a directory
                 if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
-                    FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(destFolder).toFile());
+                    FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(destFolder).toFile());//NOPMD
                     byte[] strToBytes = Files.readAllBytes(IOUtils.resolveFilePath(srcPath));
                     outputStream.write(strToBytes);
                     outputStream.close();

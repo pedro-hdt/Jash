@@ -129,7 +129,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
             assertEquals("y", stdout.toString());
         } catch (Exception e) {
@@ -153,7 +153,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5,10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
             assertEquals("yT", stdout.toString());
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5-10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
             assertEquals("y is T", stdout.toString());
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
             assertEquals("y", stdout.toString());
         } catch (Exception e) {
@@ -237,7 +237,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5,10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
             assertEquals("yT", stdout.toString());
         } catch (Exception e) {
@@ -261,7 +261,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5-10", "-" };
 
         try {
-            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE));
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
             assertEquals("y is T", stdout.toString());
         } catch (Exception e) {

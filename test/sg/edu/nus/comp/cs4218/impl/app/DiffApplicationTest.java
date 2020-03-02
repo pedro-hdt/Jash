@@ -1,13 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.DiffException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,9 +13,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.DiffException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for diff command.
@@ -111,7 +114,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithSameContent() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, false, false);
             assertTrue(stdout.toString().contains("")); // No message represents a successful diff
         } catch (IOException e) {
@@ -132,7 +135,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithSameContentUsingFlagS() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, true, false, false);
             assertTrue(stdout.toString().contains("Files " + DIFF1_FILE + " - are identical"));
         } catch (IOException e) {
@@ -153,7 +156,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithSameContentUsingFlagB() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, true, false);
             assertTrue(stdout.toString().contains("")); // No message represents a successful diff
         } catch (IOException e) {
@@ -210,7 +213,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithDifferentContent() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, false, false);
             assertTrue(stdout.toString().contains("< test A" + StringUtils.STRING_NEWLINE +
                     "< test B" + StringUtils.STRING_NEWLINE +
@@ -236,7 +239,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithDifferentContentUsingFlagQ() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF1_FILE, inputStream, false, false, true);
             assertTrue(stdout.toString().contains("Files " + DIFF1_FILE + " " + DIFF2_FILE + " differ"));
         } catch (IOException e) {
@@ -257,7 +260,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithDifferentContentUsingFlagBQ() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF2_FILE, inputStream, false, true, true);
             assertTrue(stdout.toString().contains("Files " + DIFF2_FILE + " " + DIFF1_BLANK_LINES_FILE + " differ"));
         } catch (IOException e) {
@@ -278,7 +281,7 @@ public class DiffApplicationTest { // NOPMD
     @Test
     public void testDiffFileAndStdinWithDifferentContentUsingFlagSBQ() throws DiffException {
         try {
-            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE));
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE)); //NOPMD
             diffApp.diffFileAndStdin(DIFF2_FILE, inputStream, true, true, true);
             assertTrue(stdout.toString().contains("Files " + DIFF2_FILE + " " + DIFF1_BLANK_LINES_FILE + " differ"));
         } catch (IOException e) {

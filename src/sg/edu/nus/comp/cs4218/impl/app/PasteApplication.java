@@ -1,8 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.app.PasteInterface;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,16 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.PasteInterface;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 public class PasteApplication implements PasteInterface {
 
     @Override
     public String mergeStdin(InputStream stdin) throws PasteException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));//NOPMD
         StringBuilder sb = new StringBuilder();//NOPMD
 
         String line;
@@ -63,7 +66,7 @@ public class PasteApplication implements PasteInterface {
 
             while (!done) {
                 done = true;
-                for (BufferedReader reader : readers) {
+                for (BufferedReader reader : readers) { //NOPMD
                     String line = reader.readLine();
                     if (line != null) {
                         done = false;
@@ -75,7 +78,7 @@ public class PasteApplication implements PasteInterface {
                 sb.append(STRING_NEWLINE);
             }
 
-            for (BufferedReader reader : readers) {
+            for (BufferedReader reader : readers) {//NOPMD
                 reader.close();
             }
 
