@@ -1,10 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CANNOT_OVERWRITE;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_MOVABLE;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import sg.edu.nus.comp.cs4218.app.MvInterface;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.exception.MvException;
+import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -16,12 +16,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.app.MvInterface;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.exception.LsException;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class MvApplication implements MvInterface {
 
@@ -33,7 +28,7 @@ public class MvApplication implements MvInterface {
             Path source = IOUtils.resolveFilePath(srcFile);
             Files.move(source, source.resolveSibling(destFile));
         } catch (Exception e) {
-            throw (LsException) new LsException(ERR_FILE_NOT_FOUND).initCause(e);
+            throw (MvException) new MvException(ERR_FILE_NOT_FOUND).initCause(e);
         }
 
         return null;
@@ -60,7 +55,7 @@ public class MvApplication implements MvInterface {
                                     IOUtils.resolveFilePath(srcPath).getFileName().toString()),
                             StandardCopyOption.REPLACE_EXISTING);
                 } catch (DirectoryNotEmptyException dnee) {
-                    throw (LsException) new LsException(ERR_CANNOT_OVERWRITE).initCause(dnee);
+                    throw (MvException) new MvException(ERR_CANNOT_OVERWRITE).initCause(dnee);
                 }
 
             } else {
@@ -69,7 +64,7 @@ public class MvApplication implements MvInterface {
                     Files.move(IOUtils.resolveFilePath(srcPath),
                             Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
                 } else {
-                    throw new LsException(ERR_NOT_MOVABLE);
+                    throw new MvException(ERR_NOT_MOVABLE);
                 }
             }
         }
