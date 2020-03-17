@@ -105,7 +105,7 @@ public class CpApplication implements CpInterface {
 
         // Assumption: Will assume multiple args passed when regex is used with only first arg passed
         if (args.length < 2) {
-            throw new CpException(ERR_NO_FILE_ARGS);
+            throw new CpException(ERR_NO_ARGS);
         }
 
         CpArgsParser parser = new CpArgsParser();
