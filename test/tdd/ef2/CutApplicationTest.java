@@ -1,10 +1,17 @@
 package tdd.ef2;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.app.CutInterface;
-import sg.edu.nus.comp.cs4218.exception.CutException;
-import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,14 +20,16 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.app.CutInterface;
+import sg.edu.nus.comp.cs4218.exception.CutException;
+import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 class CutApplicationTest {
 
-    private static String folderName = "tdd/util/dummyTestFolder/CutTestFolder";
+    private static String folderName = "test/tdd/util/dummyTestFolder/CutTestFolder";
     private static String fileNameTest = "test.txt";
     private static String fileNameNames = "course.txt";
     private static String subDirName = "subDir";

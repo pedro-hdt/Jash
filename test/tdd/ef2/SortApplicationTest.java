@@ -1,15 +1,11 @@
 package tdd.ef2;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-import tdd.util.TestUtil;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,8 +14,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import tdd.util.TestUtil;
 
 /**
  * Tests for sort command.
@@ -50,9 +55,9 @@ public class SortApplicationTest {
     @BeforeAll
     static void setupAll() {
         String path = ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "src"
                 + StringUtils.fileSeparator() + "test"
                 + StringUtils.fileSeparator() + "tdd"
+                + StringUtils.fileSeparator() + "util"
                 + StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "SortTestFolder";
         if (Files.isDirectory(TestUtil.resolveFilePath(path))) {
