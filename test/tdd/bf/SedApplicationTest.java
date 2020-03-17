@@ -25,6 +25,7 @@ import jdk.nashorn.internal.ir.annotations.Ignore;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 class SedApplicationTest {
     private SedApplication sedApplication;
@@ -45,12 +46,12 @@ class SedApplicationTest {
     @BeforeEach
     public void setUp() throws Exception {
         String currentDir = Environment.currentDirectory;
-        dir = new File(currentDir + File.separator + DIR_NAME);
+        dir = new File(currentDir + StringUtils.fileSeparator() + DIR_NAME);
         dir.mkdir();
 
-        file1 = new File(currentDir + File.separator + DIR_NAME + File.separator + FILENAME1);
+        file1 = new File(currentDir + StringUtils.fileSeparator() + DIR_NAME + StringUtils.fileSeparator() + FILENAME1);
         Files.write(file1.toPath(), TEXT1.getBytes());
-        file2 = new File(currentDir + File.separator + DIR_NAME + File.separator + FILENAME2);
+        file2 = new File(currentDir + StringUtils.fileSeparator() + DIR_NAME + StringUtils.fileSeparator() + FILENAME2);
         Files.write(file2.toPath(), TEXT1.getBytes());
 
         stdin = new ByteArrayInputStream(TEXT1.getBytes());

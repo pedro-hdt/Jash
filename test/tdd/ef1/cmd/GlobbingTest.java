@@ -1,14 +1,7 @@
 package tdd.ef1.cmd;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,14 +10,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
 class GlobbingTest {
     private static final Path DIRECTORY = Paths.get("test", "tdd", "util", "dummyTestFolder", "GlobbingTestFolder");
-    private static final String RESOURCE_PATH = DIRECTORY.toString() + File.separator;
+    private static final String RESOURCE_PATH = DIRECTORY.toString() + StringUtils.fileSeparator();
     private static final String FOLDER_WITH_FILE = RESOURCE_PATH + "folderWithFile";
-    private static final String FOLDER_WITH_FILE_PATH = FOLDER_WITH_FILE + File.separator;
+    private static final String FOLDER_WITH_FILE_PATH = FOLDER_WITH_FILE + StringUtils.fileSeparator();
     private static final String FILE_1 = RESOURCE_PATH + "file1.txt";
     private static final String FILE_2 = RESOURCE_PATH + "file2.tat";
     private static final String FILE_3 = RESOURCE_PATH + "file3.taa";
@@ -122,7 +123,7 @@ class GlobbingTest {
 
     @Test
     void testResolveOneArgument_singleAsterisk_emptyFolder() throws AbstractApplicationException, ShellException {
-        String input = emptyFolder + File.separator + "*";
+        String input = emptyFolder + StringUtils.fileSeparator() + "*";
         // Not sure about the expected output
         List<String> expected = Arrays.asList(input);
         List<String> actual = argumentResolver.resolveOneArgument(input);
@@ -131,7 +132,7 @@ class GlobbingTest {
 
     @Test
     void testResolveOneArgument_singleAsterisk_nonExistentFolder() throws AbstractApplicationException, ShellException {
-        String input = RESOURCE_PATH + File.separator + "nonExistent" + File.separator + "*";
+        String input = RESOURCE_PATH + "nonExistent" + StringUtils.fileSeparator() + "*";
         List<String> expected = Arrays.asList(input);
         List<String> actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);

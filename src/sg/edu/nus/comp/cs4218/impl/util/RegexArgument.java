@@ -75,13 +75,16 @@ public final class RegexArgument {
             StringBuilder dir = new StringBuilder();
             String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
             for (int i = 0; i < tokens.length - 1; i++) {
-                dir.append(tokens[i]).append(File.separator);
+                dir.append(tokens[i]).append(StringUtils.fileSeparator());
             }
 
-            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir.toString()).toFile();
+            File currentDir = Paths.get(Environment.currentDirectory + StringUtils.fileSeparator() + dir.toString()).toFile();
 
+            if (currentDir == null || currentDir.list() == null) {
+                return Collections.singletonList(plaintext.toString());
+            }
             for (String candidate : currentDir.list()) {
-                if (regexPattern.matcher(candidate).matches()) {
+                if (regexPattern.matcher(dir + candidate).matches()) {
                     globbedFiles.add(dir + candidate);
                 }
             }
