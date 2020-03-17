@@ -23,10 +23,17 @@ public class CallCommand implements Command {
     private final ApplicationRunner appRunner;
     private final ArgumentResolver argumentResolver;
 
-    public CallCommand(List<String> argsList, ApplicationRunner appRunner, ArgumentResolver argumentResolver) {
+    public CallCommand(List<String> argsList, ApplicationRunner appRunner, ArgumentResolver argumentResolver) throws ShellException {
         this.argsList = argsList;
         this.appRunner = appRunner;
         this.argumentResolver = argumentResolver;
+
+        if (appRunner == null) {
+            throw new ShellException("Null App Runner");
+        }
+        if (argumentResolver == null) {
+            throw new ShellException("Null Argument Resolver");
+        }
     }
 
     @Override

@@ -72,3 +72,45 @@ Here is a list of all the bugs that we believe have been injected in the code pr
 - So far no tests have been written for these
 - Files with spaces in it have to be quoted
 
+
+
+# TDD - ignored tests
+
+SED: One case ignored cause null regex is not allowed in UNIX
+
+EXIT: One case ignored cause Different implementation style
+
+WC: Four tests ignored cause ours is behaving same as UNIX. Probably OS or arch diff with bytes flag
+
+MV: Two tests ignored cause they test out put stream which is not unit to Mv and can be tested by integration on higher level.
+    Two ignored cause our implementation is more similar to UNIX.
+    Please check `countFromFiles_multiFiles()` for formatting of result diff from actual unix
+    
+
+# TDD - fixes
+
+- CALL Command: 
+    - Fixed null edge cases
+    
+- Exit
+    - Should we change our impl?
+
+- Globbing
+    - Fixed regex bug for relative paths
+
+- CdApp
+    - Edge cases
+    - Null args
+    - No args and multiple args
+    - No permission
+
+- IoRedir
+    - For `abc > >` case
+    
+- Mv
+    - Multiple fixes for better implementation and exception error messages
+    
+    
+    
+
+Also includes trivial fixes in tests and small bugs

@@ -1,24 +1,28 @@
 package tdd.ef2;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.LsException;
-import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-import tdd.util.TestUtil;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.LsException;
+import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import tdd.util.TestUtil;
 
 /**
  * Test Suite for ls command
@@ -40,10 +44,10 @@ class LsApplicationTest {
     @BeforeAll
     static void setupAll() {
         String path = ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "src"
+//                + StringUtils.fileSeparator() + "src"
                 + StringUtils.fileSeparator() + "test"
                 + StringUtils.fileSeparator() + "tdd"
-                + StringUtils.fileSeparator() + "tdd/util"
+                + StringUtils.fileSeparator() + "util"
                 + StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "LsTestFolder";
         if (Files.isDirectory(TestUtil.resolveFilePath(path))) {

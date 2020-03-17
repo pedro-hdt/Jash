@@ -1,9 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.app.CdInterface;
-import sg.edu.nus.comp.cs4218.exception.CdException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
 import java.io.File;
 import java.io.InputStream;
@@ -12,7 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.app.CdInterface;
+import sg.edu.nus.comp.cs4218.exception.CdException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class CdApplication implements CdInterface {
 
@@ -38,6 +45,20 @@ public class CdApplication implements CdInterface {
         if (args == null) {
             throw new CdException(ERR_NULL_ARGS);
         }
+        if (stdin == null) {
+            throw new CdException(ERR_NO_ISTREAM);
+        }
+        if (stdout == null) {
+            throw new CdException(ERR_NO_OSTREAM);
+        }
+
+        if (args.length == 0) {
+            return;
+        }
+
+        if (args.length > 1) {
+            throw new CdException(ERR_TOO_MANY_ARGS);
+        }
         changeToDirectory(args[0]);
     }
 
@@ -52,11 +73,14 @@ public class CdApplication implements CdInterface {
         }
 
         if (!Files.exists(path)) {
-            throw new CdException(String.format(ERR_FILE_NOT_FOUND, pathStr));
+            throw new CdException(String.format("%s: %s", pathStr, ERR_FILE_NOT_FOUND));
         }
 
         if (!Files.isDirectory(path)) {
-            throw new CdException(String.format(ERR_IS_NOT_DIR, pathStr));
+            throw new CdException(String.format("%s: %s", pathStr, ERR_IS_NOT_DIR));
+        }
+        if (!Files.isExecutable(path)) {
+            throw new CdException(String.format("%s: %s", pathStr, ERR_NO_PERM));
         }
 
         return path.normalize().toString();

@@ -6,13 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CANNOT_OVERWRITE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_MOVABLE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -70,6 +71,7 @@ public class MvApplicationTest {
     public static final String NO_OVERWRITE_FILE = "NotOverwriteThisFile.txt";
 
     private static MvApplication mvApp;
+    private static OutputStream stdout;
 
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
@@ -122,6 +124,7 @@ public class MvApplicationTest {
     @BeforeEach
     void setUp() {
         mvApp = new MvApplication();
+        stdout = new ByteArrayOutputStream();
     }
 
 
@@ -130,7 +133,7 @@ public class MvApplicationTest {
      */
     @Test
     public void testFailsWithNullArgs() {
-        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(null, null, null));
+        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(null, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NULL_ARGS));
 
     }
@@ -140,10 +143,10 @@ public class MvApplicationTest {
      */
     @Test
     public void testFailsWithLessThan2Args() {
-        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[0], null, null));
+        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[0], null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NO_FILE_ARGS));
 
-        expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[1], null, null));
+        expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[1], null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NO_FILE_ARGS));
 
     }
@@ -154,7 +157,7 @@ public class MvApplicationTest {
     @Test
     public void testIllegalArgsException() {
 
-        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[]{"no-file.txt", "no-dir", "-f"}, null, null));
+        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[]{"no-file.txt", "no-dir", "-f"}, null, stdout));
         assertTrue(expectedException.getMessage().contains("illegal option"));
 
     }
@@ -166,7 +169,7 @@ public class MvApplicationTest {
     @Test
     public void testRenamingFailsWhenFileNotPresent() {
         Exception expectedException = assertThrows(MvException.class, ()
-                -> mvApp.run(new String[] {"file-not-present.txt", NEW_NAME_FILE}, null, null));
+                -> mvApp.run(new String[] {"file-not-present.txt", NEW_NAME_FILE}, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
 
     }
@@ -177,7 +180,7 @@ public class MvApplicationTest {
     @Test
     public void testMovingFailsWhenFileNotPresent() {
         Exception expectedException = assertThrows(MvException.class, ()
-                -> mvApp.run(new String[] {"file-not-present.txt", DEST_DIR}, null, null));
+                -> mvApp.run(new String[] {"file-not-present.txt", DEST_DIR}, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
 
     }
@@ -188,7 +191,7 @@ public class MvApplicationTest {
     @Test
     public void testRenameExistingFile() {
         try {
-            mvApp.run(new String[] {OLD_NAME_FILE, NEW_NAME_FILE}, null, null);
+            mvApp.run(new String[] {OLD_NAME_FILE, NEW_NAME_FILE}, null, stdout);
 
             assertTrue(Files.exists(IOUtils.resolveFilePath(NEW_NAME_FILE)));
         } catch (MvException e) {
@@ -204,7 +207,7 @@ public class MvApplicationTest {
 
         Files.createDirectory(IOUtils.resolveFilePath(OLD_DIR));
 
-        mvApp.run(new String[] {OLD_DIR, NEW_DIR}, null, null);
+        mvApp.run(new String[] {OLD_DIR, NEW_DIR}, null, stdout);
         assertTrue(Files.exists(IOUtils.resolveFilePath(NEW_DIR)));
 
         Files.deleteIfExists(IOUtils.resolveFilePath(NEW_DIR));
@@ -218,7 +221,7 @@ public class MvApplicationTest {
     @Test
     public void testMoveFileToDir() {
         try {
-            mvApp.run(new String[] {FILE_TO_MOVE_TXT, DEST_DIR}, null, null);
+            mvApp.run(new String[] {FILE_TO_MOVE_TXT, DEST_DIR}, null, stdout);
 
             assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
                     + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + FILE_TO_MOVE_TXT)));
@@ -237,7 +240,7 @@ public class MvApplicationTest {
         // Reset after moving dir to dir
         Files.createDirectory(IOUtils.resolveFilePath(INIT_DIR));
 
-        mvApp.run(new String[] {INIT_DIR, DEST_DIR}, null, null);
+        mvApp.run(new String[] {INIT_DIR, DEST_DIR}, null, stdout);
 
         assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + INIT_DIR)));
@@ -261,8 +264,8 @@ public class MvApplicationTest {
 
         Exception expectedException = assertThrows(MvException.class, ()
                 -> mvApp.run(new String[] {"-n", DEST_DIR + StringUtils.fileSeparator()
-                    + NO_OVERWRITE_FILE, NO_OVERWRITE_FILE}, null, null));
-        assertTrue(expectedException.getMessage().contains(ERR_NOT_MOVABLE));
+                    + NO_OVERWRITE_FILE, NO_OVERWRITE_FILE}, null, stdout));
+        assertTrue(expectedException.getMessage().contains("is a file and replacement not allowed"));
 
     }
 
@@ -274,8 +277,7 @@ public class MvApplicationTest {
     public void testCantMoveToNonEmptyDir() {
 
         Exception expectedException = assertThrows(MvException.class, ()
-                -> mvApp.run(new String[] {"toBeMoved", "abc"}, null, null));
-        System.out.println(expectedException.getMessage());
+                -> mvApp.run(new String[] {"toBeMoved", "abc"}, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_CANNOT_OVERWRITE));
 
     }
@@ -287,7 +289,7 @@ public class MvApplicationTest {
     @Test
     public void testOverwriteFileSuccess() throws IOException {
         try {
-            mvApp.run(new String[] {DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE, OVERWRITE_FILE}, null, null);
+            mvApp.run(new String[] {DEST_DIR + StringUtils.fileSeparator() + OVERWRITE_FILE, OVERWRITE_FILE}, null, stdout);
 
             String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(OVERWRITE_FILE)));
             assertTrue(str.contains("first"));
@@ -302,7 +304,7 @@ public class MvApplicationTest {
      */
     @Test
     public void testMoveMultipleFiles() throws MvException {
-        mvApp.run(new String[] {MOVE_FIRST_TXT, MOVE_SECOND_TXT, DEST_DIR, "-n"}, null, null);
+        mvApp.run(new String[] {MOVE_FIRST_TXT, MOVE_SECOND_TXT, DEST_DIR, "-n"}, null, stdout);
 
         assertTrue(Files.exists(Paths.get(Environment.getCurrentDirectory()
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_FIRST_TXT)));
