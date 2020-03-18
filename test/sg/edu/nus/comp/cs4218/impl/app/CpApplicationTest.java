@@ -108,11 +108,26 @@ class CpApplicationTest {
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        for (File f : (new File(DEST_DIR)).listFiles()) {
+        for (File f : IOUtils.resolveFilePath(DEST_DIR).toFile().listFiles()) {
             f.delete();
         }
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
         Environment.setCurrentDirectory(ORIGINAL_DIR);
+    }
+
+
+    /**
+     * Call cp without args
+     * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_NO_ARGS string
+     */
+    @Test
+    public void testFailsWithNoArg() {
+
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+
+        assertMsgContains(cpException, ERR_NO_ARGS);
+
     }
 
 
@@ -124,7 +139,7 @@ class CpApplicationTest {
     public void testFailsWithSingleArg() {
 
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+                assertThrows(CpException.class, () -> cpApp.run(new String[]{"someFileName"}, System.in, System.out));
 
         assertMsgContains(cpException, ERR_NO_ARGS);
 

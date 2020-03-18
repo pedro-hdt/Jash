@@ -110,6 +110,11 @@ MV: Two tests ignored cause they test out put stream which is not unit to Mv and
 - Mv
     - Multiple fixes for better implementation and exception error messages
     
+- Rm 
+    - Decision not to support file permissions as it is beyond the scope of the specification
+    - Added better reporting of when files cannot be removed for being directories and not having the right flags specified
+    - Added restriction of not being able to remove directories ".", ".." or ending in "/." or "/.."
+    
     
     
 
