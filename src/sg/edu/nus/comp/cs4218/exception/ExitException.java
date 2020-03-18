@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.exception;
 
-public class ExitException extends AbstractApplicationException {
+public class ExitException extends SecurityException {
     private static final long serialVersionUID = 6517503252362314995L;
 
     /**

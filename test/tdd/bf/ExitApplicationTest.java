@@ -1,14 +1,12 @@
 package tdd.bf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.security.Permission;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.exception.ExitException;
@@ -16,15 +14,6 @@ import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
 
 class ExitApplicationTest {
     private ExitApplication exitApp;
-
-    protected static class TestExitException extends SecurityException {
-        public final int status;
-
-        public TestExitException(int status) {
-            super("Expected Exit");
-            this.status = status;
-        }
-    }
 
     private static class NoExitSecurityManager extends SecurityManager {
         @Override
@@ -40,7 +29,7 @@ class ExitApplicationTest {
         @Override
         public void checkExit(int status) {
             super.checkExit(status);
-            throw new TestExitException(status);
+            throw new ExitException("terminating execution");
 
         }
     }
@@ -57,14 +46,11 @@ class ExitApplicationTest {
     }
 
     @Test
-    @Disabled("Different assumptions. Both ways are equally good. Can be passed by asserting in ExitException")
     public void testExit() {
         try {
             exitApp.terminateExecution();
-        } catch (TestExitException e) {
-            assertEquals(0, e.status); // TODO difference in how we handle exiting
         } catch (ExitException e) {
-            fail("Expected Exit");
+            assertEquals("exit: terminating execution", e.getMessage());
         }
     }
 
