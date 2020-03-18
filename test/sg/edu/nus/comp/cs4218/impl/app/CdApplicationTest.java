@@ -6,6 +6,7 @@ import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -111,17 +112,17 @@ class CdApplicationTest {
 
     /**
      * Attempt to call cd with multiple arguments
-     * Assumption: only first argument is considered and all others ignored
+     * Assumption: exception thrown
      */
     @Test
-    public void testMultArgs() throws IOException, CdException {
+    public void testMultArgs() throws IOException {
 
         // create 2 directories in current
         Path testDir1 = mkdir(Paths.get(Environment.currentDirectory));
         Path testDir2 = mkdir(Paths.get(Environment.currentDirectory));
 
-        cdApp.run(new String[]{testDir1.toString(), testDir2.toString()}, System.in, System.out);
-        assertEquals(testDir1.toString(), Environment.currentDirectory);
+        CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{testDir1.toString(), testDir2.toString()}, System.in, System.out));
+        assertMsgContains(exception, ERR_TOO_MANY_ARGS);
 
     }
 
