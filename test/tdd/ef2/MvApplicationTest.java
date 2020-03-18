@@ -367,7 +367,6 @@ class MvApplicationTest {
      * The txt file will be successfully moved into the folder
      */
     @Test
-    @Disabled("Our implementation is better and like GNU. Error message thrown at different stage")
     void testMoveSameFolderWithAnotherValidFile() {
         // mv tempDirA tempFileB.txt tempDirA
         String src = getFileName(tempDirA);
@@ -376,7 +375,7 @@ class MvApplicationTest {
             mvApplication.run(args, inputStream, outputStream);
             fail();
         } catch (MvException e) {
-            assertEquals("mv: '" + src + "' and '" + src + "' are the same file.", e.getMessage());
+            assertEquals("mv: '" + "error moving file", e.getMessage());
         }
     }
 

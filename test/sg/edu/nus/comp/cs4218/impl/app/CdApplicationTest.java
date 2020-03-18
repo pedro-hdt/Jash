@@ -5,9 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,6 +98,28 @@ class CdApplicationTest {
         assertMsgContains(exception, ERR_NULL_ARGS);
 
     }
+
+    /**
+     * Call cd with null args for run()
+     */
+    @Test
+    public void testNullInputStream() {
+        Exception exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, null, System.out));
+
+        assertMsgContains(exception, ERR_NO_ISTREAM);
+
+    }
+
+    /**
+     * Call cd with null args for run()
+     */
+    @Test
+    public void testNullOutputStream() {
+        Exception exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, System.in, null));
+
+        assertMsgContains(exception, ERR_NO_OSTREAM);
+
+    }
     /**
      * Calls cd with a single argument
      */
@@ -143,7 +170,6 @@ class CdApplicationTest {
 
     /**
      * Call cd without args. Should have no effect
-     * NOTE: Ignore cause EF1 bug. Run again after changing to @Test
      */
     @Test
     public void testNoArgs() throws CdException {
@@ -151,6 +177,20 @@ class CdApplicationTest {
         String dirBefore = Environment.getCurrentDirectory();
 
         cdApp.run(new String[]{}, System.in, System.out);
+        assertEquals(dirBefore, Environment.getCurrentDirectory());
+    }
+
+    /**
+     * Call cd without args. Should have no effect
+     */
+    @Test
+    public void testEmptyArgs() {
+
+        String dirBefore = Environment.getCurrentDirectory();
+
+        Exception exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{""}, System.in, System.out));
+
+        assertMsgContains(exception, ERR_NO_ARGS);
         assertEquals(dirBefore, Environment.getCurrentDirectory());
     }
 
@@ -168,6 +208,20 @@ class CdApplicationTest {
 
         CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{dirName}, System.in, System.out));
         assertMsgContains(exception, ERR_FILE_NOT_FOUND);
+    }
+
+    @Test
+    public void testChangeToDirectory_noReadPermission() {
+        String CD_PATH = Environment.getCurrentDirectory() + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
+
+        File testDir = new File(CD_PATH);
+        testDir.mkdir();
+        testDir.setExecutable(false);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            cdApp.changeToDirectory(CD_PATH);
+        });
+        assertEquals("cd: " + CD_PATH + ": " + ERR_NO_PERM, exception.getMessage());
     }
 
     /**

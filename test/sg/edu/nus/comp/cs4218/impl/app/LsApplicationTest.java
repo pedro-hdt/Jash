@@ -1,21 +1,28 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.LsException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
+import sg.edu.nus.comp.cs4218.exception.LsException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Test Suite for ls command
@@ -69,6 +76,21 @@ class LsApplicationTest {
         expectedException = assertThrows(LsException.class, () -> lsApp.run(new String[0], null, null));
         assertTrue(expectedException.getMessage().contains(ERR_NO_OSTREAM));
 
+    }
+
+    /**
+     * Test ls app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+
+            lsApp.run(new String[]{}, System.in, baos);
+            fail("Exception expected");
+        } catch (LsException e) {
+            assertEquals("ls: " + ERR_WRITE_STREAM, e.getMessage());
+        }
     }
 
     /**

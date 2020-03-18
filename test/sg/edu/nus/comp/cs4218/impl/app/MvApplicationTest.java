@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -138,6 +139,18 @@ public class MvApplicationTest {
 
     }
 
+    // Test mv app with null outputstream
+    @Test
+    void testNullOutputStream() {
+        try {
+            String[] args = {};
+            mvApp.run(args, System.in, null);
+            fail();
+        } catch (MvException e) {
+            assertEquals("mv: OutputStream not provided", e.getMessage());
+        }
+    }
+
     /**
      * Tests failing when insufficient args passed
      */
@@ -197,6 +210,52 @@ public class MvApplicationTest {
         } catch (MvException e) {
             fail("should not fail:" + e);//NOPMD -  Suppressed as its fine to have similar fail with different exception msg
         }
+    }
+
+    /**
+     * Tests attempt overwriting multiple files
+     */
+    @Test
+    public void testAttemptOverwritingMultipleFiles() {
+
+        Exception expectedException = assertThrows(MvException.class, ()
+                -> mvApp.run(new String[] {OLD_NAME_FILE, MOVE_FIRST_TXT, OLD_NAME_FILE}, null, stdout));
+        assertTrue(expectedException.getMessage().contains("'" + OLD_NAME_FILE + "' is not a directory."));
+
+    }
+
+    /*
+     * Test mv app move a folder into itself, and move a txt file into said folder
+     * The txt file will be successfully moved into the folder
+     */
+    @Test
+    void testMoveSameFolderWithAnotherValidFile() throws IOException {
+
+        Files.createFile(IOUtils.resolveFilePath("fileB.txt"));
+        Files.createDirectory(IOUtils.resolveFilePath("dirA"));
+
+        String dirA = "dirA";
+        try {
+            String[] args = {dirA, "fileB.txt", dirA};
+            mvApp.run(args, System.in, System.out);
+            fail();
+        } catch (MvException e) {
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "dirA", "fileB.txt")));
+            assertEquals("mv: " + "error moving file", e.getMessage());
+        } finally {
+            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), "dirA", "fileB.txt"));
+            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
+                    + StringUtils.fileSeparator() +  "dirA"));
+        }
+    }
+
+    /**
+     * Tests rename multiple files exception
+     */
+    @Test
+    public void testRenameMultipleFilesException() {
+        Exception expectedException = assertThrows(MvException.class, () -> mvApp.run(new String[]{OLD_NAME_FILE, MOVE_FIRST_TXT, "random-new-name.txt"}, null, stdout));
+        assertTrue(expectedException.getMessage().contains("can't rename multiple files"));
     }
 
     /**
@@ -314,6 +373,27 @@ public class MvApplicationTest {
                 + StringUtils.fileSeparator() + DEST_DIR + StringUtils.fileSeparator() + MOVE_SECOND_TXT)));
         assertTrue(!Files.exists(IOUtils.resolveFilePath(MOVE_SECOND_TXT)));
 
+    }
+
+    /*
+     * Test mv app when a file with same name is being moved without overwrite
+     */
+    @Test
+    void testFileAlreadyExistsWithNoOverwriteAllowed() throws IOException {
+        String dirB = "dirB";
+        String fileA = "fileA.txt";
+
+        Files.createFile(IOUtils.resolveFilePath(fileA));
+        Files.createDirectory(IOUtils.resolveFilePath(dirB));
+        Files.createFile(Paths.get(Environment.currentDirectory, dirB, fileA));
+
+        Exception expectedException = assertThrows(MvException.class, ()
+                -> mvApp.run(new String[] {fileA, dirB, "-n"}, null, stdout));
+        assertEquals("mv: " + ERR_CANNOT_OVERWRITE + " file already exists: fileA.txt", expectedException.getMessage());
+
+        Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), dirB, fileA));
+        Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), dirB));
+        Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), fileA));
     }
 
 

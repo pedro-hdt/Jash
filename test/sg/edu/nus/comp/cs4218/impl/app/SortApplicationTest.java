@@ -1,13 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,8 +15,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
+import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for sort command.
@@ -89,6 +97,20 @@ public class SortApplicationTest {
     public void testFailsWithEmptyStdin() {
         Exception expectedException = assertThrows(SortException.class, () -> sortApp.run(null, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
+    }
+
+    /**
+     * Test sort app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            sortApp.run(new String[]{"numbersOnly.txt"}, System.in, baos);
+            fail("Exception expected");
+        } catch (SortException e) {
+            assertEquals("sort: " + ERR_WRITE_STREAM, e.getMessage());
+        }
     }
 
     @Test

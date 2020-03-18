@@ -1,19 +1,24 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.TestUtils;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
-
-import java.io.ByteArrayOutputStream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * Provides unit tests for the EchoApplication class
@@ -66,6 +71,21 @@ public class EchoApplicationTest {
 
         assertMsgContains(exception, ERR_NO_OSTREAM);
 
+    }
+
+    /**
+     *     Test echo app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+
+            echo.run(new String[]{"hi"}, System.in, baos);
+            fail("Exception expected");
+        } catch (EchoException e) {
+            assertEquals("echo: " + ERR_IO_EXCEPTION, e.getMessage());
+        }
     }
 
     /**

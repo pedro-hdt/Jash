@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_GENERAL;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -83,6 +85,20 @@ public class WcApplicationTest {
     public void testFailsWithEmptyStdin() {
         Exception expectedException = assertThrows(WcException.class, () -> wcApp.run(null, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_GENERAL));
+    }
+
+    /**
+     * Test wc app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            wcApp.run(new String[]{"hi"}, System.in, baos);
+            fail("Exception expected");
+        } catch (WcException e) {
+            assertEquals("wc: " + ERR_WRITE_STREAM, e.getMessage());
+        }
     }
 
     @Test

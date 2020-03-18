@@ -105,6 +105,8 @@ public class SortApplicationTest {
         assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
     }
 
+
+
     @Test
     public void testNFlagNumberSort() {
         String[] args = new String[]{"-n", "numbersOnly.txt"};

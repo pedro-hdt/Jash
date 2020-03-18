@@ -2,6 +2,9 @@ package sg.edu.nus.comp.cs4218;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public final class TestUtils {
 
     private TestUtils() {
@@ -17,4 +20,12 @@ public final class TestUtils {
         assertTrue(exception.getMessage().contains(text));
     }
 
+    public static OutputStream getMockExceptionThrowingOutputStream() {
+        return new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                throw new IOException();
+            }
+        };
+    }
 }
