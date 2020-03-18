@@ -1,13 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.PasteInterface;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,11 +14,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 
-import sg.edu.nus.comp.cs4218.app.PasteInterface;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplication implements PasteInterface {
 
@@ -53,8 +50,15 @@ public class PasteApplication implements PasteInterface {
         StringBuilder sb = new StringBuilder();//NOPMD
 
         for (String f : fileName) {
+
+            File file = IOUtils.resolveFilePath(f).toFile();
+            if (!file.exists()) {
+                throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
+            } else if (file.isDirectory()) {
+                throw new PasteException(f + ": " + ERR_IS_DIR);
+            }
             try {
-                readers.add(new BufferedReader(new FileReader(IOUtils.resolveFilePath(f).toString())));
+                readers.add(new BufferedReader(new FileReader(file)));
             } catch (IOException e) {
                 throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
             }
@@ -62,21 +66,24 @@ public class PasteApplication implements PasteInterface {
 
         try {
 
-            boolean done = false;
-
-            while (!done) {
-                done = true;
+            boolean notDone;
+            do {
+                notDone = false;
                 for (BufferedReader reader : readers) { //NOPMD
                     String line = reader.readLine();
                     if (line != null) {
-                        done = false;
+                        notDone = true;
                         sb.append(line);
                     }
                     sb.append(CHAR_TAB);
                 }
                 sb.deleteCharAt(sb.length() - 1);
-                sb.append(STRING_NEWLINE);
-            }
+                if (notDone) {
+                    sb.append(STRING_NEWLINE);
+                }
+            } while (notDone);
+            sb.delete(sb.length() - readers.size() + 1, sb.length()); // remove extra tab chars
+            sb.deleteCharAt(sb.length() - 1); // remove extra newline
 
             for (BufferedReader reader : readers) {//NOPMD
                 reader.close();
@@ -86,7 +93,7 @@ public class PasteApplication implements PasteInterface {
             throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
         }
 
-        return sb.toString().trim();
+        return sb.toString();
 
     }
 
@@ -99,9 +106,15 @@ public class PasteApplication implements PasteInterface {
         for (String f : fileName) {
             try {
                 if ("-".equals(f)) {
-                    fileReaders.add(null);
+                    fileReaders.add(new BufferedReader(new InputStreamReader(stdin)));
                 } else {
-                    fileReaders.add(new BufferedReader(new FileReader(IOUtils.resolveFilePath(f).toString())));
+                    File file = IOUtils.resolveFilePath(f).toFile();
+                    if (!file.exists()) {
+                        throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
+                    } else if (file.isDirectory()) {
+                        throw new PasteException(f + ": " + ERR_IS_DIR);
+                    }
+                    fileReaders.add(new BufferedReader(new FileReader(file)));
                 }
             } catch (IOException e) {
                 throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
@@ -109,33 +122,33 @@ public class PasteApplication implements PasteInterface {
         }
 
         try {
-            ListIterator<String> stdinLines = Arrays.asList(mergeStdin(stdin).split(STRING_NEWLINE)).listIterator();
-            int columns = fileName.length;
-            int i = 0;//NOPMD
-            String line = "";
-            while (stdinLines.hasNext() || line != null) {
-
-                if (fileName[i % columns].equals("-")) {
-                    if (stdinLines.hasNext()) {
-                        sb.append(stdinLines.next());
+            boolean notDone;
+            do {
+                notDone = false;
+                for (BufferedReader reader : fileReaders) { //NOPMD
+                    String line = reader.readLine();
+                    if (line != null) {
+                        notDone = true;
+                        sb.append(line);
                     }
-                } else if ((line = fileReaders.get(i % columns).readLine()) != null) {
-                    sb.append(line);
+                    sb.append(CHAR_TAB);
                 }
-                sb.append(CHAR_TAB);
-
-                if (i % columns == columns - 1) {
-                    sb.deleteCharAt(sb.length() - 1);
+                sb.deleteCharAt(sb.length() - 1);
+                if (notDone) {
                     sb.append(STRING_NEWLINE);
                 }
+            } while (notDone);
+            sb.delete(sb.length() - fileReaders.size() + 1, sb.length()); // remove extra tab chars
+            sb.deleteCharAt(sb.length() - 1); // remove extra newline
 
-                i++;
+            for (BufferedReader reader : fileReaders) {//NOPMD
+                reader.close();
             }
         } catch (IOException e) {
             throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
         }
 
-        return sb.toString().trim();
+        return sb.toString();
 
     }
 
@@ -147,12 +160,16 @@ public class PasteApplication implements PasteInterface {
             throw new PasteException(ERR_NULL_ARGS);
         }
 
-        if (args.length == 0) {
-            throw new PasteException(ERR_NO_ARGS);
+        if (stdin == null) {
+            throw new PasteException(ERR_NO_ISTREAM);
         }
 
         if (stdout == null) {
             throw new PasteException(ERR_NO_OSTREAM);
+        }
+
+        if (args.length == 0) {
+            throw new PasteException(ERR_NO_ARGS);
         }
 
         boolean hasStdin = Arrays.stream(args).anyMatch((x) -> "-".equals(x));
@@ -184,7 +201,7 @@ public class PasteApplication implements PasteInterface {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
+            throw (PasteException) new PasteException(ERR_WRITE_STREAM).initCause(e);
         }
     }
 }

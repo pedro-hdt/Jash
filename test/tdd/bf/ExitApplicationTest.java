@@ -1,17 +1,17 @@
 package tdd.bf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.security.Permission;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
+
+import java.security.Permission;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ExitApplicationTest {
     private ExitApplication exitApp;
@@ -55,8 +55,8 @@ class ExitApplicationTest {
         exitApp = new ExitApplication();
     }
 
-    @Ignore
-    // Note: Different assumptions. Both ways are equally good
+    @Test
+    @Disabled("Different assumptions. Both ways are equally good")
     public void testExit() {
         try {
             exitApp.terminateExecution();

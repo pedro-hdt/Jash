@@ -110,7 +110,13 @@ MV: Two tests ignored cause they test out put stream which is not unit to Mv and
 - Mv
     - Multiple fixes for better implementation and exception error messages
     
-    
+- Paste
+    - Added check for null input stream and test cases for it and null output stream as well
+    - Added test case for null args
+    - Fixed extra of newlines at the end of output
+    - Better error message when file is not found
+    - Better error message when file is a directory
+    - etter error message when fail to write to outstream
     
 
 Also includes trivial fixes in tests and small bugs
