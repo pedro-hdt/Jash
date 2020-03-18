@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
@@ -9,6 +10,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +23,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -118,5 +122,14 @@ public class GlobbingTest {
         shell.parseAndEvaluate("mv mvFil* dire/", stdout);
 
         assertTrue(Files.exists(IOUtils.resolveFilePath("dire" + StringUtils.fileSeparator() + MV_FILE_TXT)));
+    }
+
+    @Test
+    void testResolveOneArgument_singleAsterisk_nonExistentFolder() throws AbstractApplicationException, ShellException {
+        ArgumentResolver argumentResolver = new ArgumentResolver();
+        String input = Environment.getCurrentDirectory() + StringUtils.fileSeparator() + "nonExistent" + StringUtils.fileSeparator() + "*";
+        List<String> expected = Arrays.asList(input);
+        List<String> actual = argumentResolver.resolveOneArgument(input);
+        assertEquals(expected, actual);
     }
 }

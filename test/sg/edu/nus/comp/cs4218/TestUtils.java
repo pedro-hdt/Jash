@@ -26,6 +26,11 @@ public final class TestUtils {
             public void write(int b) throws IOException {
                 throw new IOException();
             }
+
+            @Override
+            public void close() throws IOException {
+                throw new IOException();
+            }
         };
     }
 }
