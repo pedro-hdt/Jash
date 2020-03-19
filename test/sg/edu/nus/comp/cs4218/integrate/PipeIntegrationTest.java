@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
@@ -130,6 +131,70 @@ public class PipeIntegrationTest {
 
     }
 
+
+    @Test
+    public void testSimplePipe6() throws ShellException, AbstractApplicationException {
+
+        String expected = "dummyTestFolder:" + STRING_NEWLINE +
+                "CdTestFolder" + STRING_NEWLINE +
+                "CommandSubsTest" + STRING_NEWLINE +
+                "CpTestFolder" + STRING_NEWLINE +
+                "CutTestFolder" + STRING_NEWLINE +
+                "DiffTestFolder" + STRING_NEWLINE +
+                "FindTestFolder" + STRING_NEWLINE +
+                "GlobbingTest" + STRING_NEWLINE +
+                "GrepTestFolder" + STRING_NEWLINE +
+                "LsTestFolder" + STRING_NEWLINE +
+                "MvTestFolder" + STRING_NEWLINE +
+                "PasteTestFolder" + STRING_NEWLINE +
+                "PipeTestFolder" + STRING_NEWLINE +
+                "QuotesCommandTest" + STRING_NEWLINE +
+                "SedTestFolder" + STRING_NEWLINE +
+                "SequenceTestFolder" + STRING_NEWLINE +
+                "SortTestFolder" + STRING_NEWLINE +
+                "WcTestFolder" + STRING_NEWLINE;
+
+        CallCommand ls = new CallCommand(Arrays.asList("ls", "./dummyTestFolder"), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
+
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(ls, paste));
+
+        pipeCommand.evaluate(System.in, out);
+
+        assertEquals(expected, out.toString());
+
+    }
+
+
+    @Test
+    public void testSimplePipe7() throws ShellException, AbstractApplicationException {
+
+        CallCommand wc = new CallCommand(Arrays.asList("wc", "-c", "./dummyTestFolder/WcTestFolder/wc2.txt"), appRunner, argumentResolver);
+        CallCommand grep = new CallCommand(Arrays.asList("grep", "42"), appRunner, argumentResolver);
+
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(wc, grep));
+
+        pipeCommand.evaluate(System.in, out);
+
+        assertEquals("", out.toString());
+
+    }
+
+
+    @Test
+    public void testSimplePipe8() throws ShellException {
+
+        CallCommand ls = new CallCommand(Arrays.asList("ls"), appRunner, argumentResolver);
+        CallCommand exit = new CallCommand(Arrays.asList("exit"), appRunner, argumentResolver);
+
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(ls, exit));
+
+        ExitException exitException = assertThrows(ExitException.class, () -> pipeCommand.evaluate(System.in, out));
+        assertMsgContains(exitException, "terminating execution");
+
+    }
+
+
     @Test
     public void testSimplePipeFirstCommandFails() throws ShellException, AbstractApplicationException {
 
@@ -144,7 +209,7 @@ public class PipeIntegrationTest {
     }
 
     @Test
-    public void testSimplePipeSecondCommandDoesNotExist() throws ShellException, AbstractApplicationException {
+    public void testSimplePipeSecondCommandDoesNotExist() throws ShellException {
 
         CallCommand paste = new CallCommand(Arrays.asList("ls"), appRunner, argumentResolver);
         CallCommand fake = new CallCommand(Arrays.asList("fakeCommand", "arg"), appRunner, argumentResolver);
