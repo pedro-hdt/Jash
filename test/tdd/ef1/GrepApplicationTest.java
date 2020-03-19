@@ -52,13 +52,13 @@ public class GrepApplicationTest {
             "Jin ying loves to Repeat" + StringUtils.STRING_NEWLINE;
 
     private static final String MULTIPLE_FILES_CASE_SENSITIVE_MATCHES_COUNT =
-            "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"//NOPMD
+            "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"//NOPMD
                     + StringUtils.CHAR_FILE_SEP
                     + "GrepTestFolder"//NOPMD
                     + StringUtils.CHAR_FILE_SEP
                     + "file_uppercase_multiplelines.txt: 5"
                     + StringUtils.STRING_NEWLINE
-                    + "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
+                    + "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
                     + StringUtils.CHAR_FILE_SEP
                     + "GrepTestFolder"
                     + StringUtils.CHAR_FILE_SEP
