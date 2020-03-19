@@ -110,3 +110,5 @@ hs_err_pid*
 .idea/codeStyles
 .idea/libraries/lib.xml
 src/.DS_Store
+
+.evoduite/

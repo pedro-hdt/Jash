@@ -127,3 +127,39 @@ Cut:
     - Changed expected results of testRunWithTwoFile() as there is a error in the expected results.
 
 Also includes trivial fixes in tests and small bugs
+
+
+
+# Experience with EvoSuite
+
+All generated tests were pushed to package `test.automated` in source code style.
+We then picked cases which we determined were useful (Testing is an art and hence we had to choose whats best for software)
+
+1. We have mainly used EvoSuite for couple of purposes:
+    - Generate random inputs (which seems more useful for command builders, regex, argumentresolvers than for actual commands)
+    - For testing util functions as they are integral part of project
+    
+1. Main aim was to increase coverage and build trust in our test suite.
+However, to avoid explosion of test cases which would'nt be useful for either rigorous testing or finding bugs and increasing
+testing time were avoided.
+
+
+### Big Wins with EvoSuite
+
+1. 100% Class coverage for covering ErrorConstant static class
+1. 100% Util Testing for CommandBuilder, StringUtils, RegexArgument, ArgumentResolver.
+1. Provides virtual file system
+1. Optimization of different coverage criteria, like lines, branches, outputs and mutation testing
+1. Covers more coverage but doesnt generate functionality related cases. Hence having our previous cases were good enough for unit tests
+1. Good for generating trivial test cases quickly e.g. parsers because despite them being simple are trivial in finding bugs
+
+
+### Problems we faced
+
+1. Calls to libraries not part of our project especially for mocking files etc
+1. Need to modify tests 
+1. Generates many random cases for unit since it doesn't know what driver calls it in actual software based on other rules
+and hence generates many useless tests. For e.g. Echo
+1. Didnt use for Apps as it generated fewer and tests which didnt add value to our current test suite. E.g. Echo
+1. Amazing virtual file system but couldnt make full use due to restriction on dependncy jars that can be used
+1. Unable to create correct tests cause of inheritance variable access rules for child classes
