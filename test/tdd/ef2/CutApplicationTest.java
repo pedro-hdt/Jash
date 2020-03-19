@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.app.CutInterface;
@@ -167,6 +168,43 @@ class CutApplicationTest {
             app.run(args, System.in, outputStream);
             assertEquals(expectResult, outputStream.toString());
         });
+    }
+
+    @Test
+    @Disabled("There is always the chance that an IOException is encountered, so one cannot avoid the exception handling code." +
+            " Adding this test is likely to complicate the code.")
+    void testRunWithClosedOutputStream() {
+        String[] args = {"-b", "1-8", folderName + CHAR_FILE_SEP + fileNameTest};
+        Throwable thrown = assertThrows(CutException.class, () -> {
+            outputStream = new FileOutputStream(new File(folderName + CHAR_FILE_SEP + fileNameEmpty1));
+            IOUtils.closeOutputStream(outputStream);
+            app.run(args, System.in, outputStream);
+        });
+        assertEquals(thrown.getMessage(), cutPrefix + ERR_WRITE_STREAM);
+    }
+
+    @Test
+    @Disabled("GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.")
+    void testRunCharacterIndexOutOfRange() {
+        String original = "baz";
+        InputStream stdin = new ByteArrayInputStream(original.getBytes());
+        String[] args = {"-c", "1-8", "-"};
+        outputStream = new ByteArrayOutputStream();
+        Throwable thrown = assertThrows(CutException.class, () -> {
+            app.run(args, stdin, outputStream);
+        });
+        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE);
+    }
+
+    @Test
+    @Disabled("GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.")
+    void testRunByteIndexOutOfRange() {
+        String[] args = {"-b", "1-20", folderName + CHAR_FILE_SEP + fileNameTest};
+        outputStream = new ByteArrayOutputStream();
+        Throwable thrown = assertThrows(CutException.class, () -> {
+            app.run(args, System.in, outputStream);
+        });
+        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE);
     }
 
     @Test
