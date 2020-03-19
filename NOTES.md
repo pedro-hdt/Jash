@@ -115,7 +115,8 @@ MV: Two tests ignored cause they test out put stream which is not unit to Mv and
     - Added better reporting of when files cannot be removed for being directories and not having the right flags specified
     - Added restriction of not being able to remove directories ".", ".." or ending in "/." or "/.."
     
-    
+- Find
+    - Change exception message to be same as UNIX
     
 
 Also includes trivial fixes in tests and small bugs

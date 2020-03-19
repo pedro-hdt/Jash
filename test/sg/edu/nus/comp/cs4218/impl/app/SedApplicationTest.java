@@ -233,6 +233,9 @@ public class SedApplicationTest {
         Exception exception = assertThrows(Exception.class, ()
                 -> sed.replaceSubstringInFile("regex", "yes", 1, file.toString()));
         assertTrue(exception.getMessage().contains(ERR_NO_PERM));
+
+        file.setReadable(true);
+        file.delete();
     }
 
     /**
