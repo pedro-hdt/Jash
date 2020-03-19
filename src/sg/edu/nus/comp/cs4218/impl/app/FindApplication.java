@@ -1,9 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.app.FindInterface;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,8 +14,9 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.app.FindInterface;
+import sg.edu.nus.comp.cs4218.exception.FindException;
 
 public class FindApplication implements FindInterface {
     public static final String FILE_IDENT = CHAR_FLAG_PREFIX + "name";
@@ -37,7 +38,7 @@ public class FindApplication implements FindInterface {
      * invalid arguments are given.
      */
     @Override
-    public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+    public void run(String[] args, InputStream stdin, OutputStream stdout) throws FindException {
         ArrayList<String> folderNames = new ArrayList<>();
 
         try {
@@ -180,7 +181,7 @@ public class FindApplication implements FindInterface {
             File folder = new File(path);
 
             if (!folder.exists() || !folder.isDirectory()) {
-                stringJoiner.add("find: " + f + ": " + ERR_FOLDER_NOT_FOUND);
+                stringJoiner.add("find: " + f + ": " + ERR_FILE_NOT_FOUND);
                 continue;
             }
             if (!folder.canRead()) {

@@ -1,11 +1,7 @@
 package tdd.ef1;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -19,8 +15,13 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
 public class GrepApplicationTest {
@@ -51,13 +52,13 @@ public class GrepApplicationTest {
             "Jin ying loves to Repeat" + StringUtils.STRING_NEWLINE;
 
     private static final String MULTIPLE_FILES_CASE_SENSITIVE_MATCHES_COUNT =
-            "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"//NOPMD
+            "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"//NOPMD
                     + StringUtils.CHAR_FILE_SEP
                     + "GrepTestFolder"//NOPMD
                     + StringUtils.CHAR_FILE_SEP
                     + "file_uppercase_multiplelines.txt: 5"
                     + StringUtils.STRING_NEWLINE
-                    + "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
+                    + "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
                     + StringUtils.CHAR_FILE_SEP
                     + "GrepTestFolder"
                     + StringUtils.CHAR_FILE_SEP
@@ -73,25 +74,25 @@ public class GrepApplicationTest {
     private static final String NO_INPUTSTREAM_NO_FILENAMES = "grep: No InputStream and no filenames";
     private static final String REGEX_CANNOT_BE_EMPTY = "grep: Regular expression cannot be empty";
     private Path fileTwoPath;
-    private static final String FILE_TWO_PATH_STRING = "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
+    private static final String FILE_TWO_PATH_STRING = "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "GrepTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "file_noread_permission.txt";
 
-    private static final String FILE_ABCABC = "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
+    private static final String FILE_ABCABC = "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "GrepTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "file_abcabc.txt";
 
-    private static final String FILE_JINYING_MULTIPLELINES = "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
+    private static final String FILE_JINYING_MULTIPLELINES = "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "GrepTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "file_jinying_multiplelines.txt";
 
-    private static final String FILE_UPPERCASE_MULTIPLELINES = "tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
+    private static final String FILE_UPPERCASE_MULTIPLELINES = "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
             + StringUtils.CHAR_FILE_SEP
             + "GrepTestFolder"
             + StringUtils.CHAR_FILE_SEP

@@ -44,7 +44,6 @@ class LsApplicationTest {
     @BeforeAll
     static void setupAll() {
         String path = ORIGINAL_DIR
-//                + StringUtils.fileSeparator() + "src"
                 + StringUtils.fileSeparator() + "test"
                 + StringUtils.fileSeparator() + "tdd"
                 + StringUtils.fileSeparator() + "util"

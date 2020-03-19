@@ -28,6 +28,13 @@ import sg.edu.nus.comp.cs4218.exception.EchoException;
  * - no arguments
  * - single argument
  * - two arguments
+ * - multiple args
+ *
+ * <p>
+ * Negative test cases:
+ * - null stream or args
+ * - stdout throws exception
+ *
  */
 public class EchoApplicationTest {
 
@@ -115,6 +122,18 @@ public class EchoApplicationTest {
     }
 
     /**
+     * Call echo with a single argument as keyword
+     */
+    @Test
+    public void singleArgAsKeyword() throws EchoException {
+
+        echo.run(new String[]{"echo"}, System.in, out);
+
+        assertEquals("echo" + STRING_NEWLINE, out.toString());
+
+    }
+
+    /**
      * Call echo with a single argument as space
      */
     @Test
@@ -135,6 +154,18 @@ public class EchoApplicationTest {
         echo.run(new String[]{"hello", "world"}, System.in, out);
 
         assertEquals("hello world" + STRING_NEWLINE, out.toString());
+
+    }
+
+    /**
+     * Call echo with multiple arguments
+     */
+    @Test
+    public void multipleArgs() throws EchoException {
+
+        echo.run(new String[]{"hello", "world", "how", "are", "you man"}, System.in, out);
+
+        assertEquals("hello world how are you man" + STRING_NEWLINE, out.toString());
 
     }
 
