@@ -138,8 +138,6 @@ public class CutApplication implements CutInterface {
                     throw new CutException(ERR_NO_PERM);
                 }
                 stdin = IOUtils.openInputStream(srcPath);
-            } else if (srcPath == null) {
-                throw new CutException(ERR_NULL_ARGS);
             } else {
                 stdin = inputStream;
             }
@@ -237,13 +235,8 @@ public class CutApplication implements CutInterface {
 
             // Read from stdin
             if (files.length == 0 || (files.length == 1 && files[0].contains("-"))) {
-                if (stdin == null) {
-                    throw new Exception(ERR_NULL_STREAMS);
-                }
                 result = cutFromStdin(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, stdin).trim() + STRING_NEWLINE;
                 stdout.write(result.getBytes());
-            } else if (files == null) {
-                throw new CutException(ERR_NULL_ARGS);
             } else { // Read from files
                 result = cutFromFiles(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, files).trim() + STRING_NEWLINE;
                 stdout.write(result.getBytes());
