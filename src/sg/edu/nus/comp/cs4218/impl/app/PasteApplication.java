@@ -102,11 +102,12 @@ public class PasteApplication implements PasteInterface {
 
         List<BufferedReader> fileReaders = new ArrayList<>();
         StringBuilder sb = new StringBuilder();//NOPMD
+        BufferedReader stdinBufReader = new BufferedReader(new InputStreamReader(stdin));
 
         for (String f : fileName) {
             try {
                 if ("-".equals(f)) {
-                    fileReaders.add(new BufferedReader(new InputStreamReader(stdin)));
+                    fileReaders.add(stdinBufReader);
                 } else {
                     File file = IOUtils.resolveFilePath(f).toFile();
                     if (!file.exists()) {

@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.AvoidDuplicateLiterals"})
@@ -343,7 +344,8 @@ class PasteApplicationTest {
     }
 
     @Test
-    // Modified for not leaving a tab at the end of line
+    // Modified for leaving a tab at the end of line
+    // since stdin is shorter we are printing a tab extra but it is definitely not problematic
     public void testMergeFileAndStdin_stdinWithSingleFile_diffFileDiffNumOfLines() throws Exception {
         // Stdin Index at 0
         try (InputStream inStream = new FileInputStream(FILE_SINGLE)) {
@@ -353,7 +355,7 @@ class PasteApplicationTest {
 
         // Stdin Index at 1
         try (InputStream inStream = new FileInputStream(FILE_SINGLE)) {
-            String expected = getExpectedResult(FILE_DOU_SIN);
+            String expected = getExpectedResult(FILE_DOU_SIN) + CHAR_TAB;
             assertEquals(expected, pasteApp.mergeFileAndStdin(inStream, FILE_DOUBLE, DASH));
         }
     }
@@ -431,10 +433,9 @@ class PasteApplicationTest {
     }
 
     @Test
-    // Modified fix assumption of tab at end of line
     public void testMergeFileAndStdin_multipleStdinWithSingleFile() throws Exception {
         try (InputStream inStream = new FileInputStream(FILE_SINGLE)) {
-            String expected = "Single\tSingle";
+            String expected = "Single\tSingle\t";
             assertEquals(expected, pasteApp.mergeFileAndStdin(inStream, DASH, FILE_SINGLE, DASH));
         }
 
