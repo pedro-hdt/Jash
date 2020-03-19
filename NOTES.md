@@ -85,8 +85,12 @@ WC: Four tests ignored cause ours is behaving same as UNIX. Probably OS or arch 
 MV: Two tests ignored cause they test out put stream which is not unit to Mv and can be tested by integration on higher level.
     Two ignored cause our implementation is more similar to UNIX.
     Please check `countFromFiles_multiFiles()` for formatting of result diff from actual unix
-    
 
+Cut: 
+- Ignored testRunByteIndexOutOfRange() because GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.
+- Ignored testRunCharacterIndexOutOfRange() because GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.
+- Ignored testRunWithClosedOutputStream(). There is always the chance that an IOException is encountered, so one cannot avoid the exception handling code. Adding this test is likely to complicate the code.
+                                           
 # TDD - fixes
 
 - CALL Command: 
@@ -117,6 +121,9 @@ MV: Two tests ignored cause they test out put stream which is not unit to Mv and
     
 - Find
     - Change exception message to be same as UNIX
-    
+       
+- Cut
+    - Changed expected results of testCutTwoCharactersInReverseOrderFromFile() to fit GNU cut's implementation.
+    - Changed expected results of testRunWithTwoFile() as there is a error in the expected results.
 
 Also includes trivial fixes in tests and small bugs
