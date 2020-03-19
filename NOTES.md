@@ -165,7 +165,15 @@ and hence generates many useless tests. For e.g. Echo
 1. Unable to create correct tests cause of inheritance variable access rules for child classes
 
 
-### How the tests generated were used?
+# Experience with SqTest
+
+1. Generated cases which dont consider output.
+1. Has a good basic structure of tests which need to be modifed and can generate based on what dependencies need to be mocked.
+1. Not very useful for us as we had already followed such patter and this was just a automated way to do which would have proven
+very useful for Milestone1
+1. For unit cases specific to this project it wasnt able to generate for different types of inputs and path.
+
+## How the tests generated were used?
 
 - The main purpose was to increase coverage by covering edge cases.
 - Having regression tests were also useful as we were simultaneously updating our implementation while fixing TDD tests.
@@ -173,14 +181,14 @@ and hence generates many useless tests. For e.g. Echo
 - Some used the virtual file system effectively.
 
 
-### Which tests were not used for submission?
+## Which tests were not used for submission?
 - Tests which didn't add much value to the current suite
 - Were already covered by functional tests. Evosiote especially helped in generating structural tests and on early exploration with other tools like Randoop
 - Tests redundant to current suite. Since they were unit tests and our tests were already high standard we chose to ignore the newly generated ones.
 - Some tests had to be ignored due to project specifics. (E.g. in report)
 
 
-### Bugs found
+## Bugs found
 
 - Globbing relative path
 - IORedir `> >`
