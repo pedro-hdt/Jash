@@ -8,23 +8,29 @@ import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
 
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 
@@ -33,8 +39,10 @@ public class GrepApplicationTest {
     public static final String FOLDER1 = "Test-folder-1";
     public static final String FOLDER2 = "Test-folder-2";
     public static final String TEXTFILE = "textfile.txt";
+    public static final String NO_READ_FILE = "file_noread_permission.txt";
     public static final String PATTERN = "pattern";
     public static final String CONTENT1 = "Patience is the key to success";
+    public static final String UNREADABLE_FILE = "unreadableFile.txt";
 
     static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
     private static GrepApplication grepApplication;
@@ -181,6 +189,13 @@ public class GrepApplicationTest {
             null, stdout);
         assertEquals(FOLDER2 + StringUtils.fileSeparator() + "textfile.txt: patterns" + StringUtils.STRING_NEWLINE,
             stdout.toString());
+    }
+
+    @Test
+    public void testGrepWithNotReadableFile() throws AbstractApplicationException, IOException {
+
+        grepApplication.run(new String[] {PATTERN, FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE} , System.in, stdout);
+        assertEquals(FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE + ": " + ERR_NO_PERM, stdout.toString());
     }
 
     /**
@@ -334,7 +349,7 @@ public class GrepApplicationTest {
     }
 
     /**
-     * Try grep input from stdin withall options
+     * Try grep input from stdin with-all options
      *
      * @throws AbstractApplicationException
      */
