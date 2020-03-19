@@ -163,3 +163,28 @@ and hence generates many useless tests. For e.g. Echo
 1. Didnt use for Apps as it generated fewer and tests which didnt add value to our current test suite. E.g. Echo
 1. Amazing virtual file system but couldnt make full use due to restriction on dependncy jars that can be used
 1. Unable to create correct tests cause of inheritance variable access rules for child classes
+
+
+### How the tests generated were used?
+
+- The main purpose was to increase coverage by covering edge cases.
+- Having regression tests were also useful as we were simultaneously updating our implementation while fixing TDD tests.
+- Generating random inputs also helped in testing unique situations which found faults in the software. However, some of them were very specific which didn't apply to the software scope.
+- Some used the virtual file system effectively.
+
+
+### Which tests were not used for submission?
+- Tests which didn't add much value to the current suite
+- Were already covered by functional tests. Evosiote especially helped in generating structural tests and on early exploration with other tools like Randoop
+- Tests redundant to current suite. Since they were unit tests and our tests were already high standard we chose to ignore the newly generated ones.
+- Some tests had to be ignored due to project specifics. (E.g. in report)
+
+
+### Bugs found
+
+- Globbing relative path
+- IORedir `> >`
+- NullPointerExceptions (Ls, Find) [Null checks]
+- Index cases for Parser
+- ClassCastExceptions, InvalidInputException
+- Evosuite generated tests considering our impl is bug-free.
