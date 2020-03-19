@@ -108,7 +108,7 @@ class IOUtilsTest {
 
     @Test
     void testOuputStreamsThrowsException() {
-        OutputStream outputStream = TestUtils.getMockExceptionThrowingOutputStream();
+        OutputStream outputStream = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
 
         Exception exception = assertThrows(ShellException.class, () -> IOUtils.closeOutputStream(outputStream));
         assertMsgContains(exception, ERR_CLOSING_STREAMS);

@@ -150,7 +150,7 @@ public class SedApplicationTest {
     @Test
     void testWritingResultToOutputStreamException() {
         try {
-            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
 
             sed.run(new String[]{"s|abc|def|"},new ByteArrayInputStream("random".getBytes()), baos);
             fail("Exception expected");

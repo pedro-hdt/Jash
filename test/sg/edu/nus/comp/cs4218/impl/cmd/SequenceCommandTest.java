@@ -69,7 +69,7 @@ public class SequenceCommandTest {
     @Test
     void testWritingResultToOutputStreamException() {
         try {
-            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
 
             CallCommand exitCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hi")), new ApplicationRunner(), new ArgumentResolver());
             CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "shout")), new ApplicationRunner(), new ArgumentResolver());

@@ -84,7 +84,7 @@ class LsApplicationTest {
     @Test
     void testWritingResultToOutputStreamException() {
         try {
-            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD//NOPMD
 
             lsApp.run(new String[]{}, System.in, baos);
             fail("Exception expected");

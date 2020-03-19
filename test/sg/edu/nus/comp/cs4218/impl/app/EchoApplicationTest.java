@@ -86,9 +86,9 @@ public class EchoApplicationTest {
     @Test
     void testWritingResultToOutputStreamException() {
         try {
-            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream(); //NOPMD
 
-            echo.run(new String[]{"hi"}, System.in, baos);
+            echo.run(new String[]{"heya"}, System.in, baos);
             fail("Exception expected");
         } catch (EchoException e) {
             assertEquals("echo: " + ERR_IO_EXCEPTION, e.getMessage());
@@ -115,9 +115,9 @@ public class EchoApplicationTest {
     @Test
     public void singleArg() throws EchoException {
 
-        echo.run(new String[]{"hello"}, System.in, out);
+        echo.run(new String[]{"single"}, System.in, out);
 
-        assertEquals("hello" + STRING_NEWLINE, out.toString());
+        assertEquals("single" + STRING_NEWLINE, out.toString());
 
     }
 
@@ -163,9 +163,9 @@ public class EchoApplicationTest {
     @Test
     public void multipleArgs() throws EchoException {
 
-        echo.run(new String[]{"hello", "world", "how", "are", "you man"}, System.in, out);
+        echo.run(new String[]{"hi", "boy", "how", "are", "you man"}, System.in, out);
 
-        assertEquals("hello world how are you man" + STRING_NEWLINE, out.toString());
+        assertEquals("hi boy how are you man" + STRING_NEWLINE, out.toString());
 
     }
 

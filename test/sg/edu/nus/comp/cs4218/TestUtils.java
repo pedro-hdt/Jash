@@ -23,7 +23,7 @@ public final class TestUtils {
     public static OutputStream getMockExceptionThrowingOutputStream() {
         return new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int bytes) throws IOException {
                 throw new IOException();
             }
 

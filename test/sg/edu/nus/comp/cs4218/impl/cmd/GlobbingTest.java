@@ -37,6 +37,11 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 public class GlobbingTest {
 
     public static final String MV_FILE_TXT = "mvFile.txt";
+    public static final String MATCH1_TXT = "match1.txt";
+    public static final String F1_TXT = "f1.txt";
+    public static final String DIRE = "dire";
+    public static final String ABC_TAT_FILE = "abc.tat";
+    public static final String F1_TAD_FILE = "f1.tad";
     public ShellImpl shell;
     private ArgumentResolver argumentResolver;
     private static OutputStream stdout;
@@ -83,7 +88,7 @@ public class GlobbingTest {
     public void testGlobbingWithMatch() throws AbstractApplicationException, ShellException {
         shell.parseAndEvaluate("ls match*", stdout);
 
-        assertTrue(stdout.toString().contains("match1.txt"));
+        assertTrue(stdout.toString().contains(MATCH1_TXT));
     }
 
     /**
@@ -93,7 +98,7 @@ public class GlobbingTest {
     public void testGlobbingWithMultipleMatches() throws AbstractApplicationException, ShellException {
         shell.parseAndEvaluate("ls *.txt", stdout);
 
-        assertTrue(stdout.toString().contains("f1.txt" + StringUtils.STRING_NEWLINE + "match1.txt"));
+        assertTrue(stdout.toString().contains(F1_TXT + StringUtils.STRING_NEWLINE + MATCH1_TXT));
     }
 
     /**
@@ -117,20 +122,20 @@ public class GlobbingTest {
     @Disabled("TEMP. as its modifying the folder structure. Put this test under integration")
     public void testGlobbingIntegrationWithMv() throws AbstractApplicationException, ShellException, IOException {
 
-        assertFalse(Files.exists(IOUtils.resolveFilePath("dire" + StringUtils.fileSeparator() + MV_FILE_TXT)));
+        assertFalse(Files.exists(IOUtils.resolveFilePath(DIRE + StringUtils.fileSeparator() + MV_FILE_TXT)));
 
         shell.parseAndEvaluate("mv mvFil* dire/", stdout);
 
-        assertTrue(Files.exists(IOUtils.resolveFilePath("dire" + StringUtils.fileSeparator() + MV_FILE_TXT)));
+        assertTrue(Files.exists(IOUtils.resolveFilePath(DIRE + StringUtils.fileSeparator() + MV_FILE_TXT)));
 
         // Reset after moving file to dir
         Files.createFile(IOUtils.resolveFilePath(MV_FILE_TXT));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + StringUtils.fileSeparator() + "dire" + StringUtils.fileSeparator() + MV_FILE_TXT));
+                + StringUtils.fileSeparator() + DIRE + StringUtils.fileSeparator() + MV_FILE_TXT));
     }
 
     @Test
-    void testResolveOneArgument_singleAsterisk_nonExistentFolder() throws AbstractApplicationException, ShellException {
+    void testSingleAsteriskInvalidFile() throws AbstractApplicationException, ShellException {
         ArgumentResolver argumentResolver = new ArgumentResolver();
         String input = Environment.getCurrentDirectory() + StringUtils.fileSeparator() + "nonExistent" + StringUtils.fileSeparator() + "*";
         List<String> expected = Arrays.asList(input);
@@ -139,31 +144,31 @@ public class GlobbingTest {
     }
 
     @Test
-    void testResolveOneArgument_multipleAsterisk_folderWithFile_fileExtension() throws AbstractApplicationException, ShellException {
+    void testMultipleAsterisks() throws AbstractApplicationException, ShellException {
         String input = "*.t*";
-        List<String> expected = Arrays.asList("abc.tat", "f1.tad", "f1.txt", "match1.txt", "mvFile.txt", "test.txt");
+        List<String> expected = Arrays.asList(ABC_TAT_FILE, F1_TAD_FILE, F1_TXT, MATCH1_TXT, MV_FILE_TXT, "test.txt");
         Collections.sort(expected);
         List<String> actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
 
         input =  "*.t*t";
-        expected = Arrays.asList("abc.tat", "f1.txt", "match1.txt", "mvFile.txt", "test.txt");
+        expected = Arrays.asList(ABC_TAT_FILE, F1_TXT, MATCH1_TXT, MV_FILE_TXT, "test.txt");
         Collections.sort(expected);
         actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
 
         input =  "*.*a*";
-        expected = Arrays.asList("abc.tat", "f1.tad");
+        expected = Arrays.asList(ABC_TAT_FILE, F1_TAD_FILE);
         Collections.sort(expected);
         actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
     }
 
     @Test
-    void testResolveOneArgument_multipleAsterisksInARow_folderWithFile_workTheSameAsSingleAsterisk() throws AbstractApplicationException, ShellException {
+    void testMultipleAsterisksInARow() throws AbstractApplicationException, ShellException {
         // Double asterisks
         String input = "**";
-        List<String> expected = Arrays.asList("abc.tat", "dire", "f1.tad", "f1.txt", "match1.txt", "mvFile.txt", "test.txt");
+        List<String> expected = Arrays.asList(ABC_TAT_FILE, DIRE, F1_TAD_FILE, F1_TXT, MATCH1_TXT, "mvFile.txt", "test.txt");
         Collections.sort(expected);
         List<String> actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
@@ -175,8 +180,8 @@ public class GlobbingTest {
     }
 
     @Test
-    void testResolveOneArgument_singleAsterisk_folderWithFile_fileExtension_nonExistent() throws AbstractApplicationException, ShellException {
-        String input = "dire" + StringUtils.fileSeparator() + "*.t";
+    void testSingleAsteriskNonExistentFile() throws AbstractApplicationException, ShellException {
+        String input = DIRE + StringUtils.fileSeparator() + "*.t";
         List<String> expected = Collections.singletonList(input);
         List<String> actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
@@ -184,14 +189,14 @@ public class GlobbingTest {
 
     @Test
     void testResolveOneArgumentInsideFolder() throws AbstractApplicationException, ShellException {
-        String input = "dire" + StringUtils.fileSeparator() + "*";
-        List<String> expected = Collections.singletonList("dire" + StringUtils.fileSeparator() + "fileInsideDir.txt");
+        String input = DIRE + StringUtils.fileSeparator() + "*";
+        List<String> expected = Collections.singletonList(DIRE + StringUtils.fileSeparator() + "fileInsideDir.txt");
         List<String> actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
     }
 
     @Test
-    void testResolveOneArgument_singleAsterisk_emptyFolder() throws AbstractApplicationException, ShellException, IOException {
+    void testEmptyFolderGlobal() throws AbstractApplicationException, ShellException, IOException {
 
         Path path = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "emptyFolder"));
         File file = path.toFile();

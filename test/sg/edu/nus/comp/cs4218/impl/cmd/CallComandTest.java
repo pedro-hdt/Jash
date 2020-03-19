@@ -77,7 +77,7 @@ public class CallComandTest {
     }
 
     @Test
-    void testRun_WithNullArgs_shouldThrowShellException() throws Exception {
+    void testNullArgsThrowsShellException() throws Exception {
         List<String> argsList = null;
         CallCommand callCommand = new CallCommand(argsList, new ApplicationRunner(), new ArgumentResolver());
         ShellException exception = assertThrows(ShellException.class, () -> callCommand.evaluate(System.in, System.out));
@@ -86,7 +86,7 @@ public class CallComandTest {
     }
 
     @Test
-    void testConstructor_WithNullAppRunner_shouldThrowShellException() {
+    void testNullAppRunnerThrowsShellException() {
         ApplicationRunner appRunner = null;
         Exception exception = assertThrows(ShellException.class, () -> new CallCommand(new ArrayList<>(), appRunner, new ArgumentResolver()));
         assertEquals("shell: " + "Null App Runner", exception.getMessage());

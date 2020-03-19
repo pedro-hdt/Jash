@@ -72,17 +72,7 @@ public class MvApplication implements MvInterface {
 
             } else {
                 // if overwriting is not allowed then only allow possibility of moving if its directory
-                if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
-                    try {
-                        Files.move(IOUtils.resolveFilePath(srcPath),
-                                Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
-                    } catch (FileAlreadyExistsException faee) {
-                        throw new Exception(ERR_CANNOT_OVERWRITE + " file already exists: " + srcPath); //NOPMD
-                    }
-
-                } else {
-                    throw new Exception("'" + srcPath + "' is a file and replacement not allowed.");
-                }
+                mvFilesToFolderNoOverWrite(destFolder, srcPath);
             }
         }
 
@@ -90,6 +80,20 @@ public class MvApplication implements MvInterface {
             throw new Exception("error moving file");
         }
         return null;
+    }
+
+    private void mvFilesToFolderNoOverWrite(String destFolder, String srcPath) throws Exception {
+        if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
+            try {
+                Files.move(IOUtils.resolveFilePath(srcPath),
+                        Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
+            } catch (FileAlreadyExistsException faee) {
+                throw new Exception(ERR_CANNOT_OVERWRITE + " file already exists: " + srcPath); //NOPMD
+            }
+
+        } else {
+            throw new Exception("'" + srcPath + "' is a file and replacement not allowed.");
+        }
     }
 
     @Override

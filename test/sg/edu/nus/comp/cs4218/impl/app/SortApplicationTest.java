@@ -47,6 +47,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
  * - No files supplied, use stdin
  */
 public class SortApplicationTest {
+    public static final String NUMBERS_ONLY_TXT = "numbersOnly.txt";
     private static SortApplication sortApp;
     private static OutputStream stdout;
 
@@ -105,8 +106,8 @@ public class SortApplicationTest {
     @Test
     void testWritingResultToOutputStreamException() {
         try {
-            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
-            sortApp.run(new String[]{"numbersOnly.txt"}, System.in, baos);
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
+            sortApp.run(new String[]{NUMBERS_ONLY_TXT}, System.in, baos);
             fail("Exception expected");
         } catch (SortException e) {
             assertEquals("sort: " + ERR_WRITE_STREAM, e.getMessage());
@@ -115,7 +116,7 @@ public class SortApplicationTest {
 
     @Test
     public void testNFlagNumberSort() {
-        String[] args = new String[] { "-n", "numbersOnly.txt" };
+        String[] args = new String[] { "-n", NUMBERS_ONLY_TXT};
 
         try {
             sortApp.run(args, System.in, stdout);
@@ -193,7 +194,7 @@ public class SortApplicationTest {
 
     @Test
     public void testRFlagNumberSort() {
-        String[] args = new String[] { "-r", "numbersOnly.txt" };
+        String[] args = new String[] { "-r", NUMBERS_ONLY_TXT};
 
         try {
             sortApp.run(args, System.in, stdout);
@@ -419,7 +420,7 @@ public class SortApplicationTest {
 
     @Test
     public void testMoreThanOneFileSort() {
-        String[] args = new String[] { "-nrf", "mixed.txt", "numbersOnly.txt" };
+        String[] args = new String[] { "-nrf", "mixed.txt", NUMBERS_ONLY_TXT};
 
         try {
             sortApp.run(args, System.in, stdout);

@@ -211,17 +211,17 @@ class CdApplicationTest {
     }
 
     @Test
-    public void testChangeToDirectory_noReadPermission() {
-        String CD_PATH = Environment.getCurrentDirectory() + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
+    public void testChangeToDirectoryWithNoReadPermission() {
+        String cdpath = Environment.getCurrentDirectory() + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
 
-        File testDir = new File(CD_PATH);
+        File testDir = new File(cdpath);
         testDir.mkdir();
         testDir.setExecutable(false);
 
         Exception exception = assertThrows(Exception.class, () -> {
-            cdApp.changeToDirectory(CD_PATH);
+            cdApp.changeToDirectory(cdpath);
         });
-        assertEquals("cd: " + CD_PATH + ": " + ERR_NO_PERM, exception.getMessage());
+        assertEquals("cd: " + cdpath + ": " + ERR_NO_PERM, exception.getMessage());
     }
 
     /**

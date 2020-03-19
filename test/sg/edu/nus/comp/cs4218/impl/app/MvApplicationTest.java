@@ -70,6 +70,8 @@ public class MvApplicationTest {
     public static final String MOVE_FIRST_TXT = "moveFirst.txt";
     public static final String MOVE_SECOND_TXT = "moveSecond.txt";
     public static final String NO_OVERWRITE_FILE = "NotOverwriteThisFile.txt";
+    public static final String FILE_B_TXT = "fileB.txt";
+    public static final String DIR_A = "dirA";
 
     private static MvApplication mvApp;
     private static OutputStream stdout;
@@ -231,21 +233,21 @@ public class MvApplicationTest {
     @Test
     void testMoveSameFolderWithAnotherValidFile() throws IOException {
 
-        Files.createFile(IOUtils.resolveFilePath("fileB.txt"));
-        Files.createDirectory(IOUtils.resolveFilePath("dirA"));
+        Files.createFile(IOUtils.resolveFilePath(FILE_B_TXT));
+        Files.createDirectory(IOUtils.resolveFilePath(DIR_A));
 
-        String dirA = "dirA";
+        String dirA = DIR_A;
         try {
-            String[] args = {dirA, "fileB.txt", dirA};
+            String[] args = {dirA, FILE_B_TXT, dirA};
             mvApp.run(args, System.in, System.out);
             fail();
         } catch (MvException e) {
-            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "dirA", "fileB.txt")));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, DIR_A, FILE_B_TXT)));
             assertEquals("mv: " + "error moving file", e.getMessage());
         } finally {
-            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), "dirA", "fileB.txt"));
+            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), DIR_A, FILE_B_TXT));
             Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                    + StringUtils.fileSeparator() +  "dirA"));
+                    + StringUtils.fileSeparator() + DIR_A));
         }
     }
 

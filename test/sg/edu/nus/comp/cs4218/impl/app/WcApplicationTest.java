@@ -93,7 +93,7 @@ public class WcApplicationTest {
     @Test
     void testWritingResultToOutputStreamException() {
         try {
-            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
             wcApp.run(new String[]{"hi"}, System.in, baos);
             fail("Exception expected");
         } catch (WcException e) {

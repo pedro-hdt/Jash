@@ -114,7 +114,7 @@ public class CutApplication implements CutInterface {
     @Override
     public String cutFromFiles(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, String... fileName) throws Exception {
         StringBuilder output = new StringBuilder();
-        InputStream stdin;
+        InputStream stdin; //NOPMD
 
         if (fileName == null) {
             throw new CutException(ERR_NULL_ARGS);
@@ -126,7 +126,9 @@ public class CutApplication implements CutInterface {
                 output.append(STRING_NEWLINE);
             }
             // Check for actual file
-            if (!srcPath.equals("-")) {
+            if (srcPath != null && srcPath.equals("-")) {
+                stdin = inputStream;
+            } else {
                 File node = IOUtils.resolveFilePath(srcPath).toFile();
                 if (!node.exists()) {
                     throw new CutException(ERR_FILE_NOT_FOUND);
@@ -138,8 +140,6 @@ public class CutApplication implements CutInterface {
                     throw new CutException(ERR_NO_PERM);
                 }
                 stdin = IOUtils.openInputStream(srcPath);
-            } else {
-                stdin = inputStream;
             }
             output.append(processInput(isCharPo, isBytePo, stdin, isRange, startIdx, endIdx));
         }
