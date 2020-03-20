@@ -7,6 +7,7 @@ import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.EMPTY_PATTERN;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
@@ -14,23 +15,22 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 
@@ -144,6 +144,36 @@ public class GrepApplicationTest {
     }
 
     /**
+     * Try grep with invalid  regex
+     */
+    @Test
+    public void testGrepWithInvalidRegex() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromFiles("[", true, true,
+                FOLDER1 + StringUtils.fileSeparator() + "textfile.txt"));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_REGEX));
+    }
+
+    /**
+     * Try grep with invalid  regex
+     */
+    @Test
+    public void testGrepWithInvalidRegexStdIn() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromStdin("[", true, true,
+                System.in));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_REGEX));
+    }
+
+    /**
+     * Try Grep With NullStream
+     */
+    @Test
+    public void testGrepWithNullStream() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromStdin("[", true, true,
+                null));
+        assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
+    }
+
+    /**
      * Try grep with a not existing file
      *
      * @throws AbstractApplicationException
@@ -194,8 +224,15 @@ public class GrepApplicationTest {
     @Test
     public void testGrepWithNotReadableFile() throws AbstractApplicationException, IOException {
 
+        Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(),FOLDER1, UNREADABLE_FILE));
+        File file = path.toFile();
+        file.setReadable(false);
+
         grepApplication.run(new String[] {PATTERN, FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE} , System.in, stdout);
-        assertEquals(FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE + ": " + ERR_NO_PERM, stdout.toString());
+        assertEquals(FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE + ": " + ERR_NO_PERM + StringUtils.STRING_NEWLINE, stdout.toString());
+
+        file.setReadable(true);
+        file.delete();
     }
 
     /**

@@ -73,7 +73,6 @@ public class GrepApplicationTest {
     private static final String GREP_NOTHING = "";
     private static final String NO_READ_PERMISSION = ": Permission denied" + StringUtils.STRING_NEWLINE;
     private static final String NO_INPUTSTREAM_NO_FILENAMES = "grep: No InputStream and no filenames";
-    private static final String REGEX_CANNOT_BE_EMPTY = "grep: Regular expression cannot be empty";
     private Path fileTwoPath;
     private static final String FILE_TWO_PATH_STRING = "test/tdd/util" + StringUtils.CHAR_FILE_SEP + "dummyTestFolder"
             + StringUtils.CHAR_FILE_SEP
@@ -253,14 +252,13 @@ public class GrepApplicationTest {
     }
 
     @Test
-    @Disabled("Irrelevant test as they have just changed the message displayed")
     public void testGrepFromFiles_emptyStringFileNames_shouldThrowExceptions() throws Exception {
         String[] fileName = {""};
         String pattern = "j";
         Boolean isCaseInsensitive = true;
         Boolean isCountLines = true;
         results = app.grepFromFiles(pattern, isCaseInsensitive, isCountLines, fileName);
-        assertEquals(IS_A_DIR, results);
+        assertEquals(": Is a directory" + StringUtils.STRING_NEWLINE, results);
     }
 
     @Test
@@ -438,14 +436,13 @@ public class GrepApplicationTest {
     }
 
     @Test
-    @Disabled("Irrelevant test as they have only changed the message displayed")
     public void testRun_emptyPattern_shouldThrowException() throws FileNotFoundException {
         String[] args = {""};
         inputStream = new FileInputStream(fileOnePath.toString());
         Exception exception = assertThrows(Exception.class, () -> {
             app.run(args, inputStream, outputStream);
         });
-        assertEquals(REGEX_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals("grep: Pattern should not be empty.", exception.getMessage());
     }
 
     @Test
