@@ -1,10 +1,7 @@
 package tdd.ef1;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.DisabledIf;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.DiffException;
 import sg.edu.nus.comp.cs4218.impl.app.DiffApplication;
@@ -19,6 +16,7 @@ import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 
 /**
  * Tests for diff command.
@@ -45,8 +43,12 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND
  */
 public class DiffApplicationTest { // NOPMD
     private static DiffApplication diffApp;
-    private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
-    private static final String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+    private static final String ORIGINAL_DIR = Environment.currentDirectory;
+    private static final String DIFF_TEST_DIR = ORIGINAL_DIR
+            + StringUtils.fileSeparator() + "test"
+            + StringUtils.fileSeparator() + "tdd/util"
+            + StringUtils.fileSeparator() + "dummyTestFolder"
+            + StringUtils.fileSeparator() + "DiffTestFolder";
     private static OutputStream stdout;
 
     private static final String DIFF1_FILE = "diff1.txt";
@@ -90,6 +92,13 @@ public class DiffApplicationTest { // NOPMD
     public void testFailsWithInvalidDir() {
         Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidDir", "invalidDir", false, false, false));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
+    }
+
+    @Test
+    @Disabled("The GNU's implementation of diff allows comparison of directories with empty files")
+    public void testFailsWithDirWithoutFiles() {
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoDir("dummyDir", "dummyDir", false, false, false));
+        assertTrue(expectedException.getMessage().contains(ERR_IS_DIR));
     }
 
     @Test
