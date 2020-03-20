@@ -375,7 +375,7 @@ class MvApplicationTest {
             mvApplication.run(args, inputStream, outputStream);
             fail();
         } catch (MvException e) {
-            assertEquals("mv: '" + "error moving file", e.getMessage());
+            assertEquals("mv: " + "error moving file", e.getMessage());
         }
     }
 
