@@ -95,6 +95,8 @@ Grep:
 - Ignored two tests cause not possible to put null for case insensitive flag
 - Two cause they were calling a specific method of the application with arguments which fail pre-conditions
 
+Diff:
+- Ignored testFailsWithDirWithoutFiles() because GNU's implementation of diff allows comparison of directories with empty files.
 
 # TDD - fixes
 
