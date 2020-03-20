@@ -91,6 +91,11 @@ Cut:
 - Ignored testRunCharacterIndexOutOfRange() because GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.
 - Ignored testRunWithClosedOutputStream(). There is always the chance that an IOException is encountered, so one cannot avoid the exception handling code. Adding this test is likely to complicate the code.
                                            
+Grep:
+- Ignored two tests cause not possible to put null for case insensitive flag
+- Two cause they were calling a specific method of the application with arguments which fail pre-conditions
+
+
 # TDD - fixes
 
 - CALL Command: 
@@ -125,5 +130,9 @@ Cut:
 - Cut
     - Changed expected results of testCutTwoCharactersInReverseOrderFromFile() to fit GNU cut's implementation.
     - Changed expected results of testRunWithTwoFile() as there is a error in the expected results.
+    
+- Grep
+    - Null checks
+    - No read permission test
 
 Also includes trivial fixes in tests and small bugs
