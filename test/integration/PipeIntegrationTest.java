@@ -1,4 +1,4 @@
-package sg.edu.nus.comp.cs4218.integration;
+package integration;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
