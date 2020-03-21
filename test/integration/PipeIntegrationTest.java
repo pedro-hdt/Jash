@@ -141,27 +141,6 @@ public class PipeIntegrationTest {
     @Test
     public void testSimplePipe6() throws ShellException, AbstractApplicationException {
 
-        String expected = "dummyTestFolder:" + STRING_NEWLINE +
-                "CdTestFolder" + STRING_NEWLINE +
-                "CommandSubsTest" + STRING_NEWLINE +
-                "CpTestFolder" + STRING_NEWLINE +
-                "CutTestFolder" + STRING_NEWLINE +
-                "DiffTestFolder" + STRING_NEWLINE +
-                "FindTestFolder" + STRING_NEWLINE +
-                "GlobbingTest" + STRING_NEWLINE +
-                "GrepTestFolder" + STRING_NEWLINE +
-                "IntegrationTestFolder" + STRING_NEWLINE +
-                "LsTestFolder" + STRING_NEWLINE +
-                "MvTestFolder" + STRING_NEWLINE +
-                "PasteTestFolder" + STRING_NEWLINE +
-                "PipeTestFolder" + STRING_NEWLINE +
-                "QuotesCommandTest" + STRING_NEWLINE +
-                "SedTestFolder" + STRING_NEWLINE +
-                "SequenceTestFolder" + STRING_NEWLINE +
-                "SortTestFolder" + STRING_NEWLINE +
-                "SystemTestFolder" + STRING_NEWLINE +
-                "WcTestFolder" + STRING_NEWLINE;
-
         CallCommand ls = new CallCommand(Arrays.asList("ls", "./dummyTestFolder"), appRunner, argumentResolver);
         CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
 
@@ -169,7 +148,9 @@ public class PipeIntegrationTest {
 
         pipeCommand.evaluate(System.in, out);
 
-        assertEquals(expected, out.toString());
+        ByteArrayOutputStream lsOut = new ByteArrayOutputStream();
+        ls.evaluate(System.in, lsOut);
+        assertEquals(lsOut.toString(), out.toString());
 
     }
 
