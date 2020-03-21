@@ -17,7 +17,7 @@ import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
@@ -65,6 +65,45 @@ public class PasteApplicationTest {
                 assertThrows(PasteException.class, () -> paste.run(new String[0], System.in, stdout));
 
         assertMsgContains(exception, ERR_NO_ARGS);
+
+    }
+
+    /**
+     * Call paste with null args
+     */
+    @Test
+    public void testNullArgs() {
+
+        PasteException exception =
+                assertThrows(PasteException.class, () -> paste.run(null, System.in, stdout));
+
+        assertMsgContains(exception, ERR_NULL_ARGS);
+
+    }
+
+    /**
+     * Call paste with null input stream
+     */
+    @Test
+    public void testNullInputStream() {
+
+        PasteException exception =
+                assertThrows(PasteException.class, () -> paste.run(new String[0], null, stdout));
+
+        assertMsgContains(exception, ERR_NO_ISTREAM);
+
+    }
+
+    /**
+     * Call paste with null output stream
+     */
+    @Test
+    public void testNullOutputStream() {
+
+        PasteException exception =
+                assertThrows(PasteException.class, () -> paste.run(new String[0], System.in, null));
+
+        assertMsgContains(exception, ERR_NO_OSTREAM);
 
     }
 
