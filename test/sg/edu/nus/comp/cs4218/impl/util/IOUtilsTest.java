@@ -1,8 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,7 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 /**
  * Tests for IOUtils, focusing only on the openOutputStream method as it was the only one
@@ -99,5 +104,13 @@ class IOUtilsTest {
         assertEquals(1, bytesRead.length);
         assertEquals(65, bytesRead[0]);
 
+    }
+
+    @Test
+    void testOuputStreamsThrowsException() {
+        OutputStream outputStream = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
+
+        Exception exception = assertThrows(ShellException.class, () -> IOUtils.closeOutputStream(outputStream));
+        assertMsgContains(exception, ERR_CLOSING_STREAMS);
     }
 }

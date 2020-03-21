@@ -1,22 +1,33 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.MULTIPLE_FILES;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NO_FILE;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NO_FOLDER;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NULL_POINTER;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.WRONG_FLAG_SUFFIX;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.FindException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FOLDER_NOT_FOUND;
 
 /**
  * Test Suite for find command
@@ -70,6 +81,35 @@ class FindApplicationTest {
     }
 
     /**
+     * Try find command with null stdout
+     */
+    @Test
+    public void testFindWithNullOutputStream() {
+        Exception expectedException = assertThrows(FindException.class, ()
+                -> findApplication.run(new String[]{FOLDER1, NAME_FLAG, TEXTFILE}, System.in, null));
+        assertTrue(expectedException.getMessage().contains("output stream is null"));
+    }
+
+    /**
+     * When folder with no read permission is passed
+     * @throws IOException
+     */
+    @Test
+    public void testInvalidUnreadableFile() throws IOException {
+
+        Path path = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "unreadable"));
+        File file = path.toFile();
+        file.setReadable(false);
+
+        Exception exception = assertThrows(Exception.class, ()
+                -> findApplication.findFolderContent(TEXTFILE, path.toString()));
+        assertEquals(exception.getMessage(), "find: Permission Denied");
+
+        file.setReadable(true);
+        file.delete();
+    }
+
+    /**
      * Try find command with empty arguments
      */
     @Test
@@ -87,7 +127,6 @@ class FindApplicationTest {
     public void testFindWithWrongFlagSuffix() {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {"A",
             "-i", "test"}, System.in, stdout));
-        ;
         assertTrue(expectedException.getMessage().contains(WRONG_FLAG_SUFFIX));
     }
 
@@ -97,8 +136,25 @@ class FindApplicationTest {
     @Test
     public void testFindWithOnlyFolder() {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER1}, System.in, stdout));
-        ;
-        assertTrue(expectedException.getMessage().toString().contains(NO_FILE));
+        assertTrue(expectedException.getMessage().contains(NO_FILE));
+    }
+
+    /**
+     * Try findFolderContentWithNullFile
+     */
+    @Test
+    public void testFindFolderContentNullFile() {
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.findFolderContent(null, FOLDER1));
+        assertTrue(expectedException.getMessage().contains(NO_FILE));
+    }
+
+    /**
+     * Try findFolderContentWithNullFile
+     */
+    @Test
+    public void testFindFolderContentNullFolder() {
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.findFolderContent("file1.txt", null));
+        assertTrue(expectedException.getMessage().contains(NO_FOLDER));
     }
 
     /**
@@ -107,8 +163,7 @@ class FindApplicationTest {
     @Test
     public void testFindWithNoFlag() {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER1, TESTFILE}, System.in, stdout));
-        ;
-        assertTrue(expectedException.getMessage().toString().contains(NO_FILE));
+        assertTrue(expectedException.getMessage().contains(NO_FILE));
     }
 
     /**
@@ -117,8 +172,7 @@ class FindApplicationTest {
     @Test
     public void testFindWitNoFileSpecified() {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {FOLDER1, NAME_FLAG}, System.in, stdout));
-        ;
-        assertTrue(expectedException.getMessage().toString().contains(NO_FILE));
+        assertTrue(expectedException.getMessage().contains(NO_FILE));
     }
 
     /**
@@ -128,8 +182,7 @@ class FindApplicationTest {
     public void testFindWithNoFolderSpecified() {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {
             NAME_FLAG, TESTFILE}, System.in, stdout));
-        ;
-        assertTrue(expectedException.getMessage().toString().contains(NO_FOLDER));
+        assertTrue(expectedException.getMessage().contains(NO_FOLDER));
     }
 
     /**
@@ -139,7 +192,7 @@ class FindApplicationTest {
     @Test
     public void testFindWithWrongFolderName() throws AbstractApplicationException {
         findApplication.run(new String[] {"Test-folder-10", NAME_FLAG, TESTFILE}, System.in, stdout);
-        assertTrue(stdout.toString().contains(ERR_FOLDER_NOT_FOUND));
+        assertTrue(stdout.toString().contains(ERR_FILE_NOT_FOUND));
     }
 
 

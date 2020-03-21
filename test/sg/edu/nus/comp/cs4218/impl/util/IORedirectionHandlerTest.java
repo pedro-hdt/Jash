@@ -376,4 +376,50 @@ public class IORedirectionHandlerTest {
 
     }
 
+    /**
+     * Attempts to call redirect with invalid syntax
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     */
+    @Test
+    public void testFailsWhenInvalidRedir() {
+
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
+                Arrays.asList("echo", "<", "<"),
+                System.in,
+                System.out,
+                new ArgumentResolver()
+        );
+
+        ShellException shellException =
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+
+        assertMsgContains(shellException, ERR_SYNTAX);
+
+    }
+
+    /**
+     * Attempts to call redirect when sending to multiple files
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     */
+    @Test
+    public void testFailsWhenRedirToMultipleFiles() {
+
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
+                Arrays.asList("echo", "hi", ">", "*"),
+                System.in,
+                System.out,
+                new ArgumentResolver()
+        );
+
+        ShellException shellException =
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+
+        assertMsgContains(shellException, ERR_SYNTAX);
+
+    }
+
 }

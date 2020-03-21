@@ -16,7 +16,9 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -72,6 +74,22 @@ public class CallComandTest {
     void setUp() {
         cmd = null;
         stdout.reset();
+    }
+
+    @Test
+    void testNullArgsThrowsShellException() throws Exception {
+        List<String> argsList = null;
+        CallCommand callCommand = new CallCommand(argsList, new ApplicationRunner(), new ArgumentResolver());
+        ShellException exception = assertThrows(ShellException.class, () -> callCommand.evaluate(System.in, System.out));
+        String expected = "shell: " + ERR_SYNTAX;
+        assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    void testNullAppRunnerThrowsShellException() {
+        ApplicationRunner appRunner = null;
+        Exception exception = assertThrows(ShellException.class, () -> new CallCommand(new ArrayList<>(), appRunner, new ArgumentResolver()));
+        assertEquals("shell: " + "Null App Runner", exception.getMessage());
     }
 
     @Test

@@ -1,7 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 import java.io.ByteArrayOutputStream;
@@ -9,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +20,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.TestUtils;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -62,6 +67,25 @@ public class SequenceCommandTest {
     }
 
     /**
+     * Test whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
+
+            CallCommand exitCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "hi")), new ApplicationRunner(), new ArgumentResolver());
+            CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "shout")), new ApplicationRunner(), new ArgumentResolver());
+
+            sequenceCommand = new SequenceCommand(new ArrayList<>(Arrays.asList(echoCommand, exitCommand)));
+            sequenceCommand.evaluate(System.in, baos);
+            fail("Exception expected");
+        } catch (ShellException | AbstractApplicationException e) {
+            assertMsgContains(e, "shell:");
+        }
+    }
+
+    /**
      * Throws exit exception if one of them is exit command
      */
     @Test
@@ -86,7 +110,7 @@ public class SequenceCommandTest {
         ShellImpl shell = new ShellImpl();
         Exception exception = assertThrows(ShellException.class, () -> shell.parseAndEvaluate(";", stdout));
 
-        TestUtils.assertMsgContains(exception, ERR_SYNTAX);
+        assertMsgContains(exception, ERR_SYNTAX);
     }
 
     /**
@@ -157,5 +181,18 @@ public class SequenceCommandTest {
 
         assertTrue(stdout.toString().contains("present.txt" + StringUtils.STRING_NEWLINE + "boy"));
 
+    }
+
+    @Test
+    public void test1() {
+        SequenceCommand sequenceCommand0 = new SequenceCommand((List<Command>) null);
+        sequenceCommand0.terminate();
+    }
+
+    @Test
+    public void test2() {
+        SequenceCommand sequenceCommand0 = new SequenceCommand((List<Command>) null);
+        List<Command> list0 = sequenceCommand0.getCommands();
+        assertNull(list0);
     }
 }

@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,18 +31,16 @@ public class MvApplication implements MvInterface {
 
     @Override
     public String mvSrcFileToDestFile(String srcFile, String destFile) throws Exception {
-        try {
-            Path source = IOUtils.resolveFilePath(srcFile);
-            Files.move(source, source.resolveSibling(destFile));
-        } catch (Exception e) {
-            throw new Exception(ERR_FILE_NOT_FOUND);
-        }
+        Path source = IOUtils.resolveFilePath(srcFile);
+        Files.move(source, source.resolveSibling(destFile));
 
         return null;
     }
 
     @Override
     public String mvFilesToFolder(String destFolder, String... fileName) throws Exception {
+
+        boolean hasErrorOccurred = false;
 
         for (String srcPath: fileName){
             if (shouldOverwrite) {
@@ -67,24 +66,34 @@ public class MvApplication implements MvInterface {
                             StandardCopyOption.REPLACE_EXISTING);
                 } catch (DirectoryNotEmptyException dnee) {
                     throw new Exception(ERR_CANNOT_OVERWRITE + " non-empty directory: " + destFolder);
+                } catch (FileSystemException fse) {
+                    hasErrorOccurred = true;
                 }
 
             } else {
                 // if overwriting is not allowed then only allow possibility of moving if its directory
-                if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
-                    try {
-                        Files.move(IOUtils.resolveFilePath(srcPath),
-                                Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
-                    } catch (FileAlreadyExistsException faee) {
-                        throw new Exception(ERR_CANNOT_OVERWRITE + " file already exists: " + srcPath); //NOPMD
-                    }
-
-                } else {
-                    throw new Exception("'" + srcPath + "' is a file and replacement not allowed.");
-                }
+                mvFilesToFolderNoOverWrite(destFolder, srcPath);
             }
         }
+
+        if (hasErrorOccurred) {
+            throw new Exception("error moving file");
+        }
         return null;
+    }
+
+    private void mvFilesToFolderNoOverWrite(String destFolder, String srcPath) throws Exception {
+        if (Files.isDirectory(IOUtils.resolveFilePath(destFolder))) {
+            try {
+                Files.move(IOUtils.resolveFilePath(srcPath),
+                        Paths.get(IOUtils.resolveFilePath(destFolder).toString(), srcPath));
+            } catch (FileAlreadyExistsException faee) {
+                throw new Exception(ERR_CANNOT_OVERWRITE + " file already exists: " + srcPath); //NOPMD
+            }
+
+        } else {
+            throw new Exception("'" + srcPath + "' is a file and replacement not allowed.");
+        }
     }
 
     @Override
@@ -113,11 +122,6 @@ public class MvApplication implements MvInterface {
         List<String> sourceOperands = parser.getSourceOperands();
         String targetOperand = parser.getTargetOperand();
 
-
-        if (sourceOperands.isEmpty() || targetOperand == null) {
-            throw new MvException(ERR_NO_FILE_ARGS);
-        }
-
         for (String sourceOperand : sourceOperands) {
             if (!Files.exists(IOUtils.resolveFilePath(sourceOperand))) {
                 throw new MvException("Cannot find '" + sourceOperand + "'. " +  ERR_FILE_NOT_FOUND + ".");
@@ -136,6 +140,5 @@ public class MvApplication implements MvInterface {
         }  catch (Exception e) {
             throw new MvException(e.getMessage());
         }
-
     }
 }

@@ -22,9 +22,9 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.app.MvApplication;
@@ -119,8 +119,8 @@ class MvApplicationTest {
     }
 
     // Test mv app writing to outputstream behavior
-    // NOTE: This is not unit to command and output strem writing is done in shell
-    @Ignore
+    @Test
+    @Disabled("This is not unit to command and output stream writing is done in shell. Tested in shell unit and integration")
     void testWritingToOutputStream() {
         // mv tempFileA.txt tempFileB.txt
         String src = getFileName(tempFileA);
@@ -140,8 +140,8 @@ class MvApplicationTest {
     }
 
     // Test ls app whether output exception is thrown when there is an IOException
-    // NOTE: This is not unit to command and output strem writing is done in shell
-    @Ignore
+    @Test
+    @Disabled("This is not unit to command and output stream writing is done in shell. Tested in shell unit and integration")
     void testWritingResultToOutputStreamException() {
         // mv tempFileA.txt tempFileB.txt
         String src = getFileName(tempFileA);
@@ -348,8 +348,8 @@ class MvApplicationTest {
     }
 
     // Test mv app to move a folder into itself
-    // NOTE: Our implementation is better
-    @Ignore
+    @Test
+    @Disabled("Our implementation is better and like GNU. Error message thrown at different stage")
     void testMoveSameFolder() {
         // mv tempDirA tempDirA
         String src = getFileName(tempDirA);
@@ -366,8 +366,7 @@ class MvApplicationTest {
      * Test mv app move a folder into itself, and move a txt file into said folder
      * The txt file will be successfully moved into the folder
      */
-    // NOTE: Our implementation is better and like GNU
-    @Ignore
+    @Test
     void testMoveSameFolderWithAnotherValidFile() {
         // mv tempDirA tempFileB.txt tempDirA
         String src = getFileName(tempDirA);
@@ -376,7 +375,7 @@ class MvApplicationTest {
             mvApplication.run(args, inputStream, outputStream);
             fail();
         } catch (MvException e) {
-            assertEquals("mv: '" + src + "' and '" + src + "' are the same file.", e.getMessage());
+            assertEquals("mv: " + "error moving file", e.getMessage());
         }
     }
 
