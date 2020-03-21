@@ -220,7 +220,6 @@ public class CommandSubsIntegrationTest {
             shell.parseAndEvaluate("sort `grep hell findInFile.txt`", stdout);
             assertEquals("first" + StringUtils.STRING_NEWLINE + "second" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             fail();
         }
     }
