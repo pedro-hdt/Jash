@@ -228,7 +228,7 @@ public class LsApplication implements LsInterface {
      * @return
      */
     private Path resolvePath(String directory) {
-        //TODO: Is this a bug since it checks only for Unix based and not Windows etc?
+        //Is this a bug since it checks only for Unix based and not Windows etc?
         if (directory.charAt(0) == '/') {
             // This is an absolute path
             return Paths.get(directory).normalize();
