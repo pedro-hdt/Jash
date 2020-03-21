@@ -25,7 +25,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -203,19 +202,11 @@ public class CommandSubsIntegrationTest {
 
     @Test
     @DisplayName("Integration of rm and cp. Copies and then deletes")
-    @Disabled
     public void testRmAndCp(){
         try {
-
             shell.parseAndEvaluate("rm `cp copyFile.txt newFile.txt` newFile.txt", stdout);
-            assertTrue(Files.exists(Paths.get("newFile.txt")));
 
-            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("newFile.txt")));
-            String str2 = new String(Files.readAllBytes(IOUtils.resolveFilePath("copyFile.txt")));
-
-            assertEquals(str1, str2);
-
-            assertFalse(Files.exists(Paths.get("newFile.txt")));
+            assertFalse(Files.exists(Paths.get(Environment.currentDirectory, "newFile.txt")));
         } catch (Exception e) {
             fail();
         }
@@ -371,6 +362,26 @@ public class CommandSubsIntegrationTest {
         }
     }
 
+    @Test
+    @DisplayName("Multiple commands in multiple back quotes")
+    public void testMultCmds3() {
+        try {
+
+            shell.parseAndEvaluate("ls `cp toCopy.txt newToCopy.txt`", stdout);
+
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "newToCopy.txt")));
+
+            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("newToCopy.txt")));
+            String str2 = new String(Files.readAllBytes(IOUtils.resolveFilePath("toCopy.txt")));
+
+            assertEquals(str1, str2);
+            assertTrue(stdout.toString().contains("newToCopy.txt"));
+
+            Files.delete(Paths.get(Environment.currentDirectory, "newToCopy.txt"));
+        } catch (Exception e) {
+            fail();
+        }
+    }
 
 
 

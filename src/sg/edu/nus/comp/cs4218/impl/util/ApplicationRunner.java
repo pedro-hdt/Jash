@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,6 +9,7 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
+import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
 import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
 import sg.edu.nus.comp.cs4218.impl.app.DiffApplication;
 import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
@@ -98,9 +98,10 @@ public class ApplicationRunner {
                 application = new CdApplication();
                 break;
             case APP_CP:
-                throw new ShellException(app + ": " + ERR_NOT_SUPPORTED);
+                application = new CpApplication();
+                break;
 
-                // Extended Functionality 2 - EF2
+            // Extended Functionality 2 - EF2
             case APP_CUT:
                 application = new CutApplication();
                 break;
