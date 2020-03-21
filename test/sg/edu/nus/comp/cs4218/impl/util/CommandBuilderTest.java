@@ -1,11 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,10 +15,14 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 // We argue that in this case having duplicate literals improve readability significantly
@@ -221,6 +227,67 @@ class CommandBuilderTest {
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
+    }
+
+    @Test
+    @DisplayName("Automated Testing Tool")
+    public void test0()  throws Throwable  {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        try {
+            CommandBuilder.parseCommand(";\"Y^^P~", applicationRunner0);
+            fail("Expecting exception: Exception");
+
+        } catch(Exception e) {
+            assertTrue(e instanceof ShellException);
+        }
+    }
+
+    @Test
+    @DisplayName("Automated Testing Tool")
+    public void test1()  throws Throwable  {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        try {
+            CommandBuilder.parseCommand("|.", applicationRunner0);
+            fail("Expecting exception: Exception");
+
+        } catch(Exception e) {
+            assertTrue(e instanceof ShellException);
+
+        }
+    }
+
+    @Test
+    @DisplayName("Automated Testing Tool")
+    public void test2()  throws Throwable  {
+        try {
+            CommandBuilder.parseCommand("IUG[*`A}Yr", (ApplicationRunner) null);
+            fail("Expecting exception: Exception");
+
+        } catch(Exception e) {
+            assertTrue(e instanceof ShellException);
+
+        }
+    }
+
+    @Test
+    @DisplayName("Automated Testing Tool")
+    public void test4()  throws Throwable  {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        try {
+            CommandBuilder.parseCommand("z>{!Fug@B!\"", applicationRunner0);
+            fail("Expecting exception: Exception");
+        } catch(Exception e) {
+            assertTrue(e instanceof ShellException);
+
+        }
+    }
+
+    @Test
+    @DisplayName("Automated Testing Tool")
+    public void test5()  throws Throwable  {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        Command command0 = CommandBuilder.parseCommand("we3[zf\u0005|/KX@I<}", applicationRunner0);
+        assertNotNull(command0);
     }
 
 }

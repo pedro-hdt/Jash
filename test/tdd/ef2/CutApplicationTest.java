@@ -1,10 +1,19 @@
 package tdd.ef2;
 
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.app.CutInterface;
-import sg.edu.nus.comp.cs4218.exception.CutException;
-import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_RANGE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_OUT_OF_RANGE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,14 +22,17 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.app.CutInterface;
+import sg.edu.nus.comp.cs4218.exception.CutException;
+import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 class CutApplicationTest {
 
-    private static String folderName = "tdd/util/dummyTestFolder/CutTestFolder";
+    private static String folderName = "test/tdd/util/dummyTestFolder/CutTestFolder";
     private static String fileNameTest = "test.txt";
     private static String fileNameNames = "course.txt";
     private static String subDirName = "subDir";
@@ -41,7 +53,7 @@ class CutApplicationTest {
 
     @Test
     void testCutTwoCharactersInReverseOrderFromFile() {
-        String expectResult = "sT";
+        String expectResult = "Ts";
         assertDoesNotThrow(() -> {
             String realResult = app.cutFromFiles(true, false, false, 8, 1, folderName + CHAR_FILE_SEP + fileNameTest);
             assertEquals(expectResult, realResult);
@@ -112,7 +124,7 @@ class CutApplicationTest {
 
     @Test
     void testRunWithTwoFile() {
-        String expectResult = "Today is" + STRING_NEWLINE + "Cristina" + STRING_NEWLINE + "Software" + STRING_NEWLINE;
+        String expectResult = "Today is" + STRING_NEWLINE + "Cristina" + STRING_NEWLINE;
         String[] args = {"-c", "1-8", folderName + CHAR_FILE_SEP + fileNameTest, folderName + CHAR_FILE_SEP + fileNameNames};
         outputStream = new ByteArrayOutputStream();
         assertDoesNotThrow(() -> {
@@ -159,6 +171,8 @@ class CutApplicationTest {
     }
 
     @Test
+    @Disabled("There is always the chance that an IOException is encountered, so one cannot avoid the exception handling code." +
+            " Adding this test is likely to complicate the code.")
     void testRunWithClosedOutputStream() {
         String[] args = {"-b", "1-8", folderName + CHAR_FILE_SEP + fileNameTest};
         Throwable thrown = assertThrows(CutException.class, () -> {
@@ -170,6 +184,7 @@ class CutApplicationTest {
     }
 
     @Test
+    @Disabled("GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.")
     void testRunCharacterIndexOutOfRange() {
         String original = "baz";
         InputStream stdin = new ByteArrayInputStream(original.getBytes());
@@ -178,17 +193,18 @@ class CutApplicationTest {
         Throwable thrown = assertThrows(CutException.class, () -> {
             app.run(args, stdin, outputStream);
         });
-        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE); // TODO fix this for TDD
+        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE);
     }
 
     @Test
+    @Disabled("GNU's implementation of cut doesn't care about the excess range provided and cuts the text in full.")
     void testRunByteIndexOutOfRange() {
         String[] args = {"-b", "1-20", folderName + CHAR_FILE_SEP + fileNameTest};
         outputStream = new ByteArrayOutputStream();
         Throwable thrown = assertThrows(CutException.class, () -> {
             app.run(args, System.in, outputStream);
         });
-        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE); // TODO fix this for TDD
+        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE);
     }
 
     @Test
@@ -268,7 +284,7 @@ class CutApplicationTest {
         Throwable thrown = assertThrows(CutException.class, () -> {
             app.run(args, System.in, outputStream);
         });
-        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_INVALID_RANGE); // TODO fix this for TDD
+        assertEquals(thrown.getMessage(), cutPrefix + ERR_INVALID_RANGE);
     }
 
     @Test
@@ -278,6 +294,6 @@ class CutApplicationTest {
         Throwable thrown = assertThrows(CutException.class, () -> {
             app.run(args, System.in, outputStream);
         });
-        assertEquals(thrown.getMessage(), cutPrefix); // + ERR_OUT_RANGE); // TODO fix this for TDD
+        assertEquals(thrown.getMessage(), cutPrefix + ERR_OUT_OF_RANGE);
     }
 }

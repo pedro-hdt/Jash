@@ -48,6 +48,9 @@ public class ErrorConstants {
     public static final String ERR_CANNOT_OVERWRITE = "Cannot overwrite";
     public static final String ERR_NOT_MOVABLE = "Cannot move to a file with no overwrite";
 
+    // `cut` related
+    public static final String ERR_INVALID_RANGE = "Invalid range";
+    public static final String ERR_OUT_OF_RANGE = "Out of range";
 
     // General constants
     public static final String ERR_INVALID_APP = "Invalid app";

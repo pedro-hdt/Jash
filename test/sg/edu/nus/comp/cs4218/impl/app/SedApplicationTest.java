@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -12,6 +13,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_REP_RULE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -142,6 +145,21 @@ public class SedApplicationTest {
     }
 
     /**
+     * Test sed app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
+
+            sed.run(new String[]{"s|abc|def|"},new ByteArrayInputStream("random".getBytes()), baos);
+            fail("Exception expected");
+        } catch (SedException e) {
+            assertEquals("sed: " + ERR_WRITE_STREAM, e.getMessage());
+        }
+    }
+
+    /**
      * Tests when no arguement specified
      */
     @Test
@@ -215,6 +233,9 @@ public class SedApplicationTest {
         Exception exception = assertThrows(Exception.class, ()
                 -> sed.replaceSubstringInFile("regex", "yes", 1, file.toString()));
         assertTrue(exception.getMessage().contains(ERR_NO_PERM));
+
+        file.setReadable(true);
+        file.delete();
     }
 
     /**

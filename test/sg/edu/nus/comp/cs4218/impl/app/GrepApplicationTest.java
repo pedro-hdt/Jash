@@ -7,14 +7,20 @@ import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.EMPTY_PATTERN;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.IS_DIRECTORY;
 import static sg.edu.nus.comp.cs4218.impl.app.GrepApplication.NULL_POINTER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -33,8 +39,10 @@ public class GrepApplicationTest {
     public static final String FOLDER1 = "Test-folder-1";
     public static final String FOLDER2 = "Test-folder-2";
     public static final String TEXTFILE = "textfile.txt";
+    public static final String NO_READ_FILE = "file_noread_permission.txt";
     public static final String PATTERN = "pattern";
     public static final String CONTENT1 = "Patience is the key to success";
+    public static final String UNREADABLE_FILE = "unreadableFile.txt";
 
     static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
     private static GrepApplication grepApplication;
@@ -136,6 +144,36 @@ public class GrepApplicationTest {
     }
 
     /**
+     * Try grep with invalid  regex
+     */
+    @Test
+    public void testGrepWithInvalidRegex() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromFiles("[", true, true,
+                FOLDER1 + StringUtils.fileSeparator() + "textfile.txt"));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_REGEX));
+    }
+
+    /**
+     * Try grep with invalid  regex
+     */
+    @Test
+    public void testGrepWithInvalidRegexStdIn() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromStdin("[", true, true,
+                System.in));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_REGEX));
+    }
+
+    /**
+     * Try Grep With NullStream
+     */
+    @Test
+    public void testGrepWithNullStream() {
+        Exception expectedException = assertThrows(GrepException.class, () -> grepApplication.grepFromStdin("[", true, true,
+                null));
+        assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
+    }
+
+    /**
      * Try grep with a not existing file
      *
      * @throws AbstractApplicationException
@@ -181,6 +219,20 @@ public class GrepApplicationTest {
             null, stdout);
         assertEquals(FOLDER2 + StringUtils.fileSeparator() + "textfile.txt: patterns" + StringUtils.STRING_NEWLINE,
             stdout.toString());
+    }
+
+    @Test
+    public void testGrepWithNotReadableFile() throws AbstractApplicationException, IOException {
+
+        Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(),FOLDER1, UNREADABLE_FILE));
+        File file = path.toFile();
+        file.setReadable(false);
+
+        grepApplication.run(new String[] {PATTERN, FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE} , System.in, stdout);
+        assertEquals(FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE + ": " + ERR_NO_PERM + StringUtils.STRING_NEWLINE, stdout.toString());
+
+        file.setReadable(true);
+        file.delete();
     }
 
     /**
@@ -334,7 +386,7 @@ public class GrepApplicationTest {
     }
 
     /**
-     * Try grep input from stdin withall options
+     * Try grep input from stdin with-all options
      *
      * @throws AbstractApplicationException
      */

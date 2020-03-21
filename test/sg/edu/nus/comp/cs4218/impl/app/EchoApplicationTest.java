@@ -1,19 +1,24 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.TestUtils;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
-
-import java.io.ByteArrayOutputStream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * Provides unit tests for the EchoApplication class
@@ -23,6 +28,13 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  * - no arguments
  * - single argument
  * - two arguments
+ * - multiple args
+ *
+ * <p>
+ * Negative test cases:
+ * - null stream or args
+ * - stdout throws exception
+ *
  */
 public class EchoApplicationTest {
 
@@ -69,6 +81,21 @@ public class EchoApplicationTest {
     }
 
     /**
+     *     Test echo app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream(); //NOPMD
+
+            echo.run(new String[]{"heya"}, System.in, baos);
+            fail("Exception expected");
+        } catch (EchoException e) {
+            assertEquals("echo: " + ERR_IO_EXCEPTION, e.getMessage());
+        }
+    }
+
+    /**
      * Call echo without any arguments
      */
     @Test
@@ -88,9 +115,21 @@ public class EchoApplicationTest {
     @Test
     public void singleArg() throws EchoException {
 
-        echo.run(new String[]{"hello"}, System.in, out);
+        echo.run(new String[]{"single"}, System.in, out);
 
-        assertEquals("hello" + STRING_NEWLINE, out.toString());
+        assertEquals("single" + STRING_NEWLINE, out.toString());
+
+    }
+
+    /**
+     * Call echo with a single argument as keyword
+     */
+    @Test
+    public void singleArgAsKeyword() throws EchoException {
+
+        echo.run(new String[]{"echo"}, System.in, out);
+
+        assertEquals("echo" + STRING_NEWLINE, out.toString());
 
     }
 
@@ -115,6 +154,18 @@ public class EchoApplicationTest {
         echo.run(new String[]{"hello", "world"}, System.in, out);
 
         assertEquals("hello world" + STRING_NEWLINE, out.toString());
+
+    }
+
+    /**
+     * Call echo with multiple arguments
+     */
+    @Test
+    public void multipleArgs() throws EchoException {
+
+        echo.run(new String[]{"hi", "boy", "how", "are", "you man"}, System.in, out);
+
+        assertEquals("hi boy how are you man" + STRING_NEWLINE, out.toString());
 
     }
 

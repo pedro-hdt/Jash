@@ -1,11 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.BufferedReader;
@@ -30,6 +25,8 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
  */
 public class CutApplication implements CutInterface {
 
+    InputStream inputStream;
+
     /**
      * Builds the output read from the current data processed.
      *
@@ -40,7 +37,7 @@ public class CutApplication implements CutInterface {
      * @param count    Current char/byte position
      * @return
      */
-    public String buildOutput(int data, Boolean isRange, int startIdx, int endIdx, int count) {
+    public String buildOutput(int data, Boolean isRange, int startIdx, int endIdx, int count) throws Exception {
         StringBuilder output = new StringBuilder();
         char currData = (char) data;
 
@@ -73,6 +70,9 @@ public class CutApplication implements CutInterface {
      * @throws Exception If an I/O exception occurs.
      */
     public String processInput(Boolean isCharPo, Boolean isBytePo, InputStream stdin, Boolean isRange, int startIdx, int endIdx) throws Exception {
+        if (stdin == null) {
+            throw new CutException(ERR_NULL_STREAMS);
+        }
         StringBuilder output = new StringBuilder();
 
         int data;
@@ -114,23 +114,34 @@ public class CutApplication implements CutInterface {
     @Override
     public String cutFromFiles(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, String... fileName) throws Exception {
         StringBuilder output = new StringBuilder();
+        InputStream stdin; //NOPMD
+
+        if (fileName == null) {
+            throw new CutException(ERR_NULL_ARGS);
+        }
 
         for (String srcPath : fileName) {
             // If not the first file, add carriage return
             if (output.length() != 0) {
                 output.append(STRING_NEWLINE);
             }
-            File node = IOUtils.resolveFilePath(srcPath).toFile();
-            if (!node.exists()) {
-                throw new Exception(ERR_FILE_NOT_FOUND);
+            // Check for actual file
+            if (srcPath != null && srcPath.equals("-")) {
+                stdin = inputStream;
+            } else {
+                File node = IOUtils.resolveFilePath(srcPath).toFile();
+                if (!node.exists()) {
+                    throw new CutException(ERR_FILE_NOT_FOUND);
+                }
+                if (node.isDirectory()) {
+                    throw new CutException(ERR_IS_DIR);
+                }
+                if (!node.canRead()) {
+                    throw new CutException(ERR_NO_PERM);
+                }
+                stdin = IOUtils.openInputStream(srcPath);
             }
-            if (node.isDirectory()) {
-                throw new Exception(ERR_IS_DIR);
-            }
-            if (!node.canRead()) {
-                throw new Exception(ERR_NO_PERM);
-            }
-            output.append(processInput(isCharPo, isBytePo, IOUtils.openInputStream(srcPath), isRange, startIdx, endIdx));
+            output.append(processInput(isCharPo, isBytePo, stdin, isRange, startIdx, endIdx));
         }
 
         return output.toString();
@@ -168,7 +179,7 @@ public class CutApplication implements CutInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException { // NOPMD
-         if (stdout == null) {
+         if (stdout == null || stdin == null) {
             throw new CutException(ERR_NULL_STREAMS);
          }
 
@@ -178,12 +189,13 @@ public class CutApplication implements CutInterface {
          int startIdx;
          int endIdx;
          String result;
+         inputStream = stdin;
 
         if (args == null) {
             throw new CutException(ERR_NULL_ARGS);
         }
 
-        if (args.length < 1) {
+        if (args.length < 2) {
             throw new CutException(ERR_NO_ARGS);
         }
 
@@ -191,7 +203,7 @@ public class CutApplication implements CutInterface {
         try {
             parser.parse(args);
         } catch (InvalidArgsException e) {
-            throw (CutException) new CutException(e.getMessage()).initCause(e);
+            throw (CutException) new CutException(ERR_INVALID_FLAG);
         }
 
         try {
@@ -214,15 +226,19 @@ public class CutApplication implements CutInterface {
                 endIdx = Integer.parseInt(rangeParams[1]);
             }
 
+            if (startIdx > endIdx) {
+                throw new Exception(ERR_INVALID_RANGE);
+            }
+            if (startIdx <= 0 || endIdx <= 0) {
+                throw new Exception(ERR_OUT_OF_RANGE);
+            }
+
             // Read from stdin
             if (files.length == 0 || (files.length == 1 && files[0].contains("-"))) {
-                if (stdin == null) {
-                    throw new Exception(ERR_NULL_STREAMS);
-                }
-                result = cutFromStdin(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, stdin).trim();
+                result = cutFromStdin(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, stdin).trim() + STRING_NEWLINE;
                 stdout.write(result.getBytes());
             } else { // Read from files
-                result = cutFromFiles(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, files).trim();
+                result = cutFromFiles(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, files).trim() + STRING_NEWLINE;
                 stdout.write(result.getBytes());
             }
         } catch (Exception e) {

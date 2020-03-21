@@ -1,15 +1,27 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Application;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.app.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
+import sg.edu.nus.comp.cs4218.Application;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
+import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
+import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
+import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
+import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
+import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
+import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
+import sg.edu.nus.comp.cs4218.impl.app.MvApplication;
+import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
+import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
+import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
+import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
+import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
 
 
 public class ApplicationRunner {

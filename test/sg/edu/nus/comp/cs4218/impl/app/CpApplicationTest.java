@@ -125,6 +125,21 @@ class CpApplicationTest {
 
 
     /**
+     * Call cp without args
+     * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_NO_ARGS string
+     */
+    @Test
+    public void testFailsWithNoArg() {
+
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+
+        assertMsgContains(cpException, ERR_NO_ARGS);
+
+    }
+
+
+    /**
      * Call cp with only a filename
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_NO_ARGS string
      */
@@ -132,7 +147,7 @@ class CpApplicationTest {
     public void testFailsWithSingleArg() {
 
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+                assertThrows(CpException.class, () -> cpApp.run(new String[]{"someFileName"}, System.in, System.out));
 
         assertMsgContains(cpException, ERR_NO_ARGS);
 

@@ -19,6 +19,7 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
  * Utility class responsible for extracting the input and output streams appropriate for IO redirection,
  * and separates arguments (tokens) which are not redirection related
  */
+@SuppressWarnings("PMD.ExcessiveMethodLength")
 public class IORedirectionHandler {
     private final List<String> argsList;
     private final ArgumentResolver argumentResolver;

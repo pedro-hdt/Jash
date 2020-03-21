@@ -5,8 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_NOT_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,6 +98,28 @@ class CdApplicationTest {
         assertMsgContains(exception, ERR_NULL_ARGS);
 
     }
+
+    /**
+     * Call cd with null args for run()
+     */
+    @Test
+    public void testNullInputStream() {
+        Exception exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, null, System.out));
+
+        assertMsgContains(exception, ERR_NO_ISTREAM);
+
+    }
+
+    /**
+     * Call cd with null args for run()
+     */
+    @Test
+    public void testNullOutputStream() {
+        Exception exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{}, System.in, null));
+
+        assertMsgContains(exception, ERR_NO_OSTREAM);
+
+    }
     /**
      * Calls cd with a single argument
      */
@@ -111,17 +139,17 @@ class CdApplicationTest {
 
     /**
      * Attempt to call cd with multiple arguments
-     * Assumption: only first argument is considered and all others ignored
+     * Assumption: exception thrown
      */
     @Test
-    public void testMultArgs() throws IOException, CdException {
+    public void testMultArgs() throws IOException {
 
         // create 2 directories in current
         Path testDir1 = mkdir(Paths.get(Environment.currentDirectory));
         Path testDir2 = mkdir(Paths.get(Environment.currentDirectory));
 
-        cdApp.run(new String[]{testDir1.toString(), testDir2.toString()}, System.in, System.out);
-        assertEquals(testDir1.toString(), Environment.currentDirectory);
+        CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{testDir1.toString(), testDir2.toString()}, System.in, System.out));
+        assertMsgContains(exception, ERR_TOO_MANY_ARGS);
 
     }
 
@@ -142,7 +170,6 @@ class CdApplicationTest {
 
     /**
      * Call cd without args. Should have no effect
-     * NOTE: Ignore cause EF1 bug. Run again after changing to @Test
      */
     @Test
     public void testNoArgs() throws CdException {
@@ -150,6 +177,20 @@ class CdApplicationTest {
         String dirBefore = Environment.getCurrentDirectory();
 
         cdApp.run(new String[]{}, System.in, System.out);
+        assertEquals(dirBefore, Environment.getCurrentDirectory());
+    }
+
+    /**
+     * Call cd without args. Should have no effect
+     */
+    @Test
+    public void testEmptyArgs() {
+
+        String dirBefore = Environment.getCurrentDirectory();
+
+        Exception exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{""}, System.in, System.out));
+
+        assertMsgContains(exception, ERR_NO_ARGS);
         assertEquals(dirBefore, Environment.getCurrentDirectory());
     }
 
@@ -167,6 +208,20 @@ class CdApplicationTest {
 
         CdException exception = assertThrows(CdException.class, () -> cdApp.run(new String[]{dirName}, System.in, System.out));
         assertMsgContains(exception, ERR_FILE_NOT_FOUND);
+    }
+
+    @Test
+    public void testChangeToDirectoryWithNoReadPermission() {
+        String cdpath = Environment.getCurrentDirectory() + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
+
+        File testDir = new File(cdpath);
+        testDir.mkdir();
+        testDir.setExecutable(false);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            cdApp.changeToDirectory(cdpath);
+        });
+        assertEquals("cd: " + cdpath + ": " + ERR_NO_PERM, exception.getMessage());
     }
 
     /**

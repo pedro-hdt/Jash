@@ -19,9 +19,9 @@ import java.nio.file.Files;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
@@ -122,8 +122,8 @@ class SedApplicationTest {
     }
 
 
-    @Ignore
-    // NOTE: Diff assumption of if regex can be empty. Our implementation is similar to GNU
+    @Test
+    @Disabled("empty regex is not allowed and throws error message and hence this test case is not similar to UNIX impl")
     public void testEmptyRegexFile() throws Exception {
         String pattern = "";
         String replacement = "> ";
