@@ -11,6 +11,7 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
 import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
+import sg.edu.nus.comp.cs4218.impl.app.DiffApplication;
 import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
 import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
@@ -85,7 +86,8 @@ public class ApplicationRunner {
 
             // Extended Functionality 1 - EF1
             case APP_DIFF:
-                throw new ShellException(app + ": " + ERR_NOT_SUPPORTED);
+                application = new DiffApplication();
+                break;
             case APP_GREP:
                 application = new GrepApplication();
                 break;

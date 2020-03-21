@@ -9,12 +9,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.mockito.MockitoAnnotations;
 
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
@@ -122,6 +125,18 @@ public class CommandSubsIntegrationTest {
                 -> shell.parseAndEvaluate("echo `ls echo `test1.txt`", stdout));
 
         assertMsgContains(exception, ERR_SYNTAX);
+    }
+
+    /**
+     * SubCommands with sub cmd throwing exception
+     */
+    @Test
+    public void testErrorFromSubsCmd() {
+        Exception exception = assertThrows(CdException.class, ()
+                -> shell.parseAndEvaluate("cd `ls *`", stdout));
+
+
+        assertMsgContains(exception, ERR_TOO_MANY_ARGS);
     }
 
     @Test
@@ -220,30 +235,6 @@ public class CommandSubsIntegrationTest {
     }
 
     @Test
-    @DisplayName("Nested back quotes same cmd with quotes")
-    public void testNestedSameCmd() {
-        try {
-
-            shell.parseAndEvaluate("echo `echo \"'quote is not interpreted as special character'\"`", stdout);
-            assertEquals("'quote is not interpreted as special character'" + StringUtils.STRING_NEWLINE, stdout.toString());
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    @DisplayName("Nested back quotes same cmd with quotes")
-    public void testWithQuotes() {
-        try {
-
-            shell.parseAndEvaluate("echo '\"This is space `echo \" \"`\"'", stdout);
-            assertEquals("\"This is space `echo \" \"`\"" + StringUtils.STRING_NEWLINE, stdout.toString());
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
     @DisplayName("Paste with ls")
     public void testPasteWithLs() {
         try {
@@ -273,10 +264,114 @@ public class CommandSubsIntegrationTest {
             shell.parseAndEvaluate("wc -w `sed \"s|abc|f|\" replaceFile.txt`", stdout);
             assertEquals("       5 f.txt" +  StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             fail();
         }
     }
+
+    @Test
+    @DisplayName("Find With Ls")
+    public void testFindWithLs() {
+        try {
+            shell.parseAndEvaluate("ls `find dir -name file1*`", stdout);
+            assertEquals("dir" + StringUtils.fileSeparator() + "file1.tad" +  StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Echo With Diff")
+    public void testEchoWithDiff() {
+        try {
+            shell.parseAndEvaluate("echo `diff hella.txt hellz.txt`", stdout);
+            assertEquals("< first > second" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Two commands in back quotes")
+    public void testCutWithGrep() {
+        try {
+
+            shell.parseAndEvaluate("cut -c 1-3 `grep hella.txt findInFile.txt`", stdout);
+            assertEquals("fir" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Nested back quotes same cmd with quotes")
+    public void testNestedSameCmd() {
+        try {
+
+            shell.parseAndEvaluate("echo `echo \"'quote is not interpreted as special character'\"`", stdout);
+            assertEquals("'quote is not interpreted as special character'" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Nested back quotes same cmd with quotes")
+    public void testWithQuotes() {
+        try {
+
+            shell.parseAndEvaluate("echo '\"This is space `echo \" \"`\"'", stdout);
+            assertEquals("\"This is space `echo \" \"`\"" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
+    @Test
+    @DisplayName("Multiple commands in back quotes 1")
+    public void testMultipleCommandsMvLsEcho() {
+        try {
+
+            Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "toMove"));
+            Path path2 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "newName"));
+
+
+            shell.parseAndEvaluate("mv `ls toMove` `echo newName`", stdout);
+            assertFalse(Files.exists(path));
+            assertTrue(Files.exists(path2));
+
+            path2.toFile().delete();
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Multiple commands in multiple back quotes")
+    public void testCutWithDiffAndEcho() {
+        try {
+
+            shell.parseAndEvaluate("cut -c `echo 1-3` `grep hella.txt findInFile.txt`", stdout);
+            assertEquals("fir" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Multiple commands in multiple back quotes")
+    public void testMultCmds2() {
+        try {
+
+            shell.parseAndEvaluate("echo \"`wc -c hella.txt` - `wc -c hellz.txt`\"", stdout);
+            assertEquals("       5 hella.txt -        6 hellz.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
 
 
 }
