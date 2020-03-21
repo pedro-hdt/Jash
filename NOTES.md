@@ -121,6 +121,13 @@ Diff:
 - Mv
     - Multiple fixes for better implementation and exception error messages
     
+- Paste
+    - Added check for null input stream and test cases for it and null output stream as well
+    - Added test case for null args
+    - Fixed extra of newlines at the end of output
+    - Better error message when file is not found
+    - Better error message when file is a directory
+    - etter error message when fail to write to outstream
 - Rm 
     - Decision not to support file permissions as it is beyond the scope of the specification
     - Added better reporting of when files cannot be removed for being directories and not having the right flags specified

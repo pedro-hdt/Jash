@@ -12,6 +12,11 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.impl.app.ExitApplication;
 
+import java.security.Permission;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 class ExitApplicationTest {
     private ExitApplication exitApp;
 
