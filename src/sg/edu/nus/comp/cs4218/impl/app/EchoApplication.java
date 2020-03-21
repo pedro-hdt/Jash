@@ -1,14 +1,16 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.app.EchoInterface;
-import sg.edu.nus.comp.cs4218.exception.EchoException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.EchoInterface;
+import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 /**
  * The echo command writes its arguments separated by spaces and terminates by a newline on the
@@ -50,7 +52,7 @@ public class EchoApplication implements EchoInterface {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw (EchoException)new EchoException(ERR_IO_EXCEPTION).initCause(e);
+            throw (EchoException) new EchoException(ERR_IO_EXCEPTION).initCause(e);
         }
     }
 }

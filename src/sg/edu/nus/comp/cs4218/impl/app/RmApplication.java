@@ -6,6 +6,7 @@ import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,32 +19,62 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class RmApplication implements RmInterface {
 
+    public static final String ERR_DOT_DIR = "refusing to remove '.' or '..' directory";
+
     @Override
     public void remove(Boolean isEmptyFolder, Boolean isRecursive, String... fileName) throws RmException {
 
-        List<String> missingFiles = new ArrayList<>();
+        List<String> failedFiles = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();//NOPMD
 
         for (String f : fileName) {
+
+            // prevent removing directories ending in . or ..
+            if (f.substring(f.length() - 2).equals(StringUtils.fileSeparator() + ".")
+                    || f.substring(f.length() - 3).equals(StringUtils.fileSeparator() + "..")
+                    || f.equals(".")
+                    || f.equals("..")) {
+                sb.append(f);
+                sb.append(" skipped: ");
+                sb.append(ERR_DOT_DIR);
+                sb.append(STRING_NEWLINE);
+                failedFiles.add(f);
+                continue;
+            }
 
             File file = IOUtils.resolveFilePath(f).toFile();
 
             if (!file.exists()) {
-                missingFiles.add(f); // signal this file does not exist to report it later then skip it
+                sb.append(f);
+                sb.append(" skipped: ");
+                sb.append(ERR_FILE_NOT_FOUND);
+                sb.append(STRING_NEWLINE);
+                failedFiles.add(f); // signal this file does not exist to report it later then skip it
                 continue;
             }
 
             if (file.isDirectory()) {
 
-                String[] contents = file.list();
+                if (file.list().length != 0) {
 
-                if (isRecursive && contents.length != 0) { // if recursive and not empty go ahead
-                    Environment.currentDirectory = file.getAbsolutePath(); // go into the directory
-                    remove(isEmptyFolder, true, contents);       // remove recursively
-                    Environment.currentDirectory = file.getParent();       // come out
-                } else if (!isRecursive && (contents.length != 0 || !isEmptyFolder)) {
-                    // if not recursive, then the only way this could possibly work:
-                    // -d was specified, and the directory is empty
-                    throw new RmException(String.format("cannot remove %s: %s", file.toString(), ERR_IS_DIR));
+                    String[] contents = file.list();
+
+                    if (isRecursive) { // if recursive and not empty go ahead
+                        Environment.currentDirectory = file.getAbsolutePath(); // go into the directory
+                        remove(isEmptyFolder, true, contents); // remove recursively
+                        Environment.currentDirectory = file.getParent(); // come out
+                    } else {
+                        // if not recursive, then rm fails
+                        throw new RmException(String.format("cannot remove %s: %s", file.toString(), ERR_IS_DIR));
+                    }
+
+                } else if (!isEmptyFolder && !isRecursive) {
+                    sb.append(f);
+                    sb.append(" skipped: ");
+                    sb.append(ERR_IS_DIR);
+                    sb.append(STRING_NEWLINE);
+                    failedFiles.add(f);
+                    continue;
                 }
 
             }
@@ -52,14 +83,7 @@ public class RmApplication implements RmInterface {
 
         }
 
-        if (!missingFiles.isEmpty()) {
-            StringBuilder sb = new StringBuilder();//NOPMD
-            for (String f : missingFiles) {
-                sb.append(f);
-                sb.append(" skipped: ");
-                sb.append(ERR_FILE_NOT_FOUND);
-                sb.append(STRING_NEWLINE);
-            }
+        if (!failedFiles.isEmpty()) {
             throw new RmException(STRING_NEWLINE + sb.toString().trim());
         }
 

@@ -5,10 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_RANGE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_OUT_OF_RANGE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,6 +43,10 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
  * - File not found
  * - Is directory
  * - Empty stdin
+ * - Null Stdin
+ * - Error permission to read
+ * - Illegal range
+ * - Invalid flag
  *
  * Positive test cases:
  * - "-c" flag used + single number with file/stdin
@@ -86,6 +97,58 @@ public class CutApplicationTest {
     }
 
     @Test
+    public void testProcessInputFailsWithNullStream() {
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.processInput(true, false, null, true, 1, 2));
+        assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
+    }
+
+    @Test
+    public void testCutFromFilesFailsWithNullFile() {
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.cutFromFiles(true, false, true, 1, 2, null));
+        assertTrue(expectedException.getMessage().contains(ERR_NULL_ARGS));
+    }
+
+    @Test
+    public void testInvalidRange() {
+        String[] args = new String[] { "-c", "5,1", CUT1_FILE }; // NOPMD
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, stdout));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_RANGE));
+    }
+
+    @Test
+    public void testOutOfRange() {
+        String[] args = new String[] { "-c", "0,4", CUT1_FILE }; // NOPMD
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, stdout));
+        assertTrue(expectedException.getMessage().contains(ERR_OUT_OF_RANGE));
+    }
+
+    @Test
+    public void testIllegalFlag() {
+        String[] args = new String[] { "-f", "1,4", CUT1_FILE }; // NOPMD
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, stdout));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_FLAG));
+    }
+
+    /**
+     * When folder with no read permission is passed
+     * @throws IOException
+     */
+    @Test
+    public void testInvalidUnreadableFile() throws IOException {
+
+        Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "unreadable"));
+        File file = path.toFile();
+        file.setReadable(false);
+
+        Exception exception = assertThrows(Exception.class, ()
+                -> cutApp.cutFromFiles(true, false, true, 1, 2, path.toString()));
+        assertEquals(exception.getMessage(), "cut: " + ERR_NO_PERM);
+
+        file.setReadable(true);
+        file.delete();
+    }
+
+    @Test
     public void testFailsWithInsufficientArgs() {
         String[] args = new String[] { };
         Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, stdout));
@@ -118,7 +181,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5", CUT1_FILE };
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y", stdout.toString());
+            assertEquals("y" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage()); // NOPMD
         }
@@ -131,7 +194,7 @@ public class CutApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
-            assertEquals("y", stdout.toString());
+            assertEquals("y" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage()); // NOPMD
         }
@@ -142,7 +205,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5,10", CUT1_FILE }; // NOPMD
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("yT", stdout.toString());
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage()); // NOPMD
         }
@@ -155,7 +218,7 @@ public class CutApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
-            assertEquals("yT", stdout.toString());
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -166,7 +229,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-c", "5-10", CUT1_FILE }; // NOPMD
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y is T", stdout.toString()); // NOPMD
+            assertEquals("y is T" + StringUtils.STRING_NEWLINE, stdout.toString()); // NOPMD
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage()); // NOPMD
         }
@@ -179,7 +242,7 @@ public class CutApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
-            assertEquals("y is T", stdout.toString());
+            assertEquals("y is T" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -191,7 +254,7 @@ public class CutApplicationTest {
         try {
             cutApp.run(args, System.in, stdout);
             assertEquals("y is T" + StringUtils.STRING_NEWLINE +
-                    "y is W", stdout.toString());
+                    "y is W" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -202,7 +265,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5", CUT1_FILE };
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y", stdout.toString());
+            assertEquals("y" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -215,7 +278,7 @@ public class CutApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
-            assertEquals("y", stdout.toString());
+            assertEquals("y" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -226,7 +289,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5,10", CUT1_FILE };
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("yT", stdout.toString());
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -239,7 +302,7 @@ public class CutApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
-            assertEquals("yT", stdout.toString());
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -250,7 +313,7 @@ public class CutApplicationTest {
         String[] args = new String[] { "-b", "5-10", CUT1_FILE };
         try {
             cutApp.run(args, System.in, stdout);
-            assertEquals("y is T", stdout.toString());
+            assertEquals("y is T" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -263,7 +326,7 @@ public class CutApplicationTest {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, stdout);
-            assertEquals("y is T", stdout.toString());
+            assertEquals("y is T" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -275,7 +338,7 @@ public class CutApplicationTest {
         try {
             cutApp.run(args, System.in, stdout);
             assertEquals("y is T" + StringUtils.STRING_NEWLINE +
-                    "y is W", stdout.toString());
+                    "y is W" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (CutException e) {
             fail("should not fail: " + e.getMessage());
         }

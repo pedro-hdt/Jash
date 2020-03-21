@@ -13,12 +13,12 @@ import java.io.OutputStream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
@@ -86,8 +86,8 @@ class WcApplicationTest {
 
         @AfterEach
         void tearDown() {
-//            file1.delete();
-//            file2.delete();
+            file1.delete();
+            file2.delete();
         }
 
         @Test
@@ -112,36 +112,36 @@ class WcApplicationTest {
             assertEquals(expected, outputStream.toString().trim());
         }
 
-        @Ignore
+        @Test
+        @Disabled("Our impl behaving as expected in UNIX. maybe OS arch diff. expected is diff for diff arch")
         @DisplayName("should count only bytes")
-        // NOTE: Ours behaving as expected in UNIX. maybe OS arch diff
         void countFromFiles_countBytes() throws AbstractApplicationException {
             String expected = "71 file1.txt";
             wcApplication.run(new String[]{BYTES_FLAG, FILENAME1}, inputStream, outputStream);
             assertEquals(expected, outputStream.toString().trim());
         }
 
-        @Ignore
+        @Test
+        @Disabled("Our impl behaving as expected in UNIX. maybe OS arch diff. expected is diff for diff arch")
         @DisplayName("should count lines and bytes")
-        // NOTE: Ours behaving as expected in UNIX. maybe OS arch diff
         void countFromFiles_countLinesAndBytes() throws AbstractApplicationException {
             String expected = "4      71 file1.txt";
             wcApplication.run(new String[]{LINES_FLAG, BYTES_FLAG, FILENAME1}, inputStream, outputStream);
             assertEquals(expected, outputStream.toString().trim());
         }
 
-        @Ignore
+        @Test
+        @Disabled("Our impl behaving as expected in UNIX. maybe OS arch diff. expected is diff for diff arch")
         @DisplayName("should count lines, bytes, and words with all args")
-        // NOTE: Ours behaving as expected in UNIX. maybe OS arch diff
         void countFromFiles_allArgs() throws AbstractApplicationException {
             String expected = "4      11      71 file1.txt";
             wcApplication.run(new String[]{WORDS_FLAG, LINES_FLAG, BYTES_FLAG, FILENAME1}, inputStream, outputStream);
             assertEquals(expected, outputStream.toString().trim());
         }
 
-        @Ignore
+        @Test
+        @Disabled("Our impl behaving as expected in UNIX. maybe OS arch diff. expected is diff for diff arch")
         @DisplayName("should count lines, bytes, and words from multiple files")
-        // NOTE: Ours behaving as expected in UNIX. maybe OS arch diff
         void countFromFiles_multiFiles() throws AbstractApplicationException {
             String expected = "4      11      71 file1.txt" + System.lineSeparator() +
                     "       4      13      81 file2.txt" + System.lineSeparator() +

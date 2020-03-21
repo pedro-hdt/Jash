@@ -1,8 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
 import java.io.File;
-import java.math.BigInteger;
-import java.util.Arrays;
 
 public final class StringUtils {
     public static final String STRING_NEWLINE = System.lineSeparator();
@@ -62,20 +60,6 @@ public final class StringUtils {
     }
 
     /**
-     * Performs c * n (as in python)
-     *
-     * @param character char to be multiplied
-     * @param num       if num is < 0, num is assumed to be 0
-     * @return String result of c * n
-     */
-    public static String multiplyChar(char character, int num) {
-        int length = num <= 0 ? 0 : num;
-        char[] arr = new char[length];
-        Arrays.fill(arr, character);
-        return new String(arr);
-    }
-
-    /**
      * Tokenize a string delimited by whitespace
      *
      * @param str String to be tokenized
@@ -86,21 +70,5 @@ public final class StringUtils {
             return new String[0];
         }
         return str.trim().split("\\s+");
-    }
-
-    /**
-     * Checks if a string can be represented as a number.
-     *
-     * @param str String possibly representing a number
-     * @return true if str can be represented as a number
-     */
-    public static boolean isNumber(String str) {
-        BigInteger bigInt;
-        try {
-            bigInt = new BigInteger(str);
-        } catch (Exception ex) {
-            return false;
-        }
-        return !bigInt.toString().isEmpty();
     }
 }

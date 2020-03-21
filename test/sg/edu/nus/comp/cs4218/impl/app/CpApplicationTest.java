@@ -1,14 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +19,17 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for cp command
@@ -114,13 +122,30 @@ class CpApplicationTest {
                 + StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "CpTestFolder");
         for (File f : IOUtils.resolveFilePath(DEST_DIR).toFile().listFiles()) {
-            f.delete();
+            if (!f.getName().equals("emptyFile.txt")) {
+                f.delete();
+            }
         }
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
         PrintWriter writer = new PrintWriter(IOUtils.resolveFilePath(DEST_FILE).toFile());
         writer.print("");
         writer.close(); // empty the destination file so validation is meaningful in following runs
         Environment.setCurrentDirectory(ORIGINAL_DIR);
+    }
+
+
+    /**
+     * Call cp without args
+     * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_NO_ARGS string
+     */
+    @Test
+    public void testFailsWithNoArg() {
+
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+
+        assertMsgContains(cpException, ERR_NO_ARGS);
+
     }
 
 
@@ -132,7 +157,7 @@ class CpApplicationTest {
     public void testFailsWithSingleArg() {
 
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+                assertThrows(CpException.class, () -> cpApp.run(new String[]{"someFileName"}, System.in, System.out));
 
         assertMsgContains(cpException, ERR_NO_ARGS);
 

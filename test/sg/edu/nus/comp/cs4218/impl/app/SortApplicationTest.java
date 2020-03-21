@@ -1,13 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,8 +15,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
+import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for sort command.
@@ -39,6 +47,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
  * - No files supplied, use stdin
  */
 public class SortApplicationTest {
+    public static final String NUMBERS_ONLY_TXT = "numbersOnly.txt";
     private static SortApplication sortApp;
     private static OutputStream stdout;
 
@@ -91,9 +100,23 @@ public class SortApplicationTest {
         assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
     }
 
+    /**
+     * Test sort app whether output exception is thrown when there is an IOException
+     */
+    @Test
+    void testWritingResultToOutputStreamException() {
+        try {
+            OutputStream baos = TestUtils.getMockExceptionThrowingOutputStream();//NOPMD
+            sortApp.run(new String[]{NUMBERS_ONLY_TXT}, System.in, baos);
+            fail("Exception expected");
+        } catch (SortException e) {
+            assertEquals("sort: " + ERR_WRITE_STREAM, e.getMessage());
+        }
+    }
+
     @Test
     public void testNFlagNumberSort() {
-        String[] args = new String[] { "-n", "numbersOnly.txt" };
+        String[] args = new String[] { "-n", NUMBERS_ONLY_TXT};
 
         try {
             sortApp.run(args, System.in, stdout);
@@ -171,7 +194,7 @@ public class SortApplicationTest {
 
     @Test
     public void testRFlagNumberSort() {
-        String[] args = new String[] { "-r", "numbersOnly.txt" };
+        String[] args = new String[] { "-r", NUMBERS_ONLY_TXT};
 
         try {
             sortApp.run(args, System.in, stdout);
@@ -397,7 +420,7 @@ public class SortApplicationTest {
 
     @Test
     public void testMoreThanOneFileSort() {
-        String[] args = new String[] { "-nrf", "mixed.txt", "numbersOnly.txt" };
+        String[] args = new String[] { "-nrf", "mixed.txt", NUMBERS_ONLY_TXT};
 
         try {
             sortApp.run(args, System.in, stdout);

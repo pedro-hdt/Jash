@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Environment;
@@ -189,11 +190,7 @@ public class LsApplication implements LsInterface {
         List<Path> result = new ArrayList<>();
         File pwd = directory.toFile();
 
-        if (pwd == null || pwd.listFiles() == null) {
-            return result;
-        }
-
-        for (File f : pwd.listFiles()) {
+        for (File f : Objects.requireNonNull(pwd.listFiles())) {
             if (isFoldersOnly && !f.isDirectory()) {
                 continue;
             }
@@ -231,7 +228,7 @@ public class LsApplication implements LsInterface {
      * @return
      */
     private Path resolvePath(String directory) {
-        //TODO: Is this a bug since it checks only for Unix based and not Windows etc?
+        //Is this a bug since it checks only for Unix based and not Windows etc?
         if (directory.charAt(0) == '/') {
             // This is an absolute path
             return Paths.get(directory).normalize();

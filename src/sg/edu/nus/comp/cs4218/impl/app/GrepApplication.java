@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
@@ -39,8 +40,9 @@ public class GrepApplication implements GrepInterface {
     private static final int COUNT_INDEX = 1;
 
     @Override
-    public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, String... fileNames) throws Exception {
-        if (fileNames == null || pattern == null) {
+    public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines,
+        String... fileNames) throws Exception {
+        if (fileNames == null || pattern == null || isCaseInsensitive == null || isCountLines == null) {
             throw new GrepException(NULL_POINTER);
         }
 
@@ -72,7 +74,8 @@ public class GrepApplication implements GrepInterface {
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     // We considered there is no logical or really advantageous way to break the method down
-    private void grepResultsFromFiles(String pattern, Boolean isCaseInsensitive, StringJoiner lineResults, StringJoiner countResults, String... fileNames) throws Exception {
+    private void grepResultsFromFiles(String pattern, Boolean isCaseInsensitive, StringJoiner lineResults,
+        StringJoiner countResults, String... fileNames) throws Exception {
         int count;
         boolean isSingleFile = (fileNames.length == 1);
         for (String f : fileNames) {
@@ -90,6 +93,12 @@ public class GrepApplication implements GrepInterface {
                     countResults.add(f + ": " + IS_DIRECTORY);
                     continue;
                 }
+                if (!file.canRead()) {
+                    lineResults.add(f + ": " + ERR_NO_PERM);
+                    countResults.add(f + ": " + ERR_NO_PERM);
+                    continue;
+                }
+
                 reader = new BufferedReader(new FileReader(path));
                 String line;
                 Pattern compiledPattern;
@@ -117,7 +126,7 @@ public class GrepApplication implements GrepInterface {
                 }
                 reader.close();
             } catch (PatternSyntaxException pse) {
-                throw (GrepException)new GrepException(ERR_INVALID_REGEX).initCause(pse);
+                throw (GrepException) new GrepException(ERR_INVALID_REGEX).initCause(pse);
             } finally {
                 if (reader != null) {
                     reader.close();
@@ -128,6 +137,7 @@ public class GrepApplication implements GrepInterface {
 
     /**
      * Converts filename to absolute path, if initially was relative path
+     *
      * @param fileName supplied by user
      * @return a String of the absolute path of the filename
      */
@@ -137,7 +147,7 @@ public class GrepApplication implements GrepInterface {
         String convertedPath = convertPathToSystemPath(fileName);
 
         String newPath;
-        if (convertedPath.length()>=home.length() && convertedPath.substring(0, home.length()).trim().equals(home)) {
+        if (convertedPath.length() >= home.length() && convertedPath.substring(0, home.length()).trim().equals(home)) {
             newPath = convertedPath;
         } else {
             newPath = currentDir + CHAR_FILE_SEP + convertedPath;
@@ -147,6 +157,7 @@ public class GrepApplication implements GrepInterface {
 
     /**
      * Converts path provided by user into path recognised by the system
+     *
      * @param path supplied by user
      * @return a String of the converted path
      */
@@ -164,7 +175,8 @@ public class GrepApplication implements GrepInterface {
     }
 
     @Override
-    public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, InputStream stdin) throws Exception {
+    public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines,
+        InputStream stdin) throws Exception {
         int count = 0;
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
 
@@ -186,9 +198,9 @@ public class GrepApplication implements GrepInterface {
             }
             reader.close();
         } catch (PatternSyntaxException pse) {
-            throw (GrepException)new GrepException(ERR_INVALID_REGEX).initCause(pse);
+            throw (GrepException) new GrepException(ERR_INVALID_REGEX).initCause(pse);
         } catch (NullPointerException npe) {
-            throw (GrepException)new GrepException(ERR_FILE_NOT_FOUND).initCause(npe);
+            throw (GrepException) new GrepException(ERR_FILE_NOT_FOUND).initCause(npe);
         }
 
         String results = "";
@@ -233,14 +245,15 @@ public class GrepApplication implements GrepInterface {
         } catch (GrepException grepException) {
             throw grepException;
         } catch (Exception e) {
-            throw (GrepException)new GrepException(e.getMessage()).initCause(e);
+            throw (GrepException) new GrepException(e.getMessage()).initCause(e);
         }
     }
 
     /**
      * Separates the arguments provided by user into the flags, pattern and input files.
-     * @param args supplied by user
-     * @param grepFlags a bool array of possible flags in grep
+     *
+     * @param args       supplied by user
+     * @param grepFlags  a bool array of possible flags in grep
      * @param inputFiles a ArrayList<String> of file names supplied by user
      * @return regex pattern supplied by user. An empty String if not supplied.
      */
@@ -257,17 +270,17 @@ public class GrepApplication implements GrepInterface {
                     arg = Arrays.copyOfRange(arg, 1, arg.length);
                     for (char c : arg) {
                         switch (c) {
-                            case CASE_INSEN_IDENT:
-                                grepFlags[CASE_INSEN_IDX] = true;
-                                break;
-                            case COUNT_IDENT:
-                                grepFlags[COUNT_INDEX] = true;
-                                break;
-                            default:
-                                throw new GrepException(ERR_SYNTAX);
+                        case CASE_INSEN_IDENT:
+                            grepFlags[CASE_INSEN_IDX] = true;
+                            break;
+                        case COUNT_IDENT:
+                            grepFlags[COUNT_INDEX] = true;
+                            break;
+                        default:
+                            throw new GrepException(ERR_SYNTAX);
                         }
                     }
-                } else { // pattern must come before file names
+                } else {
                     pattern = s;
                     isFile = true; // next arg onwards will be file
                 }

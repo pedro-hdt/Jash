@@ -1,18 +1,23 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_BACK_QUOTE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_DOUBLE_QUOTE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_SINGLE_QUOTE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 @SuppressWarnings("PMD.ExcessiveMethodLength")
 public class ArgumentResolver {
@@ -84,21 +89,32 @@ public class ArgumentResolver {
                     if (unmatchedQuotes.isEmpty()) {
                         List<RegexArgument> subOutputSegment = Stream
                                 .of(StringUtils.tokenize(subCommandOutput))
-                                .map(str -> makeRegexArgument(str))
+                                .map(this::makeRegexArgument)
                                 .collect(Collectors.toList());
 
                         // append the first token to the previous parsedArg
                         // e.g. arg: abc`1 2 3`xyz`4 5 6` (contents in `` is after command sub)
                         // expected: [abc1, 2, 3xyz4, 5, 6]
-                        if (!subOutputSegment.isEmpty()) {
+                        if (!parsedArgsSegment.isEmpty() && !subOutputSegment.isEmpty()) {
+                            RegexArgument lastParsedArg = parsedArgsSegment.removeLast();
                             RegexArgument firstOutputArg = subOutputSegment.remove(0);
-                            appendParsedArgIntoSegment(parsedArgsSegment, firstOutputArg);
+                            lastParsedArg.merge(firstOutputArg);
+                            parsedArgsSegment.add(lastParsedArg);
                         }
+
+                        parsedArgsSegment.addAll(new ArrayList<>(subOutputSegment));
 
                     } else {
                         // don't tokenize subCommand output
-                        appendParsedArgIntoSegment(parsedArgsSegment,
-                                makeRegexArgument(subCommandOutput));
+//                        appendParsedArgIntoSegment(parsedArgsSegment,
+//                                makeRegexArgument(subCommandOutput));
+                        if (parsedArgsSegment.isEmpty()) {
+                            parsedArgsSegment.add(new RegexArgument(subCommandOutput));
+                        } else {
+                            RegexArgument lastParsedArg = parsedArgsSegment.removeLast();
+                            lastParsedArg.merge(subCommandOutput);
+                            parsedArgsSegment.add(lastParsedArg);
+                        }
                     }
                 } else {
                     // ongoing single quote
