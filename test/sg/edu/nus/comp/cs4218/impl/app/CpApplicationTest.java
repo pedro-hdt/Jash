@@ -21,8 +21,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 /**
  * Tests for cp command
@@ -60,6 +59,7 @@ class CpApplicationTest {
     private static CpApplication cpApp;
     private static final String DEST_DIR = "destDir";
     private static final String SRC1 = "src1";
+    private static final String SRC2 = "src2";
     private static final String DEST_FILE = "destFile";
 
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
@@ -158,17 +158,100 @@ class CpApplicationTest {
 
 
     /**
-     * Attempts to copy a non existent file
+     * Attempts to copy a non existent file into a folder
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_FILE_NOT_FOUND string
      */
     @Test
-    public void testFailsNonexistentFile() {
+    public void testFailsNonexistentFileToFolder() {
 
-        String[] args = {"inexistent1", DEST_DIR};
+        String[] args = {"nonexistent1", DEST_DIR};
         CpException cpException =
                 assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
 
         assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
+
+    }
+
+    /**
+     * Attempts to copy a non existent file into another file
+     * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_FILE_NOT_FOUND string
+     */
+    @Test
+    public void testFailsNonexistentFileToFile() {
+
+        String[] args = {"nonexistent1", DEST_FILE};
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+
+        assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
+
+    }
+
+    /**
+     * Attempts to copy a file into itself
+     */
+    @Test
+    public void testFailsFileToItself() {
+
+        String[] args = {SRC1, SRC1};
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+
+        assertMsgContains(cpException, "same file");
+
+    }
+
+    /**
+     * Attempts to copy an nonexistent file to another new file
+     */
+    @Test
+    public void testFailsNonexistentFileToNewFile() {
+
+        String[] args = {"inexistent1", "newfile"};
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+
+        assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
+
+    }
+
+    /**
+     * Call cp with null outstream
+     */
+    @Test
+    public void testFailsWithNullOutputStream() {
+
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, null));
+
+        assertMsgContains(cpException, ERR_NO_OSTREAM);
+
+    }
+
+    /**
+     * Call cp with null args
+     */
+    @Test
+    public void testFailsWithNullArgs() {
+
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(null, System.in, System.out));
+
+        assertMsgContains(cpException, ERR_NULL_ARGS);
+
+    }
+
+    /**
+     * Call cp with multiple files into single existing one
+     */
+    @Test
+    public void testFailsWithMultIntoSingle() {
+
+        String[] args = {SRC1, SRC2, DEST_FILE};
+        CpException cpException =
+                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+
+        assertMsgContains(cpException, "is not a directory");
 
     }
 
@@ -233,7 +316,7 @@ class CpApplicationTest {
     public void testMultFilesToDir() throws IOException, AbstractApplicationException {
 
         Path src1 = IOUtils.resolveFilePath(SRC1);
-        Path src2 = IOUtils.resolveFilePath("src2");
+        Path src2 = IOUtils.resolveFilePath(SRC2);
         Path dest = IOUtils.resolveFilePath(DEST_DIR);
 
         String[] args = {src1.toString(), src2.toString(), dest.toString()};
