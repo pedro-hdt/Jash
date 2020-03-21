@@ -45,7 +45,7 @@ public class ErrorConstants {
     public static final String ERR_NO_REGEX = "No regular expression supplied";
 
     // `mv` related
-    public static final String ERR_CANNOT_OVERWRITE = "Cannot overwrite non-empty directory";
+    public static final String ERR_CANNOT_OVERWRITE = "Cannot overwrite";
     public static final String ERR_NOT_MOVABLE = "Cannot move to a file with no overwrite";
 
 

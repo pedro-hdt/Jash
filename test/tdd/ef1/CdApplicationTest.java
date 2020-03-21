@@ -1,12 +1,9 @@
 package tdd.ef1;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.CdException;
-import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,8 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.CdException;
+import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
 class CdApplicationTest {
@@ -37,7 +40,6 @@ class CdApplicationTest {
     private static final String IS_NOT_DIR = ": Not a directory";
     private static final String NO_READ_PERM = ": Permission denied";
     private static final String NO_ARGS = ": Insufficient arguments";
-    private static final String NULL_POINTER_EXCEPTION = ": Null Pointer Exception";
     private static final String NULL_ARGS = ": Null arguments";
     private static final String TOO_MANY_ARGS = ": Too many arguments";
 
@@ -129,7 +131,7 @@ class CdApplicationTest {
         Exception exception = assertThrows(Exception.class, () -> {
             app.run(args, inputStream, outputStream);
         });
-        assertEquals("cd" + NULL_POINTER_EXCEPTION, exception.getMessage());
+        assertEquals("cd: " + ERR_NO_ISTREAM, exception.getMessage());
     }
 
     @Test
@@ -139,7 +141,7 @@ class CdApplicationTest {
         Exception exception = assertThrows(Exception.class, () -> {
             app.run(args, inputStream, null);
         });
-        assertEquals("cd" + NULL_POINTER_EXCEPTION, exception.getMessage());
+        assertEquals("cd: " + ERR_NO_OSTREAM, exception.getMessage());
     }
 
     @Test

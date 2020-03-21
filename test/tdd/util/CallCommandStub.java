@@ -1,16 +1,16 @@
 package tdd.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 
 public class CallCommandStub extends CallCommand {
 
@@ -24,7 +24,7 @@ public class CallCommandStub extends CallCommand {
 
     private final CallCommandT commandType;
 
-    public CallCommandStub(List<String> argsList, ApplicationRunner appRunner, ArgumentResolver argumentResolver, CallCommandT commandType) {
+    public CallCommandStub(List<String> argsList, ApplicationRunner appRunner, ArgumentResolver argumentResolver, CallCommandT commandType) throws ShellException {
         super(argsList, appRunner, argumentResolver);
         this.commandType = commandType;
     }

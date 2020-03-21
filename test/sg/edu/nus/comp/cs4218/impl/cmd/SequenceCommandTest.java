@@ -65,7 +65,7 @@ public class SequenceCommandTest {
      * Throws exit exception if one of them is exit command
      */
     @Test
-    public void testExitCommandWithEcho() {
+    public void testExitCommandWithEcho() throws ShellException {
         CallCommand exitCommand = new CallCommand(new ArrayList<>(Arrays.asList("exit")), new ApplicationRunner(), new ArgumentResolver());
         CallCommand echoCommand = new CallCommand(new ArrayList<>(Arrays.asList(ECHO_CMD, "shout")), new ApplicationRunner(), new ArgumentResolver());
 
