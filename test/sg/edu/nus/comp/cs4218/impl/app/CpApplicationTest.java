@@ -12,6 +12,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -59,6 +60,7 @@ class CpApplicationTest {
     private static CpApplication cpApp;
     private static final String DEST_DIR = "destDir";
     private static final String SRC1 = "src1";
+    private static final String DEST_FILE = "destFile";
 
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
@@ -108,10 +110,16 @@ class CpApplicationTest {
 
     @AfterAll
     public static void cleanUp() throws IOException {
-        for (File f : (new File(DEST_DIR)).listFiles()) {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "CpTestFolder");
+        for (File f : IOUtils.resolveFilePath(DEST_DIR).toFile().listFiles()) {
             f.delete();
         }
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
+        PrintWriter writer = new PrintWriter(IOUtils.resolveFilePath(DEST_FILE).toFile());
+        writer.print("");
+        writer.close(); // empty the destination file so validation is meaningful in following runs
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
@@ -208,7 +216,7 @@ class CpApplicationTest {
     public void testSingleFileToExistentFile() throws IOException, AbstractApplicationException {
 
         Path src = IOUtils.resolveFilePath(SRC1);
-        Path dest = IOUtils.resolveFilePath("destFile");
+        Path dest = IOUtils.resolveFilePath(DEST_FILE);
 
         String[] args = {src.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);
