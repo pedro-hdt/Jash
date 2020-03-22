@@ -1,9 +1,17 @@
 package integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -13,19 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 
 public class ShellCommandIntegrationTest {
 
@@ -159,7 +156,7 @@ public class ShellCommandIntegrationTest {
             fail();
 
         } catch (Exception e) {
-            assertTrue(e instanceof ShellException); //NOPMD
+            assertTrue(e instanceof ShellException);
             assertMsgContains(e, "shell: Multiple streams provided");
             Path filePath1 = Paths.get(Environment.getCurrentDirectory(), "z");
             Files.delete(filePath1);
@@ -207,6 +204,75 @@ public class ShellCommandIntegrationTest {
         try {
             shell.parseAndEvaluate("      echo     ''   hi   ' '     ", stdout);
             assertEquals(" hi  " + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("paste - < wc.txt | grep f > grepOut.txt ; echo `wc -c grepOut.txt` ; rm grepOut.txt")
+    public void testComplexChain1() {
+        try {
+            shell.parseAndEvaluate(
+                    "paste - < wc.txt | grep f > grepOut.txt ; echo `wc -c grepOut.txt` ; rm grepOut.txt",
+                    stdout);
+            assertEquals("9 grepOut.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("wc -c `ls > lsOut.txt ; sed s/empty/full/ < lsOut.txt | grep ls` | " +
+            "grep [0-9]+ > grepOut.txt ; paste grepOut.txt ; mv grepOut.txt .. ; " +
+            "cd .. ; rm grepOut.txt ; cd ShellCommandFolder ; ls | cut -c 1-9 ; rm lsOut.txt")
+    public void testComplexChain2() {
+        try {
+            shell.parseAndEvaluate(
+                    "wc -c `ls > lsOut.txt ; sed s/empty/full/ < lsOut.txt | grep ls` | " +
+                            "grep [0-9]+ > grepOut.txt ; paste grepOut.txt ; mv grepOut.txt .. ; " +
+                            "cd .. ; rm grepOut.txt ; cd ShellCommandFolder ; ls | cut -c 1-9 ; rm lsOut.txt",
+                    stdout);
+            assertEquals("      35 lsOut.txt" + StringUtils.STRING_NEWLINE + "empty.txt" + StringUtils.STRING_NEWLINE,
+                    stdout.toString());
+            assertFalse(Files.exists(IOUtils.resolveFilePath("lsOut.txt")));
+            assertFalse(Files.exists(IOUtils.resolveFilePath("grepOut.txt")));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("find . -name `ls | sort | paste - | grep empt` > findOut.txt ; " +
+            "echo `paste findOut.txt` > echoOut.txt ; diff echoOut.txt findOut.txt | " +
+            "cut -c 1-10 ; rm *Out.txt ")
+    public void testComplexChain3() {
+        try {
+            shell.parseAndEvaluate(
+                    "find . -name `ls | sort | paste - | grep empt` > findOut.txt ; " +
+                            "echo `paste findOut.txt` > echoOut.txt ; diff echoOut.txt findOut.txt | " +
+                            "cut -c 1-10 ; rm *Out.txt ",
+                    stdout);
+            assertEquals(StringUtils.STRING_NEWLINE, stdout.toString());
+            assertFalse(Files.exists(IOUtils.resolveFilePath("findOut.txt")));
+            assertFalse(Files.exists(IOUtils.resolveFilePath("echoOut.txt")));
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
+    @Test
+    @DisplayName("echo \"`echo hello`\" | grep a > grepOut.txt ; echo `paste grepOut.txt` ; " +
+            "echo `rm \"grepOut.txt\"`")
+    public void testComplexChain4() {
+        try {
+            shell.parseAndEvaluate(
+                    "echo \"`echo hello`\" | grep a > grepOut.txt ; echo `paste grepOut.txt` ; " +
+                            "echo `rm \"grepOut.txt\"`",
+                    stdout);
+            assertEquals(StringUtils.STRING_NEWLINE + StringUtils.STRING_NEWLINE, stdout.toString());
+            assertFalse(Files.exists(IOUtils.resolveFilePath("grepOut.txt")));
         } catch (Exception e) {
             fail();
         }
