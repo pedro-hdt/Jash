@@ -84,8 +84,8 @@ public class DiffApplication implements DiffInterface {
     public String diffTwoFiles(String fileNameA, String fileNameB, Boolean isShowSame, Boolean isNoBlank, Boolean isSimple) throws DiffException {
         String fileAContent;
         String fileBContent;
-        String[] fileALines;
-        String[] fileBLines;
+        String[] fileALines = new String[0];
+        String[] fileBLines = new String[0];
 
         boolean isFileADir = false;
         boolean isFileBDir = false;
@@ -98,9 +98,10 @@ public class DiffApplication implements DiffInterface {
                 File fileA = IOUtils.resolveFilePath(fileNameA).toFile();
                 if (fileA.isDirectory()) {
                     isFileADir = true;
+                } else {
+                    fileAContent = readFileContent(fileA);
+                    fileALines = fileAContent.split("\n");
                 }
-                fileAContent = readFileContent(fileA);
-                fileALines = fileAContent.split("\n");
             }
 
             if (fileNameB != null && fileNameB.equals("-")) {
@@ -110,9 +111,10 @@ public class DiffApplication implements DiffInterface {
                 File fileB = IOUtils.resolveFilePath(fileNameB).toFile();
                 if (fileB.isDirectory()) {
                     isFileBDir = true;
+                } else {
+                    fileBContent = readFileContent(fileB);
+                    fileBLines = fileBContent.split("\n");
                 }
-                fileBContent = readFileContent(fileB);
-                fileBLines = fileBContent.split("\n");
             }
 
             if (isFileADir && isFileBDir) {
