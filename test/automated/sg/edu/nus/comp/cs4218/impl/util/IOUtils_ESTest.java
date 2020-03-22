@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,6 +28,7 @@ public class IOUtils_ESTest {
     public void test00() throws Throwable {
         OutputStream outputStream0 = IOUtils.openOutputStream("8m");
         assertNotNull(outputStream0);
+        Files.deleteIfExists(IOUtils.resolveFilePath("8m"));
     }
     
     @Test

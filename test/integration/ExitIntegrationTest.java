@@ -5,10 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
@@ -51,10 +53,12 @@ public class ExitIntegrationTest {
     }
     
     @Test
-    public void testExitWithIoRedir() {
+    public void testExitWithIoRedir() throws IOException {
         try {
             shell.parseAndEvaluate("exit > diff *.txt", stdout);
+            Files.deleteIfExists(IOUtils.resolveFilePath("diff"));
         } catch (Exception e) {
+            Files.deleteIfExists(IOUtils.resolveFilePath("diff"));
             assertTrue(e instanceof ExitException);
             assertMsgContains(e, TERM_EXEC_MSG);
         }
