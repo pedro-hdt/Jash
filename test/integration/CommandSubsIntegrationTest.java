@@ -382,6 +382,16 @@ public class CommandSubsIntegrationTest {
         }
     }
 
+    @Test
+    @DisplayName("Nested back quotes ")
+    public void testNestedQuotesMultiple() {
+        try {
 
+            shell.parseAndEvaluate("echo abc `echo 1 2 3`xyz`echo 4 5 6`", stdout);
+            assertEquals("abc 1 2 3xyz4 5 6" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
 
 }
