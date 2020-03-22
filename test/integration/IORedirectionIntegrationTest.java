@@ -1,25 +1,32 @@
 package integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class IORedirectionIntegrationTest {
 
@@ -28,11 +35,20 @@ public class IORedirectionIntegrationTest {
     private static final String FILE1 = "intermediateFile1.txt";
     private static final String FILE2 = "intermediateFile2.txt";
 
+    public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+
+
 
     @BeforeAll
     public static void setUp() throws IOException {
         shell = new ShellImpl();
         out = new ByteArrayOutputStream();
+
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "IoRedirIntegrationTestFolder");
+
         Files.createFile(IOUtils.resolveFilePath(FILE1));
         Files.createFile(IOUtils.resolveFilePath(FILE2));
     }
@@ -40,12 +56,19 @@ public class IORedirectionIntegrationTest {
     @AfterEach
     public void finalize() {
         out.reset();
+
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "IoRedirIntegrationTestFolder");
     }
 
     @AfterAll
     public static void tearDown() throws IOException {
         Files.delete(IOUtils.resolveFilePath(FILE1));
         Files.delete(IOUtils.resolveFilePath(FILE2));
+
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
 
     @Test
@@ -58,19 +81,50 @@ public class IORedirectionIntegrationTest {
     }
 
     @Test
+    @DisplayName("ioredir pass data")
+    public void testIoRedirPassing() throws IOException {
+        try {
+            shell.parseAndEvaluate("echo yo > first > second > third", out);
+            fail();
+
+        } catch (Exception e) {
+            assertTrue(e instanceof ShellException);
+            assertMsgContains(e, "shell: Multiple streams provided");
+            Path filePath1 = Paths.get(Environment.getCurrentDirectory(), "first");
+            Files.delete(filePath1);
+        }
+    }
+
+    @Test
+    @DisplayName("ioredir pass data output")
+    public void testInvalidWhenFileDoesntExist() {
+        try {
+            shell.parseAndEvaluate("echo one < non-existent", out);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof ShellException);
+            assertMsgContains(e, "shell: No such file or directory");
+        }
+    }
+
+    @Test
+    @DisplayName("ioredir pass data output")
+    public void testIoRedirPassingOutput() {
+        try {
+            shell.parseAndEvaluate("echo one < yo", out);
+            assertEquals("one" + StringUtils.STRING_NEWLINE, out.toString());
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
     @DisplayName("ls > file ; paste - < file")
     public void testSimpleIORedir2() throws AbstractApplicationException, ShellException, IOException {
 
-        String ORIGINAL_DIR = Environment.getCurrentDirectory();
-        Environment.setCurrentDirectory(Environment.getCurrentDirectory()
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "LsTestFolder");
-
         shell.parseAndEvaluate(String.format("ls > %s ; paste - < %1$s", FILE1), out);
         assertTrue(out.toString().contains("textfile.txt"));
-        Files.delete(IOUtils.resolveFilePath(FILE1));
-
-        Environment.setCurrentDirectory(ORIGINAL_DIR);
 
     }
 
@@ -112,5 +166,91 @@ public class IORedirectionIntegrationTest {
         assertMsgContains(shellException, ERR_INVALID_APP);
 
     }
+
+    @Test
+    @DisplayName("IOredir after piping")
+    public void testIoRedirWithPipe() {
+        try {
+            shell.parseAndEvaluate("ls | grep wctest.* | wc > output.txt", out);
+            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("output.txt")));
+            assertEquals("       1       1      11" + StringUtils.STRING_NEWLINE, str1);
+
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "output.txt"));
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testMultipleIoRedir() {
+        try {
+            shell.parseAndEvaluate("sort < sortingFile.txt > sortedFile.txt", out);
+
+            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("sortedFile.txt")));
+            assertEquals("ab" + StringUtils.STRING_NEWLINE +
+                    "mm" + StringUtils.STRING_NEWLINE +
+                    "za" + StringUtils.STRING_NEWLINE +
+                    "zc" + StringUtils.STRING_NEWLINE, str1);
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "sortedFile.txt"));
+
+        } catch(Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testIoRedirWithWc() {
+        try {
+            shell.parseAndEvaluate("wc  -l < wcf.txt", out);
+
+            assertEquals("       0" + StringUtils.STRING_NEWLINE, out.toString());
+
+        } catch(Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testIoRedirWithRm() {
+        try {
+            Files.createFile(Paths.get(Environment.currentDirectory, "toDelete"));
+            shell.parseAndEvaluate("rm toDelete > res.txt", out);
+
+            assertFalse(Files.exists(Paths.get(Environment.currentDirectory, "toDelete")));
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "res.txt"));
+        } catch(Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testChainIoRedir() {
+        try {
+            shell.parseAndEvaluate("grep -ci match < grepFile.txt > matched.txt", out);
+            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("matched.txt")));
+            assertEquals("4" + StringUtils.STRING_NEWLINE, str1);
+
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "matched.txt"));
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testIORedirFileAsStdInSed() {
+        try {
+            shell.parseAndEvaluate("sed 's|abc|def|2' < sedFile.txt", out);
+            assertEquals("abc def abc abc" + StringUtils.STRING_NEWLINE +
+                    "def abf abc def" + StringUtils.STRING_NEWLINE +
+                    "hi nothing abhere" + StringUtils.STRING_NEWLINE, out.toString());
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
 
 }

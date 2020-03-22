@@ -189,4 +189,26 @@ public class ShellCommandIntegrationTest {
             fail();
         }
     }
+
+    @Test
+    @DisplayName("lots of spaces to ignore after tokenising")
+    public void testTokenise() {
+        try {
+            shell.parseAndEvaluate("      echo        hi        ", stdout);
+            assertEquals("hi" + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("lots of spaces to ignore after tokenising but handle quotes")
+    public void testTokeniseWithQuote() {
+        try {
+            shell.parseAndEvaluate("      echo     ''   hi   ' '     ", stdout);
+            assertEquals(" hi  " + StringUtils.STRING_NEWLINE, stdout.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
 }

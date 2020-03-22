@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
@@ -248,7 +249,7 @@ public class QuoteShellIntegrationTest {
     @Test
     public void testDoubleQuoteWithDiff()
             throws ShellException, AbstractApplicationException {
-        expected = "";
+        expected = "" + StringUtils.STRING_NEWLINE;
         cmdline = "diff \"quoteshelltest.txt\" \"quoteshelltest-identical.txt\"";
 
         shell.parseAndEvaluate(cmdline, output);
@@ -258,7 +259,7 @@ public class QuoteShellIntegrationTest {
     @Test
     public void testSingleQuoteWithDiff()
             throws ShellException, AbstractApplicationException {
-        expected = "";
+        expected = "" + StringUtils.STRING_NEWLINE;
         cmdline = "diff \'quoteshelltest.txt\' \'quoteshelltest-identical.txt\'";
 
         shell.parseAndEvaluate(cmdline, output);
@@ -322,5 +323,31 @@ public class QuoteShellIntegrationTest {
             fail();
         }
     }
+
+    @Test
+    @DisplayName("Nested back quotes same cmd with quotes")
+    public void testMultipleQuotes1() {
+        try {
+
+            shell.parseAndEvaluate("echo `echo \"'hi boy'\"`", output);
+            assertEquals("'hi boy'" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    @DisplayName("Nested back quotes same cmd with quotes")
+    public void testMultQuotes2() {
+        try {
+
+            shell.parseAndEvaluate("echo '\"space here `echo \" \"`\"'", output);
+            assertEquals("\"space here `echo \" \"`\"" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
 
 }
