@@ -249,7 +249,7 @@ public class QuoteShellIntegrationTest {
     @Test
     public void testDoubleQuoteWithDiff()
             throws ShellException, AbstractApplicationException {
-        expected = "" + StringUtils.STRING_NEWLINE;
+        expected = "";
         cmdline = "diff \"quoteshelltest.txt\" \"quoteshelltest-identical.txt\"";
 
         shell.parseAndEvaluate(cmdline, output);
@@ -259,7 +259,7 @@ public class QuoteShellIntegrationTest {
     @Test
     public void testSingleQuoteWithDiff()
             throws ShellException, AbstractApplicationException {
-        expected = "" + StringUtils.STRING_NEWLINE;
+        expected = "";
         cmdline = "diff \'quoteshelltest.txt\' \'quoteshelltest-identical.txt\'";
 
         shell.parseAndEvaluate(cmdline, output);

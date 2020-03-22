@@ -59,8 +59,7 @@ public class GrepIntegrationCommandTest {
     @Test
     public void testGrepThenSort() throws AbstractApplicationException, ShellException {
         cmdLine = "ls; grep sometimes textFile.txt";
-        expected = "emptyFile.txt" + StringUtils.STRING_NEWLINE
-            + "textFile.txt" + StringUtils.STRING_NEWLINE;
+        expected = "textFile.txt" + StringUtils.STRING_NEWLINE;
         shell.parseAndEvaluate(cmdLine, stdout);
         assertEquals(expected, stdout.toString());
     }
