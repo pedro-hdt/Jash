@@ -18,6 +18,8 @@ import java.io.PushbackInputStream;
 
 import org.junit.jupiter.api.Test;
 
+import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.exception.DiffException;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.exception.FindException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
@@ -192,7 +194,7 @@ public class ApplicationRunnerTest {
          // shell: diff: Not supported yet
          //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner", e);
-          assertTrue(e instanceof ShellException);
+          assertTrue(e instanceof DiffException);
       }
   }
 
@@ -265,7 +267,7 @@ public class ApplicationRunnerTest {
          // shell: cp: Not supported yet
          //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner", e);
-         assertTrue(e instanceof ShellException);
+         assertTrue(e instanceof CpException);
       }
   }
 }

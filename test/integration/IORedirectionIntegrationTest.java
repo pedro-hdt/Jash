@@ -171,9 +171,9 @@ public class IORedirectionIntegrationTest {
     @DisplayName("IOredir after piping")
     public void testIoRedirWithPipe() {
         try {
-            shell.parseAndEvaluate("ls | grep wctest.* | wc > output.txt", out);
+            shell.parseAndEvaluate("ls | grep pipetest.* | wc > output.txt", out);
             String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("output.txt")));
-            assertEquals("       1       1      11" + StringUtils.STRING_NEWLINE, str1);
+            assertEquals("       1       1      13" + StringUtils.STRING_NEWLINE, str1);
 
             Files.deleteIfExists(Paths.get(Environment.currentDirectory, "output.txt"));
 
