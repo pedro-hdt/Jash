@@ -1,12 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.app.RmInterface;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.exception.RmException;
-import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,8 +12,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.app.RmInterface;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.exception.RmException;
+import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class RmApplication implements RmInterface {
 
@@ -32,8 +35,8 @@ public class RmApplication implements RmInterface {
             // prevent removing directories ending in . or ..
             if (f.substring(f.length() - 2).equals(StringUtils.fileSeparator() + ".")
                     || f.substring(f.length() - 3).equals(StringUtils.fileSeparator() + "..")
-                    || f.equals(".")
-                    || f.equals("..")) {
+                    || ".".equals(f)
+                    || "..".equals(f)) {
                 sb.append(f);
                 sb.append(" skipped: ");
                 sb.append(ERR_DOT_DIR);
@@ -55,7 +58,16 @@ public class RmApplication implements RmInterface {
 
             if (file.isDirectory()) {
 
-                if (file.list().length != 0) {
+                if (file.list().length == 0) {
+                    if (!isEmptyFolder && !isRecursive) {
+                        sb.append(f);
+                        sb.append(" skipped: ");
+                        sb.append(ERR_IS_DIR);
+                        sb.append(STRING_NEWLINE);
+                        failedFiles.add(f);
+                        continue;
+                    }
+                } else {
 
                     String[] contents = file.list();
 
@@ -68,13 +80,6 @@ public class RmApplication implements RmInterface {
                         throw new RmException(String.format("cannot remove %s: %s", file.toString(), ERR_IS_DIR));
                     }
 
-                } else if (!isEmptyFolder && !isRecursive) {
-                    sb.append(f);
-                    sb.append(" skipped: ");
-                    sb.append(ERR_IS_DIR);
-                    sb.append(STRING_NEWLINE);
-                    failedFiles.add(f);
-                    continue;
                 }
 
             }

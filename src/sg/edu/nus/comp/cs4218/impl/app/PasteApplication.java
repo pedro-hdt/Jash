@@ -1,8 +1,15 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.app.PasteInterface;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,9 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.PasteInterface;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 public class PasteApplication implements PasteInterface {
 
@@ -52,10 +59,12 @@ public class PasteApplication implements PasteInterface {
         for (String f : fileName) {
 
             File file = IOUtils.resolveFilePath(f).toFile();
-            if (!file.exists()) {
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    throw new PasteException(f + ": " + ERR_IS_DIR);
+                }
+            } else {
                 throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
-            } else if (file.isDirectory()) {
-                throw new PasteException(f + ": " + ERR_IS_DIR);
             }
             try {
                 readers.add(new BufferedReader(new FileReader(file)));
@@ -101,8 +110,8 @@ public class PasteApplication implements PasteInterface {
     public String mergeFileAndStdin(InputStream stdin, String... fileName) throws PasteException {
 
         List<BufferedReader> fileReaders = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();//NOPMD
-        BufferedReader stdinBufReader = new BufferedReader(new InputStreamReader(stdin));
+        StringBuilder sb = new StringBuilder(); //NOPMD
+        BufferedReader stdinBufReader = new BufferedReader(new InputStreamReader(stdin)); //NOPMD
 
         for (String f : fileName) {
             try {
@@ -110,10 +119,12 @@ public class PasteApplication implements PasteInterface {
                     fileReaders.add(stdinBufReader);
                 } else {
                     File file = IOUtils.resolveFilePath(f).toFile();
-                    if (!file.exists()) {
+                    if (file.exists()) {
+                        if (file.isDirectory()) {
+                            throw new PasteException(f + ": " + ERR_IS_DIR);
+                        }
+                    } else {
                         throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
-                    } else if (file.isDirectory()) {
-                        throw new PasteException(f + ": " + ERR_IS_DIR);
                     }
                     fileReaders.add(new BufferedReader(new FileReader(file)));
                 }

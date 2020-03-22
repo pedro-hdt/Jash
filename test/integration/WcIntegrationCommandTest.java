@@ -1,18 +1,23 @@
 package integration;
 
-import org.junit.jupiter.api.*;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class WcIntegrationCommandTest {
 
@@ -54,7 +59,7 @@ public class WcIntegrationCommandTest {
 
     @Test
     public void testWcThenEcho() throws ShellException, AbstractApplicationException {
-        expected = "       2 wctest.txt" + STRING_NEWLINE +
+        expected = "       2 wctest.txt" + STRING_NEWLINE + // NOPMD
                 "wctest.txt" + STRING_NEWLINE;
         cmdline = "wc -l wctest.txt; echo wctest.txt";
 
@@ -74,7 +79,7 @@ public class WcIntegrationCommandTest {
 
     @Test
     public void testWcThenGrep() throws ShellException, AbstractApplicationException {
-        expected = "       2 wctest.txt" + STRING_NEWLINE;
+        expected = "       2 wctest.txt" + STRING_NEWLINE;//NOPMD
         cmdline = "wc -l wctest.txt | grep 2";
 
         shell.parseAndEvaluate(cmdline, stdout);

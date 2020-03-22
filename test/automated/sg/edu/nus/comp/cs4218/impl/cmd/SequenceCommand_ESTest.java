@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
+@SuppressWarnings("PMD")
 public class SequenceCommand_ESTest {
 
 //  @Test

@@ -159,7 +159,7 @@ public class ShellCommandIntegrationTest {
             fail();
 
         } catch (Exception e) {
-            assertTrue(e instanceof ShellException);
+            assertTrue(e instanceof ShellException); //NOPMD
             assertMsgContains(e, "shell: Multiple streams provided");
             Path filePath1 = Paths.get(Environment.getCurrentDirectory(), "z");
             Files.delete(filePath1);
@@ -179,7 +179,7 @@ public class ShellCommandIntegrationTest {
                     "100" + StringUtils.STRING_NEWLINE, str1);
 
 
-            FileOutputStream outputStream = new FileOutputStream(filePath1.toFile());
+            FileOutputStream outputStream = new FileOutputStream(filePath1.toFile()); //NOPMD
             byte[] strToBytes = ("15" + StringUtils.STRING_NEWLINE +
                     "2" + StringUtils.STRING_NEWLINE + "100").getBytes();
             outputStream.write(strToBytes);

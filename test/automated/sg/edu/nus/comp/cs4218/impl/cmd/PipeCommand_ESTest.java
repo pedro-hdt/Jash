@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
+@SuppressWarnings("PMD")
 public class PipeCommand_ESTest {
 
 //  @Test

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
 
+@SuppressWarnings("PMD.AvoidInstanceofChecksInCatchClause")
 public class RegexArgumentTest {
 
   @Test
@@ -41,7 +42,7 @@ public class RegexArgumentTest {
       // Undeclared exception!
       try { 
         regexArgument0.merge((RegexArgument) null);
-        fail("Expecting exception: NullPointerException");
+        fail("Expecting exception: NullPointerException"); //NOPMD
       
       } catch(NullPointerException e) {
          //

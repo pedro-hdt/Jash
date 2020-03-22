@@ -24,7 +24,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.AvoidInstanceofChecksInCatchClause"})
 // We argue that in this case having duplicate literals improve readability significantly
 class CommandBuilderTest {
 
@@ -232,9 +232,9 @@ class CommandBuilderTest {
     @Test
     @DisplayName("Automated Testing Tool")
     public void test0()  throws Throwable  {
-        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        ApplicationRunner appRunner = new ApplicationRunner();
         try {
-            CommandBuilder.parseCommand(";\"Y^^P~", applicationRunner0);
+            CommandBuilder.parseCommand(";\"Y^^P~", appRunner);
             fail("Expecting exception: Exception");
 
         } catch(Exception e) {
@@ -245,9 +245,9 @@ class CommandBuilderTest {
     @Test
     @DisplayName("Automated Testing Tool")
     public void test1()  throws Throwable  {
-        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        ApplicationRunner appRunner = new ApplicationRunner();
         try {
-            CommandBuilder.parseCommand("|.", applicationRunner0);
+            CommandBuilder.parseCommand("|.", appRunner);
             fail("Expecting exception: Exception");
 
         } catch(Exception e) {
@@ -272,9 +272,9 @@ class CommandBuilderTest {
     @Test
     @DisplayName("Automated Testing Tool")
     public void test4()  throws Throwable  {
-        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        ApplicationRunner appRunner = new ApplicationRunner();
         try {
-            CommandBuilder.parseCommand("z>{!Fug@B!\"", applicationRunner0);
+            CommandBuilder.parseCommand("z>{!Fug@B!\"", appRunner);
             fail("Expecting exception: Exception");
         } catch(Exception e) {
             assertTrue(e instanceof ShellException);
@@ -285,8 +285,8 @@ class CommandBuilderTest {
     @Test
     @DisplayName("Automated Testing Tool")
     public void test5()  throws Throwable  {
-        ApplicationRunner applicationRunner0 = new ApplicationRunner();
-        Command command0 = CommandBuilder.parseCommand("we3[zf\u0005|/KX@I<}", applicationRunner0);
+        ApplicationRunner appRunner = new ApplicationRunner();
+        Command command0 = CommandBuilder.parseCommand("we3[zf\u0005|/KX@I<}", appRunner);
         assertNotNull(command0);
     }
 

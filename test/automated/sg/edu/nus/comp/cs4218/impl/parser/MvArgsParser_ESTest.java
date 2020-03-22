@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
 
+@SuppressWarnings("PMD")
 public class MvArgsParser_ESTest {
 
   @Test

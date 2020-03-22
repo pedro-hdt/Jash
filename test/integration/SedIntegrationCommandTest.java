@@ -65,7 +65,7 @@ public class SedIntegrationCommandTest {
     public void testWithStdIn() {
 
         try {
-            String stdin = "abc";
+            String stdin = "abc"; //NOPMD
             System.setIn(new ByteArrayInputStream(stdin.getBytes()));
 
             shell.parseAndEvaluate("sed 's/abc/def/'", stdout);
@@ -81,7 +81,7 @@ public class SedIntegrationCommandTest {
     public void testWithSort() {
 
         try {
-            String stdin = "abc" + StringUtils.STRING_NEWLINE + "mmm";
+            String stdin = "abc" + StringUtils.STRING_NEWLINE + "mmm"; //NOPMD
             System.setIn(new ByteArrayInputStream(stdin.getBytes()));
 
             shell.parseAndEvaluate("sed 's/abc/zzz/' | sort", stdout);
@@ -97,7 +97,7 @@ public class SedIntegrationCommandTest {
     public void testWithGrep() {
 
         try {
-            String stdin = "abc" + StringUtils.STRING_NEWLINE + "mmm";
+            String stdin = "abc" + StringUtils.STRING_NEWLINE + "mmm"; //NOPMD
             System.setIn(new ByteArrayInputStream(stdin.getBytes()));
 
             shell.parseAndEvaluate("sed 's/abc/zzz/' | grep -c mmm", stdout);

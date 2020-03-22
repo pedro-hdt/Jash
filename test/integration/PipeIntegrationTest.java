@@ -38,6 +38,9 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class PipeIntegrationTest {
 
+    public static final String PASTE_CMD = "paste";
+    public static final String ECHO_CMD = "echo";
+    public static final String GREP_CMD = "grep";
     public static ApplicationRunner appRunner;
     public static ArgumentResolver argumentResolver;
     public static ByteArrayOutputStream out;
@@ -82,8 +85,8 @@ public class PipeIntegrationTest {
 
         String message = "hello world";
 
-        CallCommand echo = new CallCommand(Arrays.asList("echo", message), appRunner, argumentResolver);
-        CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
+        CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList(PASTE_CMD, "-"), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, paste));
 
@@ -98,10 +101,10 @@ public class PipeIntegrationTest {
 
         String message = "this message is 6 words long";
 
-        CallCommand echo = new CallCommand(Arrays.asList("echo", message), appRunner, argumentResolver);
-        CallCommand wc = new CallCommand(Arrays.asList("wc", "-w"), appRunner, argumentResolver);
+        CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
+        CallCommand wcCmd = new CallCommand(Arrays.asList("wc", "-w"), appRunner, argumentResolver);
 
-        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, wc));
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, wcCmd));
 
         pipeCommand.evaluate(System.in, out);
 
@@ -114,7 +117,7 @@ public class PipeIntegrationTest {
 
         String message = "not yet cut";
 
-        CallCommand echo = new CallCommand(Arrays.asList("echo", message), appRunner, argumentResolver);
+        CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
         CallCommand cut = new CallCommand(Arrays.asList("cut", "-c", "9-11"), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, cut));
@@ -130,7 +133,7 @@ public class PipeIntegrationTest {
 
         String message = "5\n3\n23\n1\n8\n4";
 
-        CallCommand echo = new CallCommand(Arrays.asList("echo", message), appRunner, argumentResolver);
+        CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
         CallCommand sort = new CallCommand(Arrays.asList("sort", "-n"), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, sort));
@@ -146,14 +149,14 @@ public class PipeIntegrationTest {
 
         String message = "this is greppable";
 
-        InputStream in = new ByteArrayInputStream(message.getBytes());
+        InputStream stdin = new ByteArrayInputStream(message.getBytes());
 
-        CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
-        CallCommand grep = new CallCommand(Arrays.asList("grep", "grep"), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList(PASTE_CMD, "-"), appRunner, argumentResolver);
+        CallCommand grep = new CallCommand(Arrays.asList(GREP_CMD, GREP_CMD), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(paste, grep));
 
-        pipeCommand.evaluate(in, out);
+        pipeCommand.evaluate(stdin, out);
 
         assertEquals(message + STRING_NEWLINE, out.toString());
 
@@ -163,15 +166,15 @@ public class PipeIntegrationTest {
     @Test
     public void testSimplePipe6() throws ShellException, AbstractApplicationException {
 
-        CallCommand ls = new CallCommand(Arrays.asList("ls", "./dummyTestFolder"), appRunner, argumentResolver);
-        CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
+        CallCommand lsCmd = new CallCommand(Arrays.asList("ls", "./dummyTestFolder"), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList(PASTE_CMD, "-"), appRunner, argumentResolver);
 
-        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(ls, paste));
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(lsCmd, paste));
 
         pipeCommand.evaluate(System.in, out);
 
         ByteArrayOutputStream lsOut = new ByteArrayOutputStream();
-        ls.evaluate(System.in, lsOut);
+        lsCmd.evaluate(System.in, lsOut);
         assertEquals(lsOut.toString(), out.toString());
 
     }
@@ -180,10 +183,10 @@ public class PipeIntegrationTest {
     @Test
     public void testSimplePipe7() throws ShellException, AbstractApplicationException {
 
-        CallCommand wc = new CallCommand(Arrays.asList("wc", "-c", "./dummyTestFolder/WcTestFolder/wc2.txt"), appRunner, argumentResolver);
-        CallCommand grep = new CallCommand(Arrays.asList("grep", "42"), appRunner, argumentResolver);
+        CallCommand wcCmd = new CallCommand(Arrays.asList("wc", "-c", "./dummyTestFolder/WcTestFolder/wc2.txt"), appRunner, argumentResolver);
+        CallCommand grep = new CallCommand(Arrays.asList(GREP_CMD, "42"), appRunner, argumentResolver);
 
-        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(wc, grep));
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(wcCmd, grep));
 
         pipeCommand.evaluate(System.in, out);
 
@@ -195,10 +198,10 @@ public class PipeIntegrationTest {
     @Test
     public void testSimplePipe8() throws ShellException {
 
-        CallCommand ls = new CallCommand(Arrays.asList("ls"), appRunner, argumentResolver);
+        CallCommand lsCmd = new CallCommand(Arrays.asList("ls"), appRunner, argumentResolver);
         CallCommand exit = new CallCommand(Arrays.asList("exit"), appRunner, argumentResolver);
 
-        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(ls, exit));
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(lsCmd, exit));
 
         ExitException exitException = assertThrows(ExitException.class, () -> pipeCommand.evaluate(System.in, out));
         assertMsgContains(exitException, "terminating execution");
@@ -209,8 +212,8 @@ public class PipeIntegrationTest {
     @Test
     public void testSimplePipeFirstCommandFails() throws ShellException, AbstractApplicationException {
 
-        CallCommand paste = new CallCommand(Arrays.asList("paste", "nonExistentFile.txt"), appRunner, argumentResolver);
-        CallCommand grep = new CallCommand(Arrays.asList("grep", "grep"), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList(PASTE_CMD, "nonExistentFile.txt"), appRunner, argumentResolver);
+        CallCommand grep = new CallCommand(Arrays.asList(GREP_CMD, GREP_CMD), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(paste, grep));
 
@@ -238,8 +241,8 @@ public class PipeIntegrationTest {
 
         String message = "hello world";
 
-        CallCommand echo = new CallCommand(Arrays.asList("echo", message), appRunner, argumentResolver);
-        CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
+        CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList(PASTE_CMD, "-"), appRunner, argumentResolver);
         CallCommand sed = new CallCommand(Arrays.asList("sed", "s/hello/goodbye/"), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, paste, sed));
@@ -255,10 +258,10 @@ public class PipeIntegrationTest {
 
         String message = "hello world";
 
-        CallCommand echo = new CallCommand(Arrays.asList("echo", message), appRunner, argumentResolver);
-        CallCommand paste = new CallCommand(Arrays.asList("paste", "-"), appRunner, argumentResolver);
+        CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
+        CallCommand paste = new CallCommand(Arrays.asList(PASTE_CMD, "-"), appRunner, argumentResolver);
         CallCommand sed = new CallCommand(Arrays.asList("sed", "s/hello/goodbye/"), appRunner, argumentResolver);
-        CallCommand grep = new CallCommand(Arrays.asList("grep", "-i", "WORLD"), appRunner, argumentResolver);
+        CallCommand grep = new CallCommand(Arrays.asList(GREP_CMD, "-i", "WORLD"), appRunner, argumentResolver);
 
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, paste, sed, grep));
 

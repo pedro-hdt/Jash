@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
 
+@SuppressWarnings("PMD")
 public class RmArgsParser_ESTest {
 
 //  @Test

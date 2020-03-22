@@ -19,29 +19,30 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
+@SuppressWarnings("PMD.AvoidInstanceofChecksInCatchClause")
 public class ArgumentResolverTest {
 
   @Test 
   public void test00()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("");
+      ArgumentResolver argResolver = new ArgumentResolver();
+      List<String> list0 = argResolver.resolveOneArgument("");
       assertFalse(list0.contains(""));
   }
 
   @Test 
   public void test01()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       LinkedList<String> linkedList0 = new LinkedList<String>();
-      List<String> list0 = argumentResolver0.parseArguments(linkedList0);
+      List<String> list0 = argResolver.parseArguments(linkedList0);
       assertTrue(list0.isEmpty());
   }
 
   @Test 
   public void test02()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       // Undeclared exception!
       try { 
-        argumentResolver0.resolveOneArgument((String) null);
+        argResolver.resolveOneArgument((String) null);
         fail("Expecting exception: NullPointerException");
       
       } catch(NullPointerException e) {
@@ -55,11 +56,11 @@ public class ArgumentResolverTest {
 
   @Test 
   public void test03()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       RegexArgument regexArgument0 = new RegexArgument("([^'\"`|<>;s]+|'[^']*'|\"([^\"`]*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
       List<String> list0 = regexArgument0.globFiles();
       try { 
-        argumentResolver0.parseArguments(list0);
+        argResolver.parseArguments(list0);
         fail("Expecting exception: Exception");
       
       } catch(Exception e) {
@@ -74,10 +75,10 @@ public class ArgumentResolverTest {
 
   @Test 
   public void test04()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       // Undeclared exception!
       try { 
-        argumentResolver0.parseArguments((List<String>) null);
+        argResolver.parseArguments((List<String>) null);
         fail("Expecting exception: NullPointerException");
       
       } catch(NullPointerException e) {
@@ -92,10 +93,10 @@ public class ArgumentResolverTest {
 
   @Test 
   public void test05()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       // Undeclared exception!
       try { 
-        argumentResolver0.makeRegexArgument((String) null);
+        argResolver.makeRegexArgument((String) null);
         fail("Expecting exception: NullPointerException");
       
       } catch(NullPointerException e) {
@@ -107,52 +108,53 @@ public class ArgumentResolverTest {
 
   @Test 
   public void test06()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("cp");
+      ArgumentResolver argResolver = new ArgumentResolver();
+      List<String> list0 = argResolver.resolveOneArgument("cp");
       assertTrue(list0.contains("cp"));
   }
 
   @Test 
   public void test07()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("Dt`N;-`");
+      String arg = "Dt`N;-`";
+      ArgumentResolver argResolver = new ArgumentResolver();
+      List<String> list0 = argResolver.resolveOneArgument(arg);
       assertEquals(1, list0.size());
-      assertFalse(list0.contains("Dt`N;-`"));
+      assertFalse(list0.contains(arg));
   }
 
   @Test 
   public void test08()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      RegexArgument regexArgument0 = argumentResolver0.makeRegexArgument();
+      ArgumentResolver argResolver = new ArgumentResolver();
+      RegexArgument regexArgument0 = argResolver.makeRegexArgument();
       assertEquals("", regexArgument0.toString());
   }
 
   @Test 
   public void test09()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      ApplicationRunner applicationRunner0 = argumentResolver0.getAppRunner();
-      assertNotNull(applicationRunner0);
+      ArgumentResolver argResolver = new ArgumentResolver();
+      ApplicationRunner appRunner = argResolver.getAppRunner();
+      assertNotNull(appRunner);
   }
 
   @Test 
   public void test10()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      RegexArgument regexArgument0 = argumentResolver0.makeRegexArgument("([^'\"`|<>;s]+|'[^']*'|\"([^\"`]*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
+      ArgumentResolver argResolver = new ArgumentResolver();
+      RegexArgument regexArgument0 = argResolver.makeRegexArgument("([^'\"`|<>;s]+|'[^']*'|\"([^\"`]*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
       assertEquals("([^'\"`|<>;s]+|'[^']*'|\"([^\"`]*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+", regexArgument0.toString());
   }
 
   @Test 
   public void test11()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("W{r`>x'l#cv*pF }");
+      ArgumentResolver argResolver = new ArgumentResolver();
+      List<String> list0 = argResolver.resolveOneArgument("W{r`>x'l#cv*pF }");
       assertEquals(1, list0.size());
   }
 
   @Test 
   public void test12()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       try { 
-        argumentResolver0.resolveOneArgument("([^'\"`|<>;s]+|'[^']*'|\"([^\"``*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
+        argResolver.resolveOneArgument("([^'\"`|<>;s]+|'[^']*'|\"([^\"``*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
         fail("Expecting exception: Exception");
       
       } catch(Exception e) {
@@ -167,9 +169,9 @@ public class ArgumentResolverTest {
 
   @Test 
   public void test13()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       try { 
-        argumentResolver0.resolveOneArgument("([^'\"`|<>;s]+|'[^']*'|\"([^```.*?`[^$`]*)+!|\"[^\"]*\"`[^`]*`)+");
+        argResolver.resolveOneArgument("([^'\"`|<>;s]+|'[^']*'|\"([^```.*?`[^$`]*)+!|\"[^\"]*\"`[^`]*`)+");
         fail("Expecting exception: Exception");
       
       } catch(Exception e) {
@@ -184,10 +186,10 @@ public class ArgumentResolverTest {
 
   @Test 
   public void test14()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
+      ArgumentResolver argResolver = new ArgumentResolver();
       LinkedList<String> linkedList0 = new LinkedList<String>();
       linkedList0.add("Dt`N;-`");
-      List<String> list0 = argumentResolver0.parseArguments(linkedList0);
+      List<String> list0 = argResolver.parseArguments(linkedList0);
       assertFalse(list0.contains("Dt`N;-`"));
       assertEquals(1, list0.size());
   }

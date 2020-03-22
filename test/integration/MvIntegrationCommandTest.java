@@ -76,7 +76,7 @@ public class MvIntegrationCommandTest {
             fail();
 
         } catch (Exception e) {
-            assertTrue(e instanceof ExitException);
+            assertTrue(e instanceof ExitException); //NOPMD
             assertMsgContains(e, "terminating execution");
         }
     }
@@ -106,7 +106,7 @@ public class MvIntegrationCommandTest {
     public void testMvWithCdAndLs() {
         try {
             Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "cdDir"));
-            Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "name.cd"));
+            Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "name.cd")); //NOPMD
 
             shell.parseAndEvaluate("mv 'name.cd' cdDir ; cd cdDir ; ls", stdout);
             assertTrue(stdout.toString().contains("name.cd"));
@@ -147,7 +147,7 @@ public class MvIntegrationCommandTest {
     public void testMvWithPaste() {
         try {
             Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "name.paste"));
-            FileOutputStream outputStream = new FileOutputStream(filePath1.toFile());
+            FileOutputStream outputStream = new FileOutputStream(filePath1.toFile()); //NOPMD
             byte[] strToBytes = "first".getBytes();
             outputStream.write(strToBytes);
             outputStream.close();

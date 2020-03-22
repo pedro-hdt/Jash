@@ -1,6 +1,19 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import sg.edu.nus.comp.cs4218.app.DiffInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -8,12 +21,8 @@ import sg.edu.nus.comp.cs4218.exception.DiffException;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.impl.parser.DiffArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-
+@SuppressWarnings("PMD.PreserveStackTrace")
 public class DiffApplication implements DiffInterface {
 
     InputStream inputStream; //NOPMD
@@ -43,7 +52,7 @@ public class DiffApplication implements DiffInterface {
      * @throws Exception
      */
     public String readFileContent(File file) throws Exception {
-        InputStream inputStream;
+        InputStream inputStream;  //NOPMD
         int fileLength;
         byte[] strBuffer;
         String fileContent;
@@ -128,7 +137,7 @@ public class DiffApplication implements DiffInterface {
 
                 StringBuilder output = new StringBuilder();
                 for (int i = 0; i < commonLinesA.length; i++) {
-                    if (commonLinesA[i] == false) {
+                    if (!commonLinesA[i]) {
                         if (isNoBlank && fileALines[i].isEmpty()) {
                             continue;
                         }
@@ -136,7 +145,7 @@ public class DiffApplication implements DiffInterface {
                     }
                 }
                 for (int j = 0; j < commonLinesB.length; j++) {
-                    if (commonLinesB[j] == false) {
+                    if (!commonLinesB[j]) {
                         if (isNoBlank && fileBLines[j].isEmpty()) {
                             continue;
                         }
@@ -240,8 +249,7 @@ public class DiffApplication implements DiffInterface {
     public String diffFileAndStdin(String fileName, InputStream stdin, Boolean isShowSame, Boolean isNoBlank, Boolean isSimple) throws DiffException {
         try {
             inputStream = stdin;
-            String message = diffTwoFiles(fileName, "-", isShowSame, isNoBlank, isSimple);
-            return message;
+            return diffTwoFiles(fileName, "-", isShowSame, isNoBlank, isSimple);
         } catch (Exception e) {
             throw new DiffException(e.getMessage());
         }

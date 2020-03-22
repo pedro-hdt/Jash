@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.impl.util.RegexArgument;
 
+@SuppressWarnings("PMD")
 public class RegexArgument_ESTest {
 
   @Test

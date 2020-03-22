@@ -51,6 +51,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 public class CommandSubsIntegrationTest {
 
     public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    public static final String NEW_COPY_FILE = "newToCopy.txt";
     private static ArgumentResolver argsResolver;
 
     @Mock
@@ -110,7 +111,7 @@ public class CommandSubsIntegrationTest {
             invalidCmd.evaluate(stdin, mockOutStream);
             fail();
         } catch (Exception e) {
-            assertTrue(e instanceof ShellException);
+            assertTrue(e instanceof ShellException); //NOPMD
         }
 
     }
@@ -368,15 +369,15 @@ public class CommandSubsIntegrationTest {
 
             shell.parseAndEvaluate("ls `cp toCopy.txt newToCopy.txt`", stdout);
 
-            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "newToCopy.txt")));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, NEW_COPY_FILE)));
 
-            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("newToCopy.txt")));
+            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath(NEW_COPY_FILE)));
             String str2 = new String(Files.readAllBytes(IOUtils.resolveFilePath("toCopy.txt")));
 
             assertEquals(str1, str2);
-            assertTrue(stdout.toString().contains("newToCopy.txt"));
+            assertTrue(stdout.toString().contains(NEW_COPY_FILE));
 
-            Files.delete(Paths.get(Environment.currentDirectory, "newToCopy.txt"));
+            Files.delete(Paths.get(Environment.currentDirectory, NEW_COPY_FILE));
         } catch (Exception e) {
             fail();
         }

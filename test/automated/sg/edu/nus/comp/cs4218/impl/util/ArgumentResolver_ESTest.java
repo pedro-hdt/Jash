@@ -22,6 +22,7 @@ import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.RegexArgument;
 
+@SuppressWarnings("PMD")
 public class ArgumentResolver_ESTest {
 
   @Test 

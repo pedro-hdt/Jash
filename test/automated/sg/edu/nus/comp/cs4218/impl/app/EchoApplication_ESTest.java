@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 
+@SuppressWarnings("PMD")
 public class EchoApplication_ESTest {
 
   @Test

@@ -1,8 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.app.CpInterface;
-import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CANNOT_OVERWRITE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -17,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.CpInterface;
+import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+@SuppressWarnings("PMD.PreserveStackTrace")
 public class CpApplication implements CpInterface {
 
     @Override
@@ -37,7 +42,7 @@ public class CpApplication implements CpInterface {
     public String cpFilesToFolder(String destFolder, String... fileName) throws Exception {
 
         List<String> invalidFiles = new ArrayList<>();
-        boolean hasOtherErrorOccurred = false;
+        boolean hasOtherErrOccurred = false; //NOPMD
 
         for (String srcPath : fileName) {
 
@@ -71,7 +76,7 @@ public class CpApplication implements CpInterface {
             } catch (DirectoryNotEmptyException dnee) {
                 throw new Exception(ERR_CANNOT_OVERWRITE + " non-empty directory: " + destFolder);
             } catch (FileSystemException fse) {
-                hasOtherErrorOccurred = true;
+                hasOtherErrOccurred = true;
             }
 
         }
@@ -81,17 +86,17 @@ public class CpApplication implements CpInterface {
             for (String f : invalidFiles) {
                 sb.append(f);
                 sb.append(" skipped: ");
-                if (!Files.exists(IOUtils.resolveFilePath(f))) {
-                    sb.append(ERR_FILE_NOT_FOUND);
-                } else {
+                if (Files.exists(IOUtils.resolveFilePath(f))) {
                     sb.append(String.format("'%s' and '%s' are the same file", f, f));
+                } else {
+                    sb.append(ERR_FILE_NOT_FOUND);
                 }
                 sb.append(STRING_NEWLINE);
             }
             throw new Exception(STRING_NEWLINE + sb.toString().trim());
         }
 
-        if (hasOtherErrorOccurred) {
+        if (hasOtherErrOccurred) {
             throw new Exception("file system error while copying file");
         }
 
