@@ -31,7 +31,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 import tdd.util.FilePermissionTestUtil;
 import tdd.util.RmTestUtil;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 public class RmApplicationTest {
     private RmApplication rmApplication;
     private RmTestUtil rmTestUtil;

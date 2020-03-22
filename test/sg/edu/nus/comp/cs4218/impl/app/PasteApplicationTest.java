@@ -1,14 +1,17 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.TestUtils;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,10 +20,16 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class PasteApplicationTest {
 
@@ -116,7 +125,7 @@ public class PasteApplicationTest {
     @Test
     public void testPasteDirOnlyFiles() throws IOException {
 
-        Path dir = Files.createDirectory(IOUtils.resolveFilePath("dir"));
+        Path dir = Files.createDirectory(IOUtils.resolveFilePath("dir")); //NOPMD
 
         PasteException exception =
                 assertThrows(PasteException.class, () -> paste.run(new String[]{"dir"}, System.in, System.out));

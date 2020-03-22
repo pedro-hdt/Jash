@@ -29,6 +29,7 @@ import tdd.util.TestUtil;
  * <p>
  * Contains negative and positive test cases
  */
+@SuppressWarnings("PMD")
 class LsApplicationTest {
 
     public static final String TEXTFILE_TXT = "textfile.txt";

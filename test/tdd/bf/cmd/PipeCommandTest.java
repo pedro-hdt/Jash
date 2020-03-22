@@ -1,15 +1,7 @@
 package tdd.bf.cmd;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-import tdd.util.CallCommandStub;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,9 +11,19 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import tdd.util.CallCommandStub;
+
+@SuppressWarnings("PMD")
 class PipeCommandTest {
 
     private InputStream inputStream;

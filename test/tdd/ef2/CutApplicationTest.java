@@ -30,6 +30,7 @@ import sg.edu.nus.comp.cs4218.exception.CutException;
 import sg.edu.nus.comp.cs4218.impl.app.CutApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+@SuppressWarnings("PMD")
 class CutApplicationTest {
 
     private static String folderName = "test/tdd/util/dummyTestFolder/CutTestFolder";

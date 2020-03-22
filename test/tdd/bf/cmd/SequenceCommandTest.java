@@ -1,13 +1,7 @@
 package tdd.bf.cmd;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
-import tdd.util.CommandStub;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,8 +11,15 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
+import tdd.util.CommandStub;
 
 /**
  * SequenceCommand takes in a list of CallCommands / PipeCommands. Run the first command; when the first command
@@ -26,6 +27,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  * execution of the second command can continue and may return a non-zero exit code.
  **/
 
+@SuppressWarnings("PMD")
 class SequenceCommandTest {
 
     List<Command> commands;

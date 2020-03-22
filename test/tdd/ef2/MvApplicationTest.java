@@ -29,6 +29,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.app.MvApplication;
 
+@SuppressWarnings("PMD")
 class MvApplicationTest {
 
     private static final String BASE_URL = Environment.currentDirectory;

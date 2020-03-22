@@ -38,7 +38,7 @@ import sg.edu.nus.comp.cs4218.impl.util.IORedirectionHandler;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 class IORedirectionHandlerTest {
     private static final Path DIRECTORY = Paths.get("test", "tdd", "util", "dummyTestFolder", "IORedirectionHandlerTestFolder");
     private static final String RESOURCE_PATH = DIRECTORY.toString() + StringUtils.fileSeparator();

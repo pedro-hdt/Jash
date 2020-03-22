@@ -67,7 +67,7 @@ public class GrepIntegrationCommandTest {
     @Test
     public void testGrepTheSortReverse() throws AbstractApplicationException, ShellException {
         cmdLine = "grep -i sometimes textFile.txt; sort -r textFile.txt";
-        expected = "Sometimes tests need to be written for marks. You are a lucky person to take this module."
+        expected = "Sometimes tests need to be written for marks. You are a lucky person to take this module." //NOPMD
             + StringUtils.STRING_NEWLINE + "That is why take CS4218, and learn software testing."
             + StringUtils.STRING_NEWLINE
             + "Sometimes tests need to be written for marks. You are a lucky person to take this module."

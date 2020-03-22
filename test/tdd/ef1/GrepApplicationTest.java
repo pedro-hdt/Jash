@@ -24,7 +24,7 @@ import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 public class GrepApplicationTest {
     private GrepApplication app;
 

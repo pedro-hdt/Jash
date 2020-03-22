@@ -21,7 +21,7 @@ import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 class CdApplicationTest {
 
     private CdApplication app;

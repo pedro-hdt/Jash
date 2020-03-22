@@ -1,11 +1,11 @@
 package tdd.util;
 
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+
 import java.io.File;
 import java.io.IOException;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 public class FilePermissionTestUtil {
     public static final String RESOURCE_DIR = "file_permission" + CHAR_FILE_SEP;
     public static final String NO_PERMISSION_FILE = "no_permission.txt";

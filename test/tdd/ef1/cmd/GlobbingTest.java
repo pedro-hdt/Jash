@@ -20,7 +20,7 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 class GlobbingTest {
     private static final Path DIRECTORY = Paths.get("test", "tdd", "util", "dummyTestFolder", "GlobbingTestFolder");
     private static final String RESOURCE_PATH = DIRECTORY.toString() + StringUtils.fileSeparator();

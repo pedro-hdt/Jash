@@ -1,11 +1,11 @@
 package tdd.util;
 
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+
 import java.io.File;
 import java.io.IOException;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
+@SuppressWarnings("PMD")
 public class RmTestUtil {
     public static final String RM_TEST_DIR = "rm_test_env" + CHAR_FILE_SEP;
     public static final String EMPTY_DIR = "empty_directory";

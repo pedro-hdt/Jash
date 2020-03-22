@@ -81,7 +81,7 @@ public class DiffApplication implements DiffInterface {
      * @throws DiffException
      */
     @Override
-    public String diffTwoFiles(String fileNameA, String fileNameB, Boolean isShowSame, Boolean isNoBlank, Boolean isSimple) throws DiffException {
+    public String diffTwoFiles(String fileNameA, String fileNameB, Boolean isShowSame, Boolean isNoBlank, Boolean isSimple) throws DiffException { //NOPMD
         String fileAContent;
         String fileBContent;
         String[] fileALines = new String[0];
@@ -179,7 +179,7 @@ public class DiffApplication implements DiffInterface {
      * @throws DiffException
      */
     @Override
-    public String diffTwoDir(String folderA, String folderB, Boolean isShowSame, Boolean isNoBlank, Boolean isSimple) throws DiffException {
+    public String diffTwoDir(String folderA, String folderB, Boolean isShowSame, Boolean isNoBlank, Boolean isSimple) throws DiffException { //NOPMD
         try {
             StringBuilder stringBuilder = new StringBuilder();
             checkExists(folderA);

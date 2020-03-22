@@ -39,7 +39,7 @@ public class CpApplication implements CpInterface {
     }
 
     @Override
-    public String cpFilesToFolder(String destFolder, String... fileName) throws Exception {
+    public String cpFilesToFolder(String destFolder, String... fileName) throws Exception { //NOPMD
 
         List<String> invalidFiles = new ArrayList<>();
         boolean hasOtherErrOccurred = false; //NOPMD

@@ -1,17 +1,10 @@
 package integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -21,8 +14,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class ShellCommandIntegrationTest {
 
@@ -156,7 +160,7 @@ public class ShellCommandIntegrationTest {
             fail();
 
         } catch (Exception e) {
-            assertTrue(e instanceof ShellException);
+            assertTrue(e instanceof ShellException); //NOPMD
             assertMsgContains(e, "shell: Multiple streams provided");
             Path filePath1 = Paths.get(Environment.getCurrentDirectory(), "z");
             Files.delete(filePath1);

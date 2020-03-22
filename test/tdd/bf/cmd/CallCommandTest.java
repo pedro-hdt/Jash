@@ -1,29 +1,33 @@
 package tdd.bf.cmd;
 
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 
 /**
  * SUT: {@link CallCommand}
  */
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings("PMD")
 public class CallCommandTest extends BaseCommandTest {
     private static final String EXCEPTION_PREFIX = "shell: ";
 

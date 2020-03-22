@@ -1,11 +1,17 @@
 package tdd.bf;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
-import tdd.util.StdOutStubIOExceptionOnWrite;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_GENERAL;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -16,12 +22,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.AvoidDuplicateLiterals"})
+import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
+import tdd.util.StdOutStubIOExceptionOnWrite;
+
+@SuppressWarnings("PMD")
 class PasteApplicationTest {
     private static PasteApplication pasteApp;
     private static final Path DIRECTORY = Paths.get("test", "tdd/util", "dummyTestFolder",

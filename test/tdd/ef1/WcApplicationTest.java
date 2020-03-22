@@ -23,7 +23,7 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
 
-
+@SuppressWarnings("PMD")
 class WcApplicationTest {
 
     private WcApplication wcApplication;

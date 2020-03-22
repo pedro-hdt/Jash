@@ -27,6 +27,7 @@ import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+@SuppressWarnings("PMD")
 class SedApplicationTest {
     private SedApplication sedApplication;
     private InputStream stdin;

@@ -46,6 +46,7 @@ import tdd.util.TestUtil;
  * - >1 files supplied
  * - No files supplied, use stdin
  */
+@SuppressWarnings("PMD")
 public class SortApplicationTest {
     private static SortApplication sortApp;
     private static OutputStream stdout;

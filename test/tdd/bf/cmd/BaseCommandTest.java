@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings({"PMD.MethodNamingConventions", "PMD.AbstractNaming"})
+@SuppressWarnings("PMD")
 public class BaseCommandTest {
 
     /**

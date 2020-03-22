@@ -1,23 +1,24 @@
 package tdd.ef1.cmd;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
-@SuppressWarnings({"PMD.LongVariable", "PMD.AvoidDuplicateLiterals"})
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+
+@SuppressWarnings("PMD")
 public class QuotingTest {
 
     private static ApplicationRunner appRunner;

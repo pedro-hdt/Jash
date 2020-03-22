@@ -23,6 +23,7 @@ import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 import tdd.util.TestUtil;
 
+@SuppressWarnings("PMD")
 public class FindApplicationTest {
     String testDir = "sampleFiles4";
     String testDir2 = "sampleFiles2";

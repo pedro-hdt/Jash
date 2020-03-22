@@ -12,6 +12,7 @@ import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+@SuppressWarnings("PMD")
 public class CallCommandStub extends CallCommand {
 
     public enum CallCommandT {

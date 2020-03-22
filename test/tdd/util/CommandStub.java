@@ -1,17 +1,18 @@
 package tdd.util;
 
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
-
+@SuppressWarnings("PMD")
 public class CommandStub implements Command {
 
     public enum CommandT {

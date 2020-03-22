@@ -19,7 +19,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
 @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.ClassNamingConventions"})
-public final class CommandBuilder {
+public final class CommandBuilder { //NOPMD
     /**
      * Regular expression for extracting valid arguments from the command string:
      * (NO_QUOTE | SINGLE_QUOTE | NESTED_BACK_QUOTE | DOUBLE_QUOTE | BACK_QUOTE)+
