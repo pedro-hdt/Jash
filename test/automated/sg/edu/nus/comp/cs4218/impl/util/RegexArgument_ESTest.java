@@ -133,7 +133,7 @@ public class RegexArgument_ESTest {
     @Test
     public void test11() throws Throwable {
         RegexArgument regexArgument0 = new RegexArgument();
-        RegexArgument regexArgument1 = new RegexArgument("/Users/tshradheya/Desktop/Sem8/CS4218/Project/cs4218-project-ay1920-s2-2020-team03", "W+l9jf4+p", true);
+        RegexArgument regexArgument1 = new RegexArgument("", "W+l9jf4+p", true);
         regexArgument0.merge(regexArgument1);
         regexArgument0.merge(regexArgument1);
         assertEquals("W+l9jf4+pW+l9jf4+p", regexArgument0.toString());
