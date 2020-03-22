@@ -53,6 +53,7 @@ public class CdApplication implements CdInterface {
         }
 
         if (args.length == 0) {
+            Environment.currentDirectory = System.getProperty("user.home").trim();
             return;
         }
 

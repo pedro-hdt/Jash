@@ -111,4 +111,32 @@ public class CdIntegrationCommandTest {
         shell.parseAndEvaluate(cmdLine, stdout);
         assertEquals(expected, stdout.toString());
     }
+
+    /**
+     * Test where second command passes cause it does not depend on cd command
+     * @throws ShellException
+     * @throws AbstractApplicationException
+     */
+    @Test
+    public void testInvalidCdWithValidFindCommand() throws ShellException, AbstractApplicationException {
+        cmdLine = "cd NotPresentFolder; find GlobbingFolder -name empty.txt";
+        expected = "cd: NotPresentFolder: No such file or directory" + StringUtils.STRING_NEWLINE
+            + "GlobbingFolder/dir/empty.txt" + StringUtils.STRING_NEWLINE;
+        shell.parseAndEvaluate(cmdLine, stdout);
+        assertEquals(expected, stdout.toString());
+    }
+
+    /**
+     * Test where second command fails cause it depends on first cd command
+     * @throws ShellException
+     * @throws AbstractApplicationException
+     */
+    @Test
+    public void testInvalidCdWithInvalidFindCommand() throws ShellException, AbstractApplicationException {
+        cmdLine = "cd NotPresentFolder; find dir -name empty.txt";
+        expected = "cd: NotPresentFolder: No such file or directory" + StringUtils.STRING_NEWLINE
+            + "find: dir: No such file or directory" + StringUtils.STRING_NEWLINE;
+        shell.parseAndEvaluate(cmdLine, stdout);
+        assertEquals(expected, stdout.toString());
+    }
 }
