@@ -177,7 +177,7 @@ class CdApplicationTest {
         String dirBefore = Environment.getCurrentDirectory();
 
         cdApp.run(new String[]{}, System.in, System.out);
-        assertEquals(dirBefore, Environment.getCurrentDirectory());
+        assertEquals(Environment.currentDirectory = System.getProperty("user.home").trim(), Environment.getCurrentDirectory());
     }
 
     /**
