@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -144,9 +145,8 @@ public class SequenceIntegrationCommandTest {
      */
     @Test
     public void testSequencingWithExitAtEnd() {
-        assertThrows(ExitException.class, () -> shell.parseAndEvaluate("ls; exit", stdout));
-        assertEquals("CommandSubsFolder" + StringUtils.STRING_NEWLINE + SEQUENCE_FOLDER
-            + StringUtils.STRING_NEWLINE, stdout.toString());
+        assertThrows(ExitException.class, () -> shell.parseAndEvaluate("echo hi; exit", stdout));
+        assertEquals("hi" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -154,10 +154,8 @@ public class SequenceIntegrationCommandTest {
      */
     @Test
     public void testSequencingWithExitInMiddle() {
-        assertThrows(ExitException.class, () -> shell.parseAndEvaluate("ls; exit; ls", stdout));
-        assertEquals("CommandSubsFolder" + StringUtils.STRING_NEWLINE + SEQUENCE_FOLDER
-            + StringUtils.STRING_NEWLINE + "CommandSubsFolder" + StringUtils.STRING_NEWLINE + SEQUENCE_FOLDER
-            + StringUtils.STRING_NEWLINE, stdout.toString());
+        assertThrows(ExitException.class, () -> shell.parseAndEvaluate("echo hi; exit; echo bye", stdout));
+        assertEquals("hi" + StringUtils.STRING_NEWLINE + "bye" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
 
     /**
@@ -222,6 +220,33 @@ public class SequenceIntegrationCommandTest {
         shell.parseAndEvaluate("cd SequencingFolder; grep -i ; ls", stdout);
         assertEquals("grep: Invalid syntax" + StringUtils.STRING_NEWLINE + EMPTY_FILE
             + StringUtils.STRING_NEWLINE + TEXT_FILE + StringUtils.STRING_NEWLINE, stdout.toString());
+    }
+
+    @Test
+    public void testFindWithCd() throws AbstractApplicationException, ShellException {
+        shell.parseAndEvaluate("cd SequencingFolder; find . -name empty*", stdout);
+        assertEquals("./emptyFile.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
+
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + INTEGRATION_FOLDER);
+    }
+
+    @Test
+    public void testChangeAfterSequence() {
+
+        try {
+            Path f1 = Files.createFile(Paths.get(Environment.currentDirectory, "temp"));
+            shell.parseAndEvaluate("ls ; rm temp ; ls", stdout);
+
+            assertTrue(stdout.toString().contains(INTEGRATION_FOLDER));
+            assertFalse(Files.exists(f1));
+
+        } catch (Exception e) {
+            fail();
+        }
+
+
     }
 
 }

@@ -1,14 +1,18 @@
 package tdd.bf;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.RmException;
-import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-import tdd.util.FilePermissionTestUtil;
-import tdd.util.RmTestUtil;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.app.RmApplication.ERR_DOT_DIR;
+import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MISSING_ARG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -16,11 +20,16 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.app.RmApplication.ERR_DOT_DIR;
-import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import sg.edu.nus.comp.cs4218.exception.RmException;
+import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import tdd.util.FilePermissionTestUtil;
+import tdd.util.RmTestUtil;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.LongVariable"})
 public class RmApplicationTest {
@@ -607,7 +616,6 @@ public class RmApplicationTest {
     }
 
     @Test
-    // @Disabled("Different exception text")
     // Modified expected text
     public void testRun_invalidRemoveArguments_shouldThrowException() {
         String[] args = {EMPTY_FOLDER_RECURSIVE_OPTION};
