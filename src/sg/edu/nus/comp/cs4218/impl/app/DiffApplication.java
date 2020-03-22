@@ -78,12 +78,18 @@ public class DiffApplication implements DiffInterface {
         String[] fileALines;
         String[] fileBLines;
 
+        boolean isFileADir = false;
+        boolean isFileBDir = false;
+
         try {
             if (fileNameA != null && fileNameA.equals("-")) {
                 fileALines = IOUtils.getLinesFromInputStream(inputStream).toArray(new String[0]);
             } else {
                 checkExists(fileNameA);
                 File fileA = IOUtils.resolveFilePath(fileNameA).toFile();
+                if (fileA.isDirectory()) {
+                    isFileADir = true;
+                }
                 fileAContent = readFileContent(fileA);
                 fileALines = fileAContent.split("\n");
             }
@@ -93,49 +99,56 @@ public class DiffApplication implements DiffInterface {
             } else {
                 checkExists(fileNameB);
                 File fileB = IOUtils.resolveFilePath(fileNameB).toFile();
+                if (fileB.isDirectory()) {
+                    isFileBDir = true;
+                }
                 fileBContent = readFileContent(fileB);
                 fileBLines = fileBContent.split("\n");
             }
 
-            boolean[] commonLinesA = new boolean[fileALines.length];
-            boolean[] commonLinesB = new boolean[fileBLines.length];
+            if (isFileADir && isFileBDir) {
+                return diffTwoDir(fileNameA, fileNameB, isShowSame, isNoBlank, isSimple);
+            } else {
+                boolean[] commonLinesA = new boolean[fileALines.length];
+                boolean[] commonLinesB = new boolean[fileBLines.length];
 
-            // Check common lines
-            for (int i = 0; i < fileALines.length; i++) {
-                String currLineA = fileALines[i];
-                for (int j = 0; j < fileBLines.length; j++) {
-                    String currLineB = fileBLines[j];
-                    if (currLineA.equals(currLineB)) {
-                        commonLinesA[i] = true;
-                        commonLinesB[j] = true;
-                    } else if (isSimple) {
-                        return "Files [" + fileNameA + " " + fileNameB + "] differ";
+                // Check common lines
+                for (int i = 0; i < fileALines.length; i++) {
+                    String currLineA = fileALines[i];
+                    for (int j = 0; j < fileBLines.length; j++) {
+                        String currLineB = fileBLines[j];
+                        if (currLineA.equals(currLineB)) {
+                            commonLinesA[i] = true;
+                            commonLinesB[j] = true;
+                        } else if (isSimple) {
+                            return "Files [" + fileNameA + " " + fileNameB + "] differ";
+                        }
                     }
                 }
-            }
 
-            StringBuilder output = new StringBuilder();
-            for (int i = 0; i < commonLinesA.length; i++) {
-                if (commonLinesA[i] == false) {
-                    if (isNoBlank && fileALines[i].isEmpty()) {
-                        continue;
+                StringBuilder output = new StringBuilder();
+                for (int i = 0; i < commonLinesA.length; i++) {
+                    if (commonLinesA[i] == false) {
+                        if (isNoBlank && fileALines[i].isEmpty()) {
+                            continue;
+                        }
+                        output.append("< " + fileALines[i] + "\n");
                     }
-                    output.append("< " + fileALines[i] + "\n");
                 }
-            }
-            for (int j = 0; j < commonLinesB.length; j++) {
-                if (commonLinesB[j] == false) {
-                    if (isNoBlank && fileBLines[j].isEmpty()) {
-                        continue;
+                for (int j = 0; j < commonLinesB.length; j++) {
+                    if (commonLinesB[j] == false) {
+                        if (isNoBlank && fileBLines[j].isEmpty()) {
+                            continue;
+                        }
+                        output.append("> " + fileBLines[j] + "\n");
                     }
-                    output.append("> " + fileBLines[j] + "\n");
                 }
-            }
-            if (output.length() == 0 && isShowSame) {
-                return "Files [" + fileNameA + " " + fileNameB + "] are identical";
-            }
+                if (output.length() == 0 && isShowSame) {
+                    return "Files [" + fileNameA + " " + fileNameB + "] are identical";
+                }
 
-            return output.toString();
+                return output.toString();
+            }
         } catch (Exception e) {
             throw new DiffException(e.getMessage());
         }
@@ -269,7 +282,7 @@ public class DiffApplication implements DiffInterface {
             String source = files[0];
             String destination = files[1];
 
-            String output = diffTwoFiles(source, destination, isShowSame, isNoBlank, isSimple);
+            String output = diffTwoFiles(source, destination, isShowSame, isNoBlank, isSimple) + STRING_NEWLINE;
             stdout.write(output.getBytes());
         } catch (Exception e) {
             throw (DiffException) new DiffException(e.getMessage()).initCause(e);
