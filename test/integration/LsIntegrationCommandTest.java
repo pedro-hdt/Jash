@@ -144,7 +144,7 @@ public class LsIntegrationCommandTest {
             assertEquals("< azz" + StringUtils.STRING_NEWLINE +
                     "< ccc" + StringUtils.STRING_NEWLINE +
                     "> zza" + StringUtils.STRING_NEWLINE +
-                    "> ccd" + StringUtils.STRING_NEWLINE, stdout.toString());
+                    "> ccd" + StringUtils.STRING_NEWLINE + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail();
         }
