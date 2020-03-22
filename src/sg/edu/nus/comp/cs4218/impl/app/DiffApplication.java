@@ -290,7 +290,10 @@ public class DiffApplication implements DiffInterface {
             String source = files[0];
             String destination = files[1];
 
-            String output = diffTwoFiles(source, destination, isShowSame, isNoBlank, isSimple) + STRING_NEWLINE;
+            String output = diffTwoFiles(source, destination, isShowSame, isNoBlank, isSimple);
+            if (output.length() != 0) {
+                output += STRING_NEWLINE;
+            }
             stdout.write(output.getBytes());
         } catch (Exception e) {
             throw (DiffException) new DiffException(e.getMessage()).initCause(e);

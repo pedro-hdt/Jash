@@ -69,7 +69,7 @@ public class DiffIntegrationCommandTest {
     @Test
     public void testPasteThenDiff() throws Exception {
         String cmdline = "paste difftest.txt | diff difftest.txt - ";
-        String expected = "" + STRING_NEWLINE;
+        String expected = "";
         shell.parseAndEvaluate(cmdline, stdout);
         assertEquals(expected, stdout.toString());
     }
@@ -85,7 +85,7 @@ public class DiffIntegrationCommandTest {
     @Test
     public void testPasteThenDiff3() throws Exception {
         String cmdline = "paste difftest.txt | diff -q difftest.txt - ";
-        String expected = "" + STRING_NEWLINE;
+        String expected = "";
         shell.parseAndEvaluate(cmdline, stdout);
         assertEquals(expected, stdout.toString());
     }
