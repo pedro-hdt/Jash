@@ -46,87 +46,15 @@ public class PasteApplication implements PasteInterface {
     @Override
     public String mergeFile(String... fileName) throws PasteException {
 
-        List<BufferedReader> readers = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();//NOPMD
-
-        for (String f : fileName) {
-
-            File file = IOUtils.resolveFilePath(f).toFile();
-            if (file.exists()) {
-                if (file.isDirectory()) {
-                    throw new PasteException(f + ": " + ERR_IS_DIR);
-                }
-            } else {
-                throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
-            }
-            try {
-                readers.add(new BufferedReader(new FileReader(file)));
-            } catch (IOException e) {
-                throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
-            }
-        }
-
-        try {
-
-            boolean notDone;
-            do {
-                notDone = false;
-                for (BufferedReader reader : readers) { //NOPMD
-                    String line = reader.readLine();
-                    if (line != null) {
-                        notDone = true;
-                        sb.append(line);
-                    }
-                    sb.append(CHAR_TAB);
-                }
-                sb.deleteCharAt(sb.length() - 1);
-                if (notDone) {
-                    sb.append(STRING_NEWLINE);
-                }
-            } while (notDone);
-
-            if (sb.length() != 0) {
-                sb.delete(sb.length() - readers.size(), sb.length()); // remove extra tab chars
-            }
-
-            for (BufferedReader reader : readers) {//NOPMD
-                reader.close();
-            }
-
-        } catch (IOException e) {
-            throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
-        }
-
-        return sb.toString();
+        return mergeFileAndStdin(System.in, fileName);
 
     }
 
     @Override
     public String mergeFileAndStdin(InputStream stdin, String... fileName) throws PasteException {
 
-        List<BufferedReader> fileReaders = new ArrayList<>();
+        List<BufferedReader> fileReaders = buildReadersList(stdin, fileName);
         StringBuilder sb = new StringBuilder(); //NOPMD
-        BufferedReader stdinBufReader = new BufferedReader(new InputStreamReader(stdin)); //NOPMD
-
-        for (String f : fileName) {
-            try {
-                if ("-".equals(f)) {
-                    fileReaders.add(stdinBufReader);
-                } else {
-                    File file = IOUtils.resolveFilePath(f).toFile();
-                    if (file.exists()) {
-                        if (file.isDirectory()) {
-                            throw new PasteException(f + ": " + ERR_IS_DIR);
-                        }
-                    } else {
-                        throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
-                    }
-                    fileReaders.add(new BufferedReader(new FileReader(file)));
-                }
-            } catch (IOException e) {
-                throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
-            }
-        }
 
         try {
             boolean notDone;
@@ -158,6 +86,35 @@ public class PasteApplication implements PasteInterface {
 
         return sb.toString();
 
+    }
+
+
+    private List<BufferedReader> buildReadersList(InputStream stdin, String... files) throws PasteException {
+
+        List<BufferedReader> readers = new ArrayList<>();
+        BufferedReader stdinBufReader = new BufferedReader(new InputStreamReader(stdin)); //NOPMD
+
+        for (String f : files) {
+            try {
+                if ("-".equals(f)) {
+                    readers.add(stdinBufReader);
+                } else {
+                    File file = IOUtils.resolveFilePath(f).toFile();
+                    if (file.exists()) {
+                        if (file.isDirectory()) {
+                            throw new PasteException(f + ": " + ERR_IS_DIR);
+                        }
+                    } else {
+                        throw new PasteException(f + ": " + ERR_FILE_NOT_FOUND);
+                    }
+                    readers.add(new BufferedReader(new FileReader(file)));
+                }
+            } catch (IOException e) {
+                throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
+            }
+        }
+
+        return readers;
     }
 
 
