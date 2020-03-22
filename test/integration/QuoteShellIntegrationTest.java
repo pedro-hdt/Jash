@@ -1,5 +1,17 @@
 package integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,12 +22,6 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class QuoteShellIntegrationTest {
     public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
@@ -277,6 +283,44 @@ public class QuoteShellIntegrationTest {
 
         shell.parseAndEvaluate(cmdline, output);
         assertEquals(expected, output.toString());
+    }
+
+    @Test
+    public void testQuoteInSed() {
+        try {
+            shell.parseAndEvaluate("sed 's|abcd|no|' sedQuote.txt", output);
+            assertEquals("abc" + StringUtils.STRING_NEWLINE + "def" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testQuoteInLsToIgnoreGlob() {
+        try {
+            shell.parseAndEvaluate("ls '*'", output);
+            assertEquals("ls: cannot access '*': No such file or directory" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testQuoteForFileNameWithSpace() {
+        try {
+            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "mvDir"));
+            Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "name with space.mv"));
+
+            shell.parseAndEvaluate("mv \"name with space.mv\" mvDir", output);
+
+            assertFalse(Files.exists(filePath1));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "mvDir", "name with space.mv")));
+
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "mvDir", "name with space.mv"));
+            Files.deleteIfExists(dirPath);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
 }
