@@ -1,14 +1,14 @@
 package integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +37,7 @@ public class FindIntegrationCommandTest {
         Environment.setCurrentDirectory(ORIGINAL_DIR
             + StringUtils.fileSeparator() + "dummyTestFolder"
             + StringUtils.fileSeparator() + "IntegrationTestFolder"
-        + StringUtils.fileSeparator() + "FindIntegrationTestFolder");
+            + StringUtils.fileSeparator() + "FindIntegrationTestFolder");
     }
 
     @AfterAll
@@ -62,8 +62,9 @@ public class FindIntegrationCommandTest {
 
     @Test
     public void testFindThenRm() throws ShellException, AbstractApplicationException, IOException {
-        Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(),  "Test-folder-1", "temporaryFile.txt"));
-        cmdLine ="find Test-folder-1 -name temporaryFile.txt; cd Test-folder-1; rm temporaryFile.txt";
+        Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "Test-folder-1", "temporaryFile" +
+            ".txt"));
+        cmdLine = "find Test-folder-1 -name temporaryFile.txt; cd Test-folder-1; rm temporaryFile.txt";
         expected = "Test-folder-1/temporaryFile.txt" + StringUtils.STRING_NEWLINE;
         shell.parseAndEvaluate(cmdLine, stdout);
         assertEquals(expected, stdout.toString());
@@ -74,7 +75,7 @@ public class FindIntegrationCommandTest {
     public void testFindThenGrep() throws ShellException, AbstractApplicationException {
         cmdLine = "find Test-folder-1 -name textfile.txt; cd Test-folder-1; grep -c PATTERN textfile.txt";
         expected = "Test-folder-1/textfile.txt" + StringUtils.STRING_NEWLINE
-        + "0" + StringUtils.STRING_NEWLINE;
+            + "0" + StringUtils.STRING_NEWLINE;
         shell.parseAndEvaluate(cmdLine, stdout);
         assertEquals(expected, stdout.toString());
     }
@@ -99,8 +100,9 @@ public class FindIntegrationCommandTest {
 
     @Test
     public void testValidFindWithInvalidCommand() throws ShellException, AbstractApplicationException {
-        cmdLine = "find Test-folder-1 -name textfile.txt ; cd test-folder-1";
-        expected = "Test-folder-1/textfile.txt" + StringUtils.STRING_NEWLINE;
+        cmdLine = "find Test-folder-1 -name textfile.txt ; cd tst-folder-1";
+        expected = "Test-folder-1/textfile.txt" + StringUtils.STRING_NEWLINE
+            + "cd: tst-folder-1: No such file or directory" + StringUtils.STRING_NEWLINE;
         shell.parseAndEvaluate(cmdLine, stdout);
         assertEquals(expected, stdout.toString());
     }
