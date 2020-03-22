@@ -17,7 +17,7 @@ public interface WcInterface extends Application {
      */
     String countFromFiles(Boolean isBytes, Boolean isLines, Boolean isWords,
                           String... fileName) throws Exception;
-
+    
     /**
      * Returns string containing the number of lines, words, and bytes in standard input
      *
@@ -30,6 +30,6 @@ public interface WcInterface extends Application {
      */
     String countFromStdin(Boolean isBytes, Boolean isLines, Boolean isWords,
                           InputStream stdin)
-            throws Exception;
-
+      throws Exception;
+    
 }

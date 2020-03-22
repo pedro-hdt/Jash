@@ -6,14 +6,13 @@
 package automated.sg.edu.nus.comp.cs4218.impl.cmd;
 
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SuppressWarnings("PMD")
 public class PipeCommand_ESTest {
@@ -35,17 +34,17 @@ public class PipeCommand_ESTest {
 ////         verifyException("sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand", e);
 //      }
 //  }
-
-  @Test 
-  public void test1()  throws Throwable  {
-      PipeCommand pipeCommand0 = new PipeCommand((List<CallCommand>) null);
-      List<CallCommand> list0 = pipeCommand0.getCallCommands();
-      assertNull(list0);
-  }
-
-  @Test 
-  public void test2()  throws Throwable  {
-      PipeCommand pipeCommand0 = new PipeCommand((List<CallCommand>) null);
-      pipeCommand0.terminate();
-  }
+    
+    @Test
+    public void test1() throws Throwable {
+        PipeCommand pipeCommand0 = new PipeCommand((List<CallCommand>) null);
+        List<CallCommand> list0 = pipeCommand0.getCallCommands();
+        assertNull(list0);
+    }
+    
+    @Test
+    public void test2() throws Throwable {
+        PipeCommand pipeCommand0 = new PipeCommand((List<CallCommand>) null);
+        pipeCommand0.terminate();
+    }
 }

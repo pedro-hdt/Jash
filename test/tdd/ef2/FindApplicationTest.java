@@ -1,8 +1,16 @@
 package tdd.ef2;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.FindException;
+import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import tdd.util.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,18 +18,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
-import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-import tdd.util.TestUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("PMD")
 public class FindApplicationTest {
@@ -41,11 +40,11 @@ public class FindApplicationTest {
     static void setUp() {
         app = new FindApplication();
         String path = ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "test"
-                + StringUtils.fileSeparator() + "tdd"
-                + StringUtils.fileSeparator() + "util"
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "FindTestFolder";
+          + StringUtils.fileSeparator() + "test"
+          + StringUtils.fileSeparator() + "tdd"
+          + StringUtils.fileSeparator() + "util"
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "FindTestFolder";
         if (Files.isDirectory(TestUtil.resolveFilePath(path))) {
             Environment.currentDirectory = TestUtil.resolveFilePath(path).toString();
         }
@@ -134,11 +133,11 @@ public class FindApplicationTest {
         // Note: didn't account for case if file found in multiple folders
     void FindFolderContent_1FileNameMultipleValidFolders_OutputToStream() throws Exception {
         String expected = "sampleFiles" + StringUtils.fileSeparator() + "diffTest"
-                + StringUtils.fileSeparator() + "a"
-                + StringUtils.fileSeparator() + "c.txt" + System.lineSeparator() +
-                "sampleFiles" + StringUtils.fileSeparator() + "diffTest"
-                + StringUtils.fileSeparator() + "b"
-                + StringUtils.fileSeparator() + "c.txt";
+          + StringUtils.fileSeparator() + "a"
+          + StringUtils.fileSeparator() + "c.txt" + System.lineSeparator() +
+          "sampleFiles" + StringUtils.fileSeparator() + "diffTest"
+          + StringUtils.fileSeparator() + "b"
+          + StringUtils.fileSeparator() + "c.txt";
         assertEquals(expected, app.findFolderContent("c.txt", "sampleFiles"));
 
     }
@@ -148,7 +147,7 @@ public class FindApplicationTest {
         // Test Case: One FileName Specified, 1 Valid Folder 1 Invalid Folder i.e. Folder does not exist
     void FindFolderContent_1FileName1Valid1InvalidDNEFolder_OutputToStream() throws Exception {
         String expected = "sampleFiles2" + StringUtils.fileSeparator() + "c.txt" + System.lineSeparator() +
-                "find: " + sample1 + ": No such file or directory";
+          "find: " + sample1 + ": No such file or directory";
         assertEquals(expected, app.findFolderContent("c.txt", "sampleFiles2", "sampleNotExist"));
     }
 
@@ -165,7 +164,7 @@ public class FindApplicationTest {
         // Test Case: One FileName Specified, >1 Folders All Invalid i.e. Folders do not exist
     void FindFolderContent_1FilenameMultipleInvalidFoldersDNE_OutputToStream() throws Exception {
         String expected = "find: " + sample1 + ": No such file or directory" + System.lineSeparator() +
-                "find: " + sample2 + ": No such file or directory";
+          "find: " + sample2 + ": No such file or directory";
         assertEquals(expected, app.findFolderContent("c.txt", "sampleNotExist", "sampleNotExist2"));
     }
 

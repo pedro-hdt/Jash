@@ -1,7 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.CutInterface;
+import sg.edu.nus.comp.cs4218.exception.CutException;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.impl.parser.CutArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,11 +12,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import sg.edu.nus.comp.cs4218.app.CutInterface;
-import sg.edu.nus.comp.cs4218.exception.CutException;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.impl.parser.CutArgsParser;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * The cut command Cuts out selected portions of each line (as specified by list) from each file and writes them to the standard output.
@@ -24,9 +24,9 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
  * </p>
  */
 public class CutApplication implements CutInterface {
-
+    
     InputStream inputStream;
-
+    
     /**
      * Builds the output read from the current data processed.
      *
@@ -40,7 +40,7 @@ public class CutApplication implements CutInterface {
     public String buildOutput(int data, Boolean isRange, int startIdx, int endIdx, int count) throws Exception {
         StringBuilder output = new StringBuilder();
         char currData = (char) data;
-
+    
         if (isRange) {
             if (count >= startIdx && count <= endIdx) {
                 output.append(currData);
@@ -50,13 +50,13 @@ public class CutApplication implements CutInterface {
                 output.append(currData);
             }
         }
-
+    
         return output.toString();
     }
-
+    
     /**
      * Processes the input stream and return a string.
-     *
+     * <p>
      * Process byte: http://tutorials.jenkov.com/java-io/inputstream.html
      * Process chars: https://stackoverflow.com/questions/811851/how-do-i-read-input-character-by-character-in-java
      *
@@ -74,11 +74,11 @@ public class CutApplication implements CutInterface {
             throw new CutException(ERR_NULL_STREAMS);
         }
         StringBuilder output = new StringBuilder();
-
+    
         int data;
         if (isBytePo) {
             int byteCount = 1; // to determine byte position
-
+    
             // Read 1 byte at a time from the input stream
             while ((data = stdin.read()) != -1) {
                 output.append(buildOutput(data, isRange, startIdx, endIdx, byteCount));
@@ -87,18 +87,18 @@ public class CutApplication implements CutInterface {
         } else if (isCharPo) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));//NOPMD
             int charCount = 1;
-
+    
             // Read 1 char at a time from the input stream
             while ((data = reader.read()) != -1) {
                 output.append(buildOutput(data, isRange, startIdx, endIdx, charCount));
                 charCount++; // keeps track of the number of chars that have been read
             }
         }
-
+    
         stdin.close();
         return output.toString();
     }
-
+    
     /**
      * Cut selected portions from each file and returns a string as output.
      *
@@ -115,11 +115,11 @@ public class CutApplication implements CutInterface {
     public String cutFromFiles(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, String... fileName) throws Exception {
         StringBuilder output = new StringBuilder();
         InputStream stdin; //NOPMD
-
+    
         if (fileName == null) {
             throw new CutException(ERR_NULL_ARGS);
         }
-
+    
         for (String srcPath : fileName) {
             // If not the first file, add carriage return
             if (output.length() != 0) {
@@ -143,10 +143,10 @@ public class CutApplication implements CutInterface {
             }
             output.append(processInput(isCharPo, isBytePo, stdin, isRange, startIdx, endIdx));
         }
-
+    
         return output.toString();
     }
-
+    
     /**
      * Cut selected portions from stdin and return a string as output.
      *
@@ -163,10 +163,10 @@ public class CutApplication implements CutInterface {
     public String cutFromStdin(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx, InputStream stdin) throws Exception {
         return processInput(isCharPo, isBytePo, stdin, isRange, startIdx, endIdx);
     }
-
+    
     /**
      * Runs the cut application with the specified arguments.
-     *
+     * <p>
      * ASSUMPTION 1: Input can ONLY be a list of comma separated numbers, a range of numbers or a single number
      * ASSUMPTION 2: Input can ONLY allow up to 2 comma separated numbers as the interface's method can't accept multiple positions
      * ASSUMPTION 3: '0' should not be supplied as a single number, a range of numbers or comma separated numbers. The official command throws this error `cut: [-cf] list: values may not include zero`
@@ -179,38 +179,38 @@ public class CutApplication implements CutInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws CutException { // NOPMD
-         if (stdout == null || stdin == null) {
+        if (stdout == null || stdin == null) {
             throw new CutException(ERR_NULL_STREAMS);
-         }
-
-         Boolean isCutByCharPos;
-         Boolean isCutByBytePos;
-         Boolean isRange;
-         int startIdx;
-         int endIdx;
-         String result;
-         inputStream = stdin;
-
+        }
+    
+        Boolean isCutByCharPos;
+        Boolean isCutByBytePos;
+        Boolean isRange;
+        int startIdx;
+        int endIdx;
+        String result;
+        inputStream = stdin;
+    
         if (args == null) {
             throw new CutException(ERR_NULL_ARGS);
         }
-
+    
         if (args.length < 2) {
             throw new CutException(ERR_NO_ARGS);
         }
-
+    
         CutArgsParser parser = new CutArgsParser();
         try {
             parser.parse(args);
         } catch (InvalidArgsException e) {
             throw (CutException) new CutException(ERR_INVALID_FLAG);
         }
-
+    
         try {
             isCutByCharPos = parser.isCutByCharPos();
             isCutByBytePos = parser.isCutByBytePos();
             String[] files = parser.getFiles();
-
+        
             String list = parser.getList();
             isRange = list.contains("-");
             if (isRange) {
@@ -225,14 +225,14 @@ public class CutApplication implements CutInterface {
                 startIdx = Integer.parseInt(rangeParams[0]);
                 endIdx = Integer.parseInt(rangeParams[1]);
             }
-
+        
             if (startIdx > endIdx) {
                 throw new Exception(ERR_INVALID_RANGE);
             }
             if (startIdx <= 0 || endIdx <= 0) {
                 throw new Exception(ERR_OUT_OF_RANGE);
             }
-
+        
             // Read from stdin
             if (files.length == 0 || (files.length == 1 && files[0].contains("-"))) {
                 result = cutFromStdin(isCutByCharPos, isCutByBytePos, isRange, startIdx, endIdx, stdin).trim() + STRING_NEWLINE;

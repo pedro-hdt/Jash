@@ -13,7 +13,7 @@ public interface PasteInterface extends Application {
      * @throws Exception
      */
     String mergeStdin(InputStream stdin) throws Exception;
-
+    
     /**
      * Returns string of line-wise concatenated (tab-separated) files. If only one file is
      * specified, echo back the file content.
@@ -22,7 +22,7 @@ public interface PasteInterface extends Application {
      * @throws Exception
      */
     String mergeFile(String... fileName) throws Exception;
-
+    
     /**
      * Returns string of line-wise concatenated (tab-separated) files and Stdin arguments.
      *

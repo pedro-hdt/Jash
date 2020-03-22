@@ -1,12 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.SedInterface;
+import sg.edu.nus.comp.cs4218.exception.SedException;
+import sg.edu.nus.comp.cs4218.impl.app.args.SedArguments;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,13 +14,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import sg.edu.nus.comp.cs4218.app.SedInterface;
-import sg.edu.nus.comp.cs4218.exception.SedException;
-import sg.edu.nus.comp.cs4218.impl.app.args.SedArguments;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class SedApplication implements SedInterface {
-
+    
     /**
      * Runs the sed application with the specified arguments.
      *
@@ -68,7 +63,7 @@ public class SedApplication implements SedInterface {
             throw new SedException(ERR_WRITE_STREAM);//NOPMD
         }
     }
-
+    
     /**
      * Returns string of the file content with the matched substring on each line replaced. For each
      * line, find the substring that matched the pattern and replace the substring in the specified
@@ -102,7 +97,7 @@ public class SedApplication implements SedInterface {
         IOUtils.closeInputStream(input);
         return result;
     }
-
+    
     /**
      * Returns string of the Stdin arg content with the matched substring on each line replaced. For
      * each line, find the substring that matched the pattern and replace the substring in the
@@ -122,10 +117,10 @@ public class SedApplication implements SedInterface {
             throw new Exception(ERR_NULL_STREAMS);
         }
         SedArguments.validate(regexp, replacement, replacementIndex);
-
+    
         List<String> input = IOUtils.getLinesFromInputStream(stdin);
         Pattern pattern = Pattern.compile(regexp);
-
+    
         StringBuilder output = new StringBuilder();
         for (String line : input) {
             Matcher matcher = pattern.matcher(line);
@@ -141,10 +136,10 @@ public class SedApplication implements SedInterface {
                 }
                 counterOfMatches++;
             }
-            builder.append(line,index,line.length());
+            builder.append(line, index, line.length());
             output.append(builder.toString()).append(STRING_NEWLINE);
         }
-
+    
         return output.toString();
     }
 }

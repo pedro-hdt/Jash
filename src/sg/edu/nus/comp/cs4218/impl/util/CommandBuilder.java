@@ -1,22 +1,18 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_PIPE;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_SEMICOLON;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.ClassNamingConventions"})
 public final class CommandBuilder { //NOPMD
@@ -33,8 +29,8 @@ public final class CommandBuilder { //NOPMD
      * BACK_QUOTE: `[^`]*`
      */
     private static final Pattern ARGUMENT_REGEX = Pattern
-            .compile("([^'\"`|<>;\\s]+|'[^']*'|\"([^\"`]*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
-
+      .compile("([^'\"`|<>;\\s]+|'[^']*'|\"([^\"`]*`.*?`[^\"`]*)+\"|\"[^\"]*\"|`[^`]*`)+");
+    
     /**
      * Parses and tokenizes the provided command string into command(s) and arguments.
      * <p>
@@ -45,37 +41,37 @@ public final class CommandBuilder { //NOPMD
      * @throws ShellException If the provided command string has an invalid syntax.
      */
     public static Command parseCommand(String commandString, ApplicationRunner appRunner)
-            throws ShellException {
+      throws ShellException {
         if (StringUtils.isBlank(commandString) || commandString.contains(STRING_NEWLINE)) {
             throw new ShellException(ERR_SYNTAX);
         }
-
+        
         ArgumentResolver argumentResolver = new ArgumentResolver();
         List<Command> cmdsForSequence = new LinkedList<>();
         List<CallCommand> callCmdsForPipe = new LinkedList<>();
         List<String> tokens = new LinkedList<>();
-
+        
         String commandSubstring = commandString;
         while (!commandSubstring.isEmpty()) {
             commandSubstring = commandSubstring.trim();
             Matcher matcher = ARGUMENT_REGEX.matcher(commandSubstring);
-
+    
             // no valid arguments found
             if (!matcher.find()) {
                 throw new ShellException(ERR_SYNTAX);
             }
-
+    
             // found a valid argument at the start of the command substring
             if (matcher.start() == 0) {
                 tokens.add(matcher.group());
                 commandSubstring = commandSubstring.substring(matcher.end());
                 continue;
             }
-
+    
             // found a valid argument but not at the start of the command substring
             char firstChar = commandSubstring.charAt(0);
             commandSubstring = commandSubstring.substring(1);
-
+    
             switch (firstChar) {
                 case CHAR_REDIR_INPUT:
                     // add as a separate token on its own
@@ -85,7 +81,7 @@ public final class CommandBuilder { //NOPMD
                     // add as a separate token on its own
                     tokens.add(String.valueOf(firstChar));
                     break;
-
+        
                 case CHAR_PIPE:
                     if (tokens.isEmpty()) {
                         // cannot start a new command with pipe
@@ -96,7 +92,7 @@ public final class CommandBuilder { //NOPMD
                         tokens = new LinkedList<>();
                     }
                     break;
-
+        
                 case CHAR_SEMICOLON:
                     if (tokens.isEmpty()) {
                         // cannot start a new command with semicolon
@@ -109,20 +105,20 @@ public final class CommandBuilder { //NOPMD
                         // add CallCommand as part of ongoing PipeCommand
                         callCmdsForPipe.add(new CallCommand(tokens, appRunner, argumentResolver));
                         tokens = new LinkedList<>();
-
+    
                         // add PipeCommand as part of a SequenceCommand
                         cmdsForSequence.add(new PipeCommand(callCmdsForPipe));
                         callCmdsForPipe = new LinkedList<>();
                     }
-
+            
                     break;
-
+        
                 default:
                     // encountered a mismatched quote
                     throw new ShellException(ERR_SYNTAX);
             }
         }
-
+        
         Command finalCommand = new CallCommand(tokens, appRunner, argumentResolver);
         if (!callCmdsForPipe.isEmpty()) {
             // add CallCommand as part of ongoing PipeCommand
@@ -134,7 +130,7 @@ public final class CommandBuilder { //NOPMD
             cmdsForSequence.add(finalCommand);
             finalCommand = new SequenceCommand(cmdsForSequence);
         }
-
+        
         return finalCommand;
     }
 }

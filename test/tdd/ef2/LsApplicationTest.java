@@ -1,28 +1,27 @@
 package tdd.ef2;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.LsException;
+import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import tdd.util.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.LsException;
-import sg.edu.nus.comp.cs4218.impl.app.LsApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-import tdd.util.TestUtil;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 /**
  * Test Suite for ls command
@@ -31,7 +30,7 @@ import tdd.util.TestUtil;
  */
 @SuppressWarnings("PMD")
 class LsApplicationTest {
-
+    
     public static final String TEXTFILE_TXT = "textfile.txt";
     public static final String FOLDER1 = "folder1";
     public static final String FOLDER2 = "folder2";
@@ -45,11 +44,11 @@ class LsApplicationTest {
     @BeforeAll
     static void setupAll() {
         String path = ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "test"
-                + StringUtils.fileSeparator() + "tdd"
-                + StringUtils.fileSeparator() + "util"
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "LsTestFolder";
+          + StringUtils.fileSeparator() + "test"
+          + StringUtils.fileSeparator() + "tdd"
+          + StringUtils.fileSeparator() + "util"
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "LsTestFolder";
         if (Files.isDirectory(TestUtil.resolveFilePath(path))) {
             Environment.currentDirectory = TestUtil.resolveFilePath(path).toString();
         }
@@ -213,7 +212,7 @@ class LsApplicationTest {
     public void testListFolderContent() throws LsException {
         String result = lsApp.listFolderContent(false, true, "folderRecursive");
         assertTrue(result.contains("folderRecursive:" + StringUtils.STRING_NEWLINE
-                + "firstFile.txt" + StringUtils.STRING_NEWLINE + "innerFolder"));
+          + "firstFile.txt" + StringUtils.STRING_NEWLINE + "innerFolder"));
 
         assertTrue(result.contains("folderRecursive/innerFolder:" + StringUtils.STRING_NEWLINE + "innerFile.txt"));
     }

@@ -1,12 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_GENERAL;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.WcInterface;
+import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.app.args.WcArguments;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,18 +13,16 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.app.WcInterface;
-import sg.edu.nus.comp.cs4218.exception.WcException;
-import sg.edu.nus.comp.cs4218.impl.app.args.WcArguments;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class WcApplication implements WcInterface {
-
+    
     private static final String NUMBER_FORMAT = " %7d";
     private static final int LINES_INDEX = 0;
     private static final int WORDS_INDEX = 1;
     private static final int BYTES_INDEX = 2;
-
+    
     /**
      * Runs the wc application with the specified arguments.
      *
@@ -40,7 +35,7 @@ public class WcApplication implements WcInterface {
      */
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout)
-            throws WcException {
+      throws WcException {
         // Format: wc [-clw] [FILES]
         if (stdout == null) {
             throw new WcException(ERR_NULL_STREAMS);
@@ -65,7 +60,7 @@ public class WcApplication implements WcInterface {
             throw new WcException(ERR_WRITE_STREAM);//NOPMD
         }
     }
-
+    
     /**
      * Returns string containing the number of lines, words, and bytes in input files
      *
@@ -97,16 +92,16 @@ public class WcApplication implements WcInterface {
                 result.add("wc: " + ERR_NO_PERM);
                 continue;
             }
-
+    
             InputStream input = IOUtils.openInputStream(file); //NOPMD
             long[] count = getCountReport(input); // lines words bytes
             IOUtils.closeInputStream(input);
-
+    
             // Update total count
             totalLines += count[0];
             totalWords += count[1];
             totalBytes += count[2];
-
+    
             // Format all output: " %7d %7d %7d %s"
             // Output in the following order: lines words bytes filename
             StringBuilder sb = new StringBuilder(); //NOPMD
@@ -122,7 +117,7 @@ public class WcApplication implements WcInterface {
             sb.append(String.format(" %s", file));
             result.add(sb.toString());
         }
-
+    
         // Print cumulative counts for all the files
         if (fileName.length > 1) {
             StringBuilder sb = new StringBuilder(); //NOPMD
@@ -140,7 +135,7 @@ public class WcApplication implements WcInterface {
         }
         return String.join(STRING_NEWLINE, result);
     }
-
+    
     /**
      * Returns string containing the number of lines, words, and bytes in standard input
      *
@@ -157,7 +152,7 @@ public class WcApplication implements WcInterface {
             throw new Exception(ERR_NULL_STREAMS);
         }
         long[] count = getCountReport(stdin); // lines words bytes;
-
+    
         StringBuilder sb = new StringBuilder(); //NOPMD
         if (isLines) {
             sb.append(String.format(NUMBER_FORMAT, count[0]));
@@ -168,10 +163,10 @@ public class WcApplication implements WcInterface {
         if (isBytes) {
             sb.append(String.format(NUMBER_FORMAT, count[2]));
         }
-
+    
         return sb.toString();
     }
-
+    
     /**
      * Returns array containing the number of lines, words, and bytes based on data in InputStream.
      *
@@ -183,7 +178,7 @@ public class WcApplication implements WcInterface {
             throw new Exception(ERR_NULL_STREAMS);
         }
         long[] result = new long[3]; // lines, words, bytes
-
+    
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         byte[] data = new byte[1024];
         int inRead = 0;
@@ -198,7 +193,7 @@ public class WcApplication implements WcInterface {
                     if (inWord) {
                         ++result[WORDS_INDEX];
                     }
-
+    
                     inWord = false;
                 } else {
                     inWord = true;
@@ -211,7 +206,7 @@ public class WcApplication implements WcInterface {
         if (inWord) {
             ++result[WORDS_INDEX]; // To handle last word
         }
-
+    
         return result;
     }
 }

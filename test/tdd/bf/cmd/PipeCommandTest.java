@@ -1,7 +1,15 @@
 package tdd.bf.cmd;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import tdd.util.CallCommandStub;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,28 +19,19 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-import tdd.util.CallCommandStub;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("PMD")
 class PipeCommandTest {
-
+    
     private InputStream inputStream;
     private OutputStream outputStream;
     private List<CallCommand> callCommand;
     private List<String> argsList;
     private ApplicationRunner appRunner;
     private ArgumentResolver argumentResolver;
-
+    
     @BeforeEach
     void setUp() {
         inputStream = new ByteArrayInputStream("".getBytes());
@@ -42,13 +41,13 @@ class PipeCommandTest {
         appRunner = new ApplicationRunner();
         argumentResolver = new ArgumentResolver();
     }
-
+    
     @AfterEach
     void tearDown() throws IOException {
         inputStream.close();
         outputStream.close();
     }
-
+    
     @Test
     public void testPipeBetweenApplicationsNoException() throws AbstractApplicationException, ShellException {
         String expectedResult = "test";
@@ -58,7 +57,7 @@ class PipeCommandTest {
         pipeCommand.evaluate(inputStream, outputStream);
         assertEquals(expectedResult, outputStream.toString());
     }
-
+    
     @Test
     public void testPipeBetweenApplicationsFirstCommandThrowException() throws AbstractApplicationException, ShellException {
         String expectedResult = "shell: First Input ShellException";
@@ -68,7 +67,7 @@ class PipeCommandTest {
         Throwable thrown = assertThrows(ShellException.class, () -> pipeCommand.evaluate(inputStream, outputStream));
         assertEquals(thrown.getMessage(), expectedResult);
     }
-
+    
     @Test
     public void testPipeBetweenApplicationsSecondCommandThrowException() throws AbstractApplicationException, ShellException {
         String expectedResult = "shell: Second Input ShellException";
@@ -78,7 +77,7 @@ class PipeCommandTest {
         Throwable thrown = assertThrows(ShellException.class, () -> pipeCommand.evaluate(inputStream, outputStream));
         assertEquals(thrown.getMessage(), expectedResult);
     }
-
+    
     @Test
     public void testPipeBetweenApplicationsBothCommandThrowException() throws AbstractApplicationException, ShellException {
         String expectedResult = "shell: First Input ShellException";
@@ -88,5 +87,5 @@ class PipeCommandTest {
         Throwable thrown = assertThrows(ShellException.class, () -> pipeCommand.evaluate(inputStream, outputStream));
         assertEquals(thrown.getMessage(), expectedResult);
     }
-
+    
 }

@@ -6,14 +6,13 @@
 package automated.sg.edu.nus.comp.cs4218.impl.parser;
 
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.parser.LsArgsParser;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.impl.parser.LsArgsParser;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("PMD")
 public class LsArgsParser_ESTest {
@@ -25,21 +24,21 @@ public class LsArgsParser_ESTest {
 //      List<String> list0 = lsArgsParser0.getDirectories();
 //      assertNull(list0);
 //  }
-
-  @Test 
-  public void test1()  throws Throwable  {
-      LsArgsParser lsArgsParser0 = new LsArgsParser();
-      String[] stringArray0 = new String[6];
-      stringArray0[0] = "illegal option -- ";
-      stringArray0[1] = "illegal option -- ";
-      stringArray0[2] = "illegal option -- ";
-      stringArray0[3] = "illegal option -- ";
-      stringArray0[4] = "illegal option -- ";
-      stringArray0[5] = "illegal option -- ";
-      lsArgsParser0.parse(stringArray0);
-      List<String> list0 = lsArgsParser0.getDirectories();
-      assertTrue(list0.contains("illegal option -- "));
-  }
+    
+    @Test
+    public void test1() throws Throwable {
+        LsArgsParser lsArgsParser0 = new LsArgsParser();
+        String[] stringArray0 = new String[6];
+        stringArray0[0] = "illegal option -- ";
+        stringArray0[1] = "illegal option -- ";
+        stringArray0[2] = "illegal option -- ";
+        stringArray0[3] = "illegal option -- ";
+        stringArray0[4] = "illegal option -- ";
+        stringArray0[5] = "illegal option -- ";
+        lsArgsParser0.parse(stringArray0);
+        List<String> list0 = lsArgsParser0.getDirectories();
+        assertTrue(list0.contains("illegal option -- "));
+    }
 
 //  @Test
 //  public void test2()  throws Throwable  {
@@ -75,14 +74,14 @@ public class LsArgsParser_ESTest {
 //      lsArgsParser0.isRecursive();
 //      assertTrue(lsArgsParser0.isFoldersOnly());
 //  }
-
-  @Test 
-  public void test5()  throws Throwable  {
-      LsArgsParser lsArgsParser0 = new LsArgsParser();
-      Boolean boolean0 = lsArgsParser0.isRecursive();
-      assertFalse(lsArgsParser0.isFoldersOnly());
-      assertFalse(boolean0);
-  }
+    
+    @Test
+    public void test5() throws Throwable {
+        LsArgsParser lsArgsParser0 = new LsArgsParser();
+        Boolean boolean0 = lsArgsParser0.isRecursive();
+        assertFalse(lsArgsParser0.isFoldersOnly());
+        assertFalse(boolean0);
+    }
 
 //  @Test
 //  public void test6()  throws Throwable  {
@@ -92,20 +91,20 @@ public class LsArgsParser_ESTest {
 //      lsArgsParser0.isFoldersOnly();
 //      assertTrue(lsArgsParser0.isRecursive());
 //  }
-
-  @Test 
-  public void test7()  throws Throwable  {
-      LsArgsParser lsArgsParser0 = new LsArgsParser();
-      Boolean boolean0 = lsArgsParser0.isFoldersOnly();
-      assertFalse(lsArgsParser0.isRecursive());
-      assertFalse(boolean0);
-  }
-
-  @Test 
-  public void test8()  throws Throwable  {
-      LsArgsParser lsArgsParser0 = new LsArgsParser();
-      lsArgsParser0.getDirectories();
-      assertFalse(lsArgsParser0.isFoldersOnly());
-      assertFalse(lsArgsParser0.isRecursive());
-  }
+    
+    @Test
+    public void test7() throws Throwable {
+        LsArgsParser lsArgsParser0 = new LsArgsParser();
+        Boolean boolean0 = lsArgsParser0.isFoldersOnly();
+        assertFalse(lsArgsParser0.isRecursive());
+        assertFalse(boolean0);
+    }
+    
+    @Test
+    public void test8() throws Throwable {
+        LsArgsParser lsArgsParser0 = new LsArgsParser();
+        lsArgsParser0.getDirectories();
+        assertFalse(lsArgsParser0.isFoldersOnly());
+        assertFalse(lsArgsParser0.isRecursive());
+    }
 }

@@ -1,12 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.SortInterface;
+import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.app.args.SortArguments;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,13 +15,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.app.SortInterface;
-import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.impl.app.args.SortArguments;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class SortApplication implements SortInterface {
-
+    
     /**
      * Runs the sort application with the specified arguments.
      *
@@ -62,7 +57,7 @@ public class SortApplication implements SortInterface {
             throw new SortException(ERR_WRITE_STREAM);//NOPMD
         }
     }
-
+    
     /**
      * Returns string containing the orders of the lines of the specified file
      *
@@ -97,7 +92,7 @@ public class SortApplication implements SortInterface {
         sortInputString(isFirstWordNumber, isReverseOrder, isCaseIndependent, lines);
         return String.join(STRING_NEWLINE, lines);
     }
-
+    
     /**
      * Returns string containing the orders of the lines from the standard input
      *
@@ -117,7 +112,7 @@ public class SortApplication implements SortInterface {
         sortInputString(isFirstWordNumber, isReverseOrder, isCaseIndependent, lines);
         return String.join(STRING_NEWLINE, lines);
     }
-
+    
     /**
      * Sorts the input ArrayList based on the given conditions. Invoking this function will mutate the ArrayList.
      *
@@ -133,12 +128,12 @@ public class SortApplication implements SortInterface {
             public int compare(String str1, String str2) {
                 String temp1 = isCaseIndependent ? str1.toLowerCase() : str1;//NOPMD
                 String temp2 = isCaseIndependent ? str2.toLowerCase() : str2;//NOPMD
-
+    
                 // Extract the first group of numbers if possible.
                 if (isFirstWordNumber && !temp1.isEmpty() && !temp2.isEmpty()) {
                     String chunk1 = getChunk(temp1);//NOPMD
                     String chunk2 = getChunk(temp2);//NOPMD
-
+    
                     // If both chunks can be represented as numbers, sort them numerically.
                     int result = 0;
                     if (Character.isDigit(chunk1.charAt(0)) && Character.isDigit(chunk2.charAt(0))) {
@@ -151,7 +146,7 @@ public class SortApplication implements SortInterface {
                     }
                     return temp1.substring(chunk1.length()).compareTo(temp2.substring(chunk2.length()));
                 }
-
+    
                 return temp1.compareTo(temp2);
             }
         });
@@ -159,7 +154,7 @@ public class SortApplication implements SortInterface {
             Collections.reverse(input);
         }
     }
-
+    
     /**
      * Extracts a chunk of numbers or non-numbers from str starting from index 0.
      *

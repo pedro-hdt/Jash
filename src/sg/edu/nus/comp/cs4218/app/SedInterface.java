@@ -19,7 +19,7 @@ public interface SedInterface extends Application {
      */
     String replaceSubstringInFile(String pattern, String replacement, int replacementIndex,
                                   String fileName) throws Exception;
-
+    
     /**
      * Returns string of the Stdin arg content with the matched substring on each line replaced. For
      * each line, find the substring that matched the pattern and replace the substring in the

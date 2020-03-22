@@ -5,7 +5,7 @@ import sg.edu.nus.comp.cs4218.Application;
 import java.io.InputStream;
 
 public interface CutInterface extends Application {
-
+    
     /**
      * Cuts out selected portions of each line
      *
@@ -20,8 +20,8 @@ public interface CutInterface extends Application {
      */
     String cutFromFiles(Boolean isCharPo, Boolean isBytePo, Boolean isRange, int startIdx, int endIdx,
                         String... fileName) throws Exception;
-
-
+    
+    
     /**
      * Cuts out selected portions of each line
      *

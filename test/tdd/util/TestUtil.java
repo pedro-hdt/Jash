@@ -1,9 +1,9 @@
 package tdd.util;
 
+import sg.edu.nus.comp.cs4218.Environment;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import sg.edu.nus.comp.cs4218.Environment;
 
 @SuppressWarnings("PMD")
 public class TestUtil {

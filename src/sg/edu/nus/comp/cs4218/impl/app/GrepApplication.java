@@ -1,13 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.app.GrepInterface;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.GrepException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,35 +18,35 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.app.GrepInterface;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.GrepException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class GrepApplication implements GrepInterface {
     public static final String INVALID_PATTERN = "Invalid pattern syntax";
     public static final String EMPTY_PATTERN = "Pattern should not be empty.";
     public static final String IS_DIRECTORY = "Is a directory";
     public static final String NULL_POINTER = "Null Pointer Exception";
-
+    
     private static final int NUM_ARGUMENTS = 2;
     private static final char CASE_INSEN_IDENT = 'i';
     private static final char COUNT_IDENT = 'c';
     private static final int CASE_INSEN_IDX = 0;
     private static final int COUNT_INDEX = 1;
-
+    
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines,
-        String... fileNames) throws Exception {
+                                String... fileNames) throws Exception {
         if (fileNames == null || pattern == null || isCaseInsensitive == null || isCountLines == null) {
             throw new GrepException(NULL_POINTER);
         }
-
+        
         StringJoiner lineResults = new StringJoiner(STRING_NEWLINE);
         StringJoiner countResults = new StringJoiner(STRING_NEWLINE);
-
+        
         grepResultsFromFiles(pattern, isCaseInsensitive, lineResults, countResults, fileNames);
-
+        
         String results = "";
         if (isCountLines) {
             results = countResults.toString() + STRING_NEWLINE;
@@ -61,7 +57,7 @@ public class GrepApplication implements GrepInterface {
         }
         return results;
     }
-
+    
     /**
      * Extract the lines and count number of lines for grep from files and insert them into
      * lineResults and countResults respectively.
@@ -75,7 +71,7 @@ public class GrepApplication implements GrepInterface {
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     // We considered there is no logical or really advantageous way to break the method down
     private void grepResultsFromFiles(String pattern, Boolean isCaseInsensitive, StringJoiner lineResults,
-        StringJoiner countResults, String... fileNames) throws Exception {
+                                      StringJoiner countResults, String... fileNames) throws Exception {
         int count;
         boolean isSingleFile = (fileNames.length == 1);
         for (String f : fileNames) {
@@ -98,7 +94,7 @@ public class GrepApplication implements GrepInterface {
                     countResults.add(f + ": " + ERR_NO_PERM);
                     continue;
                 }
-
+                
                 reader = new BufferedReader(new FileReader(path));
                 String line;
                 Pattern compiledPattern;
@@ -134,7 +130,7 @@ public class GrepApplication implements GrepInterface {
             }
         }
     }
-
+    
     /**
      * Converts filename to absolute path, if initially was relative path
      *
@@ -145,7 +141,7 @@ public class GrepApplication implements GrepInterface {
         String home = System.getProperty("user.home").trim();
         String currentDir = Environment.currentDirectory.trim();
         String convertedPath = convertPathToSystemPath(fileName);
-
+    
         String newPath;
         if (convertedPath.length() >= home.length() && convertedPath.substring(0, home.length()).trim().equals(home)) {
             newPath = convertedPath;
@@ -154,7 +150,7 @@ public class GrepApplication implements GrepInterface {
         }
         return newPath;
     }
-
+    
     /**
      * Converts path provided by user into path recognised by the system
      *
@@ -166,20 +162,20 @@ public class GrepApplication implements GrepInterface {
         String pathIdentifier = "\\" + Character.toString(CHAR_FILE_SEP);
         convertedPath = convertedPath.replaceAll("(\\\\)+", pathIdentifier);
         convertedPath = convertedPath.replaceAll("/+", pathIdentifier);
-
+    
         if (convertedPath.length() != 0 && convertedPath.charAt(convertedPath.length() - 1) == CHAR_FILE_SEP) {
             convertedPath = convertedPath.substring(0, convertedPath.length() - 1);
         }
-
+    
         return convertedPath;
     }
-
+    
     @Override
     public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines,
-        InputStream stdin) throws Exception {
+                                InputStream stdin) throws Exception {
         int count = 0;
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
-
+        
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));//NOPMD
             String line;
@@ -202,7 +198,7 @@ public class GrepApplication implements GrepInterface {
         } catch (NullPointerException npe) {
             throw (GrepException) new GrepException(ERR_FILE_NOT_FOUND).initCause(npe);
         }
-
+        
         String results = "";
         if (isCountLines) {
             results = count + STRING_NEWLINE;
@@ -213,7 +209,7 @@ public class GrepApplication implements GrepInterface {
         }
         return results;
     }
-
+    
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
         try {
@@ -221,14 +217,14 @@ public class GrepApplication implements GrepInterface {
             ArrayList<String> inputFiles = new ArrayList<>();
             String pattern = getGrepArguments(args, grepFlags, inputFiles);
             String result = "";
-
+    
             if (stdin == null && inputFiles.isEmpty()) {
                 throw new Exception(ERR_NO_INPUT);
             }
             if (pattern == null) {
                 throw new Exception(ERR_SYNTAX);
             }
-
+    
             if (pattern.isEmpty()) {
                 throw new Exception(EMPTY_PATTERN);
             } else {
@@ -238,7 +234,7 @@ public class GrepApplication implements GrepInterface {
                     String[] inputFilesArray = new String[inputFiles.size()];
                     inputFilesArray = inputFiles.toArray(inputFilesArray);
                     result = grepFromFiles(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], inputFilesArray);
-
+    
                 }
             }
             stdout.write(result.getBytes());
@@ -248,7 +244,7 @@ public class GrepApplication implements GrepInterface {
             throw (GrepException) new GrepException(e.getMessage()).initCause(e);
         }
     }
-
+    
     /**
      * Separates the arguments provided by user into the flags, pattern and input files.
      *
@@ -260,7 +256,7 @@ public class GrepApplication implements GrepInterface {
     private String getGrepArguments(String[] args, boolean[] grepFlags, ArrayList<String> inputFiles) throws Exception {
         String pattern = null;
         boolean isFile = false; // files can only appear after pattern
-
+    
         for (String s : args) {
             char[] arg = s.toCharArray();
             if (isFile) {
@@ -270,14 +266,14 @@ public class GrepApplication implements GrepInterface {
                     arg = Arrays.copyOfRange(arg, 1, arg.length);
                     for (char c : arg) {
                         switch (c) {
-                        case CASE_INSEN_IDENT:
-                            grepFlags[CASE_INSEN_IDX] = true;
-                            break;
-                        case COUNT_IDENT:
-                            grepFlags[COUNT_INDEX] = true;
-                            break;
-                        default:
-                            throw new GrepException(ERR_SYNTAX);
+                            case CASE_INSEN_IDENT:
+                                grepFlags[CASE_INSEN_IDX] = true;
+                                break;
+                            case COUNT_IDENT:
+                                grepFlags[COUNT_INDEX] = true;
+                                break;
+                            default:
+                                throw new GrepException(ERR_SYNTAX);
                         }
                     }
                 } else {

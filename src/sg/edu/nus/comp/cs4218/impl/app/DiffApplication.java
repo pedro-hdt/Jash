@@ -1,12 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.DiffInterface;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.DiffException;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
+import sg.edu.nus.comp.cs4218.impl.parser.DiffArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,20 +14,17 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.app.DiffInterface;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.DiffException;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.impl.parser.DiffArgsParser;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 @SuppressWarnings("PMD.PreserveStackTrace")
 public class DiffApplication implements DiffInterface {
-
+    
     InputStream inputStream; //NOPMD
-
+    
     /**
      * Checks if the source path exists in the current system.
+     *
      * @param srcPath Source path of the file or directory.
      * @throws DiffException
      */
@@ -44,9 +40,10 @@ public class DiffApplication implements DiffInterface {
             throw new DiffException(ERR_NO_PERM);
         }
     }
-
+    
     /**
      * Reads the file's content and returns a string version of the file's content.
+     *
      * @param file File to be read
      * @return string version of the file's content
      * @throws Exception
@@ -56,17 +53,17 @@ public class DiffApplication implements DiffInterface {
         int fileLength;
         byte[] strBuffer;
         String fileContent;
-
+    
         inputStream = new FileInputStream(file);
         fileLength = (int) file.length();
         strBuffer = new byte[fileLength];
         inputStream.read(strBuffer, 0, fileLength);
         fileContent = new String(strBuffer);
         inputStream.close();
-
+    
         return fileContent;
     }
-
+    
     /**
      * Performs a diff of two files.
      *
@@ -86,10 +83,10 @@ public class DiffApplication implements DiffInterface {
         String fileBContent;
         String[] fileALines = new String[0];
         String[] fileBLines = new String[0];
-
+    
         boolean isFileADir = false;
         boolean isFileBDir = false;
-
+    
         try {
             if (fileNameA != null && fileNameA.equals("-")) {
                 fileALines = IOUtils.getLinesFromInputStream(inputStream).toArray(new String[0]);
@@ -103,7 +100,7 @@ public class DiffApplication implements DiffInterface {
                     fileALines = fileAContent.split("\n");
                 }
             }
-
+        
             if (fileNameB != null && fileNameB.equals("-")) {
                 fileBLines = IOUtils.getLinesFromInputStream(inputStream).toArray(new String[0]);
             } else {
@@ -116,13 +113,13 @@ public class DiffApplication implements DiffInterface {
                     fileBLines = fileBContent.split("\n");
                 }
             }
-
+        
             if (isFileADir && isFileBDir) {
                 return diffTwoDir(fileNameA, fileNameB, isShowSame, isNoBlank, isSimple);
             } else {
                 boolean[] commonLinesA = new boolean[fileALines.length];
                 boolean[] commonLinesB = new boolean[fileBLines.length];
-
+            
                 // Check common lines
                 for (int i = 0; i < fileALines.length; i++) {
                     String currLineA = fileALines[i];
@@ -136,7 +133,7 @@ public class DiffApplication implements DiffInterface {
                         }
                     }
                 }
-
+            
                 StringBuilder output = new StringBuilder();
                 for (int i = 0; i < commonLinesA.length; i++) {
                     if (!commonLinesA[i]) {
@@ -157,14 +154,14 @@ public class DiffApplication implements DiffInterface {
                 if (output.length() == 0 && isShowSame) {
                     return "Files [" + fileNameA + " " + fileNameB + "] are identical";
                 }
-
+            
                 return output.toString();
             }
         } catch (Exception e) {
             throw new DiffException(e.getMessage());
         }
     }
-
+    
     /**
      * Performs a diff of two directories.
      *
@@ -184,24 +181,24 @@ public class DiffApplication implements DiffInterface {
             StringBuilder stringBuilder = new StringBuilder();
             checkExists(folderA);
             checkExists(folderB);
-
+    
             File dirA = IOUtils.resolveFilePath(folderA).toFile();
             File dirB = IOUtils.resolveFilePath(folderB).toFile();
             String[] dirAFiles = dirA.list();
             String[] dirBFiles = dirB.list();
             List<String> listA = Arrays.asList(dirAFiles);
             List<String> listB = Arrays.asList(dirBFiles);
-
+    
             String pathA = folderA + File.separator;
             String pathB = folderB + File.separator;
             boolean hasLines = false;
-
+    
             for (int i = 0; i < dirAFiles.length; i++) {
                 String message;
                 if (listB.contains(dirAFiles[i])) {
                     String filePathA = pathA + dirAFiles[i];
                     String filePathB = pathB + dirAFiles[i];
-
+    
                     message = diffTwoFiles(filePathA, filePathB, isShowSame, isNoBlank, isSimple);
                     if (!message.isEmpty()) {
                         if (hasLines) {
@@ -218,7 +215,7 @@ public class DiffApplication implements DiffInterface {
                     hasLines = true;
                 }
             }
-
+    
             for (int i = 0; i < dirBFiles.length; i++) {
                 String message;
                 if (!listA.contains(dirBFiles[i])) {
@@ -235,7 +232,7 @@ public class DiffApplication implements DiffInterface {
             throw new DiffException(e.getMessage());
         }
     }
-
+    
     /**
      * Performs a diff of a file and stdin.
      *
@@ -256,42 +253,42 @@ public class DiffApplication implements DiffInterface {
             throw new DiffException(e.getMessage());
         }
     }
-
+    
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
         if (stdout == null || stdin == null) {
             throw new DiffException(ERR_NULL_STREAMS);
         }
-
+        
         Boolean isShowSame;
         Boolean isNoBlank;
         Boolean isSimple;
         inputStream = stdin;
-
+        
         DiffArgsParser parser = new DiffArgsParser();
         try {
             parser.parse(args);
         } catch (InvalidArgsException e) {
             throw new DiffException(ERR_INVALID_FLAG);
         }
-
+        
         try {
             isShowSame = parser.isShowSame();
             isNoBlank = parser.isNoBlank();
             isSimple = parser.isSimple();
             String[] files = parser.getFiles();
-
+            
             if (files.length < 2) {
                 throw new DiffException(ERR_NO_ARGS);
             }
-
+            
             if (files.length > 2) {
                 throw new DiffException(ERR_TOO_MANY_ARGS);
             }
-
+            
             String source = files[0];
             String destination = files[1];
-
+            
             String output = diffTwoFiles(source, destination, isShowSame, isNoBlank, isSimple);
             if (output.length() != 0) {
                 output += STRING_NEWLINE;

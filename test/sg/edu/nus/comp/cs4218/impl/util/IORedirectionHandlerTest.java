@@ -1,14 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,11 +13,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * Tests for IO redirection
@@ -70,10 +69,10 @@ public class IORedirectionHandlerTest {
 
         // instantiate a redirection handler for the command
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("echo", "hello", ">", outFile.toString()),//NOPMD
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("echo", "hello", ">", outFile.toString()),//NOPMD
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
 
         // let the handler run
@@ -127,10 +126,10 @@ public class IORedirectionHandlerTest {
 
         // instantiate a redirection handler for the command
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("paste", "-", "<", inFile.toString()),//NOPMD
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("paste", "-", "<", inFile.toString()),//NOPMD
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
 
         // let the handler run
@@ -185,10 +184,10 @@ public class IORedirectionHandlerTest {
 
         // instantiate a redirection handler for the command
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("paste", "-", "<", inFile.toString(), ">", outFile.toString()),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("paste", "-", "<", inFile.toString(), ">", outFile.toString()),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
 
         // let the handler run
@@ -261,14 +260,14 @@ public class IORedirectionHandlerTest {
     public void testFailsEmptyArgs() {
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList(),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList(),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
@@ -283,14 +282,14 @@ public class IORedirectionHandlerTest {
     public void testFailsNullArgs() {
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                null,
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          null,
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
@@ -307,15 +306,15 @@ public class IORedirectionHandlerTest {
     public void testFailsRedirOutputNoDest() throws AbstractApplicationException, ShellException {
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("echo", "hello", ">"),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("echo", "hello", ">"),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
-
+    
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
     }
@@ -335,15 +334,15 @@ public class IORedirectionHandlerTest {
         outFile1.toFile().deleteOnExit();
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("echo", "hello", ">", outFile1.toString(), ">", outFile2.toString()),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("echo", "hello", ">", outFile1.toString(), ">", outFile2.toString()),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
-
+    
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_MULTIPLE_STREAMS);
 
@@ -362,15 +361,15 @@ public class IORedirectionHandlerTest {
         Path inFile = IOUtils.resolveFilePath("ghost-infile.txt");
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("paste", "-", "<", inFile.toString()),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("paste", "-", "<", inFile.toString()),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
-
+    
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_FILE_NOT_FOUND);
 
@@ -386,14 +385,14 @@ public class IORedirectionHandlerTest {
     public void testFailsWhenInvalidRedir() {
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("echo", "<", "<"),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("echo", "<", "<"),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
@@ -409,14 +408,14 @@ public class IORedirectionHandlerTest {
     public void testFailsWhenRedirToMultipleFiles() {
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
-                Arrays.asList("echo", "hi", ">", "*"),
-                System.in,
-                System.out,
-                new ArgumentResolver()
+          Arrays.asList("echo", "hi", ">", "*"),
+          System.in,
+          System.out,
+          new ArgumentResolver()
         );
-
+    
         ShellException shellException =
-                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
 
         assertMsgContains(shellException, ERR_SYNTAX);
 

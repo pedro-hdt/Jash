@@ -1,20 +1,20 @@
 package tdd.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+
 @SuppressWarnings("PMD")
 public class CommandStub implements Command {
-
+    
     public enum CommandT {
         ECHO_EXCEPTION,
         SHELL_EXCEPTION,
@@ -28,11 +28,11 @@ public class CommandStub implements Command {
     public CommandStub(CommandT commandType) {
         this.commandType = commandType;
     }
-
+    
     @Override
     public void evaluate(InputStream stdin, OutputStream stdout)
-            throws AbstractApplicationException, ShellException {
-
+      throws AbstractApplicationException, ShellException {
+        
         switch (commandType) {
             case EXIT_EXCEPTION:
                 throw new ExitException("ExitException");

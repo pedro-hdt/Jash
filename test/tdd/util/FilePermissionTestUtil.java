@@ -1,9 +1,9 @@
 package tdd.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
-
 import java.io.File;
 import java.io.IOException;
+
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
 @SuppressWarnings("PMD")
 public class FilePermissionTestUtil {

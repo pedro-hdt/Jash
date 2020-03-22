@@ -5,20 +5,8 @@
 
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PushbackInputStream;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.exception.CpException;
 import sg.edu.nus.comp.cs4218.exception.DiffException;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
@@ -27,249 +15,260 @@ import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PushbackInputStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 @SuppressWarnings("PMD")
 public class ApplicationRunnerTest {
-
+    
     public static final String EXCEPTION_FAIL = "Expecting exception: Exception";
-
+    
     @Test
     @Disabled("automated tests changed with change in implementation")
-    public void test00()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
-      String[] stringArray0 = new String[6];
-      stringArray0[0] = "ls";
-      stringArray0[1] = "wc";
-      stringArray0[2] = "wc";
-      stringArray0[3] = "%;d\"'7v";
-      stringArray0[4] = "paste";
-      stringArray0[5] = "sed";
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("rm", stringArray0, pipedInputStream0, pipedOutputStream0);
-        fail("Expecting exception: StringIndexOutOfBoundsException");
-      
-      } catch(StringIndexOutOfBoundsException e) {
-      }
-  }
-
-  @Test
-  public void test01()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[3];
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0, 3083269);
-      try { 
-        applicationRunner0.runApp("", stringArray0, pipedInputStream0, pipedOutputStream0);
-        fail(EXCEPTION_FAIL);
-      
-      } catch(Exception e) {
-         //
-         // shell: : Invalid app
-         //
-          assertTrue(e instanceof ShellException);
-
-      }
-  }
-
-  @Test 
-  public void test02()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[3];
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
-      PushbackInputStream pushbackInputStream0 = new PushbackInputStream(pipedInputStream0);
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("paste", stringArray0, pushbackInputStream0, pipedOutputStream0);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-      }
-  }
-
-  @Test 
-  public void test03()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[3];
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("sort", stringArray0, pipedInputStream0, pipedOutputStream0);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
+    public void test00() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
+        String[] stringArray0 = new String[6];
+        stringArray0[0] = "ls";
+        stringArray0[1] = "wc";
+        stringArray0[2] = "wc";
+        stringArray0[3] = "%;d\"'7v";
+        stringArray0[4] = "paste";
+        stringArray0[5] = "sed";
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("rm", stringArray0, pipedInputStream0, pipedOutputStream0);
+            fail("Expecting exception: StringIndexOutOfBoundsException");
+            
+        } catch (StringIndexOutOfBoundsException e) {
+        }
+    }
+    
+    @Test
+    public void test01() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[3];
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0, 3083269);
+        try {
+            applicationRunner0.runApp("", stringArray0, pipedInputStream0, pipedOutputStream0);
+            fail(EXCEPTION_FAIL);
+            
+        } catch (Exception e) {
+            //
+            // shell: : Invalid app
+            //
+            assertTrue(e instanceof ShellException);
+            
+        }
+    }
+    
+    @Test
+    public void test02() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[3];
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
+        PushbackInputStream pushbackInputStream0 = new PushbackInputStream(pipedInputStream0);
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("paste", stringArray0, pushbackInputStream0, pipedOutputStream0);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+        }
+    }
+    
+    @Test
+    public void test03() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[3];
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("sort", stringArray0, pipedInputStream0, pipedOutputStream0);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.args.SortArguments", e);
-          assertTrue(e instanceof NullPointerException);
-
-      }
-  }
-
-  @Test 
-  public void test04()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[2];
-      byte[] byteArray0 = new byte[2];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("grep", stringArray0, byteArrayInputStream0, pipedOutputStream0);
-        fail("Expecting exception: ClassCastException");
-      
-      } catch(GrepException e) {
-         //
-         // org.evosuite.runtime.mock.java.lang.MockThrowable cannot be cast to sg.edu.nus.comp.cs4218.exception.GrepException
-         //
+            assertTrue(e instanceof NullPointerException);
+            
+        }
+    }
+    
+    @Test
+    public void test04() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[2];
+        byte[] byteArray0 = new byte[2];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("grep", stringArray0, byteArrayInputStream0, pipedOutputStream0);
+            fail("Expecting exception: ClassCastException");
+            
+        } catch (GrepException e) {
+            //
+            // org.evosuite.runtime.mock.java.lang.MockThrowable cannot be cast to sg.edu.nus.comp.cs4218.exception.GrepException
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.GrepApplication", e);
-          assertTrue(e instanceof GrepException);
-      }
-  }
-
-  @Test 
-  public void test05()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[8];
-      PipedInputStream pipedInputStream0 = new PipedInputStream(1560);
-      ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream(0);
-      try { 
-        applicationRunner0.runApp("find", stringArray0, pipedInputStream0, byteArrayOutputStream0);
-        fail(EXCEPTION_FAIL);
-      
-      } catch(Exception e) {
-         //
-         // find: null
-         //
+            assertTrue(e instanceof GrepException);
+        }
+    }
+    
+    @Test
+    public void test05() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[8];
+        PipedInputStream pipedInputStream0 = new PipedInputStream(1560);
+        ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream(0);
+        try {
+            applicationRunner0.runApp("find", stringArray0, pipedInputStream0, byteArrayOutputStream0);
+            fail(EXCEPTION_FAIL);
+            
+        } catch (Exception e) {
+            //
+            // find: null
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.FindApplication", e);
-          assertTrue(e instanceof FindException);
-
-      }
-  }
-
-  @Test 
-  public void test06()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[2];
-      byte[] byteArray0 = new byte[1];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("exit", stringArray0, byteArrayInputStream0, (OutputStream) null);
-        fail("Expecting exception: ExitException");
-      
-      } catch(ExitException e) {
-         //
-         // exit: terminating execution
-         //
+            assertTrue(e instanceof FindException);
+            
+        }
+    }
+    
+    @Test
+    public void test06() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[2];
+        byte[] byteArray0 = new byte[1];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("exit", stringArray0, byteArrayInputStream0, (OutputStream) null);
+            fail("Expecting exception: ExitException");
+            
+        } catch (ExitException e) {
+            //
+            // exit: terminating execution
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.ExitApplication", e);
-          assertTrue(e instanceof ExitException);
-      }
-  }
-
-  @Test 
-  public void test07()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[9];
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
-      applicationRunner0.runApp("echo", stringArray0, pipedInputStream0, pipedOutputStream0);
-      assertEquals(45, pipedInputStream0.available());
-  }
-
-  @Test 
-  public void test08()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[0];
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
-      try { 
-        applicationRunner0.runApp("diff", stringArray0, pipedInputStream0, byteArrayOutputStream0);
-        fail(EXCEPTION_FAIL);
-      
-      } catch(Exception e) {
-         //
-         // shell: diff: Not supported yet
-         //
+            assertTrue(e instanceof ExitException);
+        }
+    }
+    
+    @Test
+    public void test07() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[9];
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
+        applicationRunner0.runApp("echo", stringArray0, pipedInputStream0, pipedOutputStream0);
+        assertEquals(45, pipedInputStream0.available());
+    }
+    
+    @Test
+    public void test08() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[0];
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
+        try {
+            applicationRunner0.runApp("diff", stringArray0, pipedInputStream0, byteArrayOutputStream0);
+            fail(EXCEPTION_FAIL);
+            
+        } catch (Exception e) {
+            //
+            // shell: diff: Not supported yet
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner", e);
-          assertTrue(e instanceof DiffException);
-      }
-  }
-
-  @Test 
-  public void test09()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[3];
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
-      try { 
-        applicationRunner0.runApp("sed", stringArray0, pipedInputStream0, pipedOutputStream0);
-        fail(EXCEPTION_FAIL);
-      
-      } catch(Exception e) {
-          assertTrue(e instanceof SedException);
-      }
-  }
-
-  @Test 
-  public void test11()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[3];
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
-      PushbackInputStream pushbackInputStream0 = new PushbackInputStream(pipedInputStream0);
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("wc", stringArray0, pushbackInputStream0, pipedOutputStream0);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
+            assertTrue(e instanceof DiffException);
+        }
+    }
+    
+    @Test
+    public void test09() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[3];
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
+        try {
+            applicationRunner0.runApp("sed", stringArray0, pipedInputStream0, pipedOutputStream0);
+            fail(EXCEPTION_FAIL);
+            
+        } catch (Exception e) {
+            assertTrue(e instanceof SedException);
+        }
+    }
+    
+    @Test
+    public void test11() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[3];
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
+        PushbackInputStream pushbackInputStream0 = new PushbackInputStream(pipedInputStream0);
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("wc", stringArray0, pushbackInputStream0, pipedOutputStream0);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.args.WcArguments", e);
-          assertTrue(e instanceof NullPointerException);
-      }
-  }
-
-  @Test 
-  public void test12()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[4];
-      byte[] byteArray0 = new byte[1];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-      ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
-      // Undeclared exception!
-      try { 
-        applicationRunner0.runApp("mv", stringArray0, byteArrayInputStream0, byteArrayOutputStream0);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-          assertTrue(e instanceof NullPointerException);
-      }
-  }
-
-
-  @Test 
-  public void test15()  throws Throwable  {
-      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-      String[] stringArray0 = new String[0];
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
-      try { 
-        applicationRunner0.runApp("cp", stringArray0, pipedInputStream0, byteArrayOutputStream0);
-        fail(EXCEPTION_FAIL);
-      
-      } catch(Exception e) {
-         //
-         // shell: cp: Not supported yet
-         //
+            assertTrue(e instanceof NullPointerException);
+        }
+    }
+    
+    @Test
+    public void test12() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[4];
+        byte[] byteArray0 = new byte[1];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+        ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
+        // Undeclared exception!
+        try {
+            applicationRunner0.runApp("mv", stringArray0, byteArrayInputStream0, byteArrayOutputStream0);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            assertTrue(e instanceof NullPointerException);
+        }
+    }
+    
+    
+    @Test
+    public void test15() throws Throwable {
+        ApplicationRunner applicationRunner0 = new ApplicationRunner();
+        String[] stringArray0 = new String[0];
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
+        try {
+            applicationRunner0.runApp("cp", stringArray0, pipedInputStream0, byteArrayOutputStream0);
+            fail(EXCEPTION_FAIL);
+            
+        } catch (Exception e) {
+            //
+            // shell: cp: Not supported yet
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner", e);
-         assertTrue(e instanceof CpException);
-      }
-  }
+            assertTrue(e instanceof CpException);
+        }
+    }
 }

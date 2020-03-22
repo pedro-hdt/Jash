@@ -1,25 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.TestUtils;
@@ -30,6 +15,20 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 /**
  * Tests commands used in sequence
@@ -46,8 +45,8 @@ public class SequenceCommandTest {
     @BeforeAll
     static void setupAll() {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "SequenceTestFolder");
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "SequenceTestFolder");
     }
 
     @AfterAll
@@ -115,6 +114,7 @@ public class SequenceCommandTest {
 
     /**
      * Asserts if exception thrown when invalid commands are piped
+     *
      * @throws AbstractApplicationException
      * @throws ShellException
      */

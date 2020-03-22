@@ -5,14 +5,13 @@
 
 package automated.sg.edu.nus.comp.cs4218.impl.cmd;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SuppressWarnings("PMD")
 public class SequenceCommand_ESTest {
@@ -34,17 +33,17 @@ public class SequenceCommand_ESTest {
 //         verifyException("sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand", e);
 //      }
 //  }
-
-  @Test 
-  public void test1()  throws Throwable  {
-      SequenceCommand sequenceCommand0 = new SequenceCommand((List<Command>) null);
-      sequenceCommand0.terminate();
-  }
-
-  @Test 
-  public void test2()  throws Throwable  {
-      SequenceCommand sequenceCommand0 = new SequenceCommand((List<Command>) null);
-      List<Command> list0 = sequenceCommand0.getCommands();
-      assertNull(list0);
-  }
+    
+    @Test
+    public void test1() throws Throwable {
+        SequenceCommand sequenceCommand0 = new SequenceCommand((List<Command>) null);
+        sequenceCommand0.terminate();
+    }
+    
+    @Test
+    public void test2() throws Throwable {
+        SequenceCommand sequenceCommand0 = new SequenceCommand((List<Command>) null);
+        List<Command> list0 = sequenceCommand0.getCommands();
+        assertNull(list0);
+    }
 }

@@ -1,9 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,8 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
 
 
 /**
@@ -28,7 +28,7 @@ public class IORedirectionHandler {
     private List<String> noRedirArgsList;
     private InputStream inputStream;
     private OutputStream outputStream;
-
+    
     public IORedirectionHandler(List<String> argsList, InputStream origInputStream,
                                 OutputStream origOutputStream, ArgumentResolver argumentResolver) {
         this.argsList = argsList;
@@ -38,25 +38,25 @@ public class IORedirectionHandler {
         this.origOutputStream = origOutputStream;
         this.argumentResolver = argumentResolver;
     }
-
+    
     public void extractRedirOptions() throws AbstractApplicationException, ShellException {
         if (argsList == null || argsList.isEmpty()) {
             throw new ShellException(ERR_SYNTAX);
         }
-
+        
         noRedirArgsList = new LinkedList<>();
-
+        
         // extract redirection operators (with their corresponding files) from argsList
         ListIterator<String> argsIterator = argsList.listIterator();
         while (argsIterator.hasNext()) {
             String arg = argsIterator.next();
-
+    
             // leave the other args untouched
             if (!isRedirOperator(arg)) {
                 noRedirArgsList.add(arg);
                 continue;
             }
-
+    
             // if current arg is < or >, check if there is another argument
             // if so fast-forward to the next arg to extract the specified file
             if (!argsIterator.hasNext()) {
@@ -66,7 +66,7 @@ public class IORedirectionHandler {
             if (isRedirOperator(file)) {
                 throw new ShellException(ERR_SYNTAX);
             }
-
+    
             // handle quoting + globing + command substitution in file arg
             List<String> fileSegment = argumentResolver.resolveOneArgument(file);
             if (fileSegment.size() > 1) {
@@ -74,7 +74,7 @@ public class IORedirectionHandler {
                 throw new ShellException(ERR_SYNTAX);
             }
             file = fileSegment.get(0);
-
+    
             // replace existing inputStream / outputStream
             if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
                 IOUtils.closeInputStream(inputStream);
@@ -91,19 +91,19 @@ public class IORedirectionHandler {
             }
         }
     }
-
+    
     public List<String> getNoRedirArgsList() {
         return noRedirArgsList;
     }
-
+    
     public InputStream getInputStream() {
         return inputStream;
     }
-
+    
     public OutputStream getOutputStream() {
         return outputStream;
     }
-
+    
     private boolean isRedirOperator(String str) {
         return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));
     }

@@ -15,17 +15,17 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
  */
 public class ArgsParser {
     public static final String ILLEGAL_FLAG_MSG = "illegal option -- ";
-
+    
     protected Set<Character> flags;
     protected Set<Character> legalFlags;
     protected List<String> nonFlagArgs;
-
+    
     protected ArgsParser() {
         flags = new HashSet<>();
         legalFlags = new HashSet<>();
         nonFlagArgs = new ArrayList<>();
     }
-
+    
     /**
      * Separates command flags from non-flag arguments given a tokenized command.
      *
@@ -42,10 +42,10 @@ public class ArgsParser {
                 nonFlagArgs.add(arg);
             }
         }
-
+    
         validateArgs();
     }
-
+    
     /**
      * Checks for the existence of illegal flags. Presence of any illegal flags would result in a
      * non-empty set after subtracting the set of legal flags from the set of parsed flags.
@@ -57,7 +57,7 @@ public class ArgsParser {
     protected void validateArgs() throws InvalidArgsException {
         Set<Character> illegalFlags = new HashSet<>(flags);
         illegalFlags.removeAll(legalFlags);
-
+    
         // construct exception message with the first illegal flag encountered
         for (Character flag : illegalFlags) {
             String exceptionMessage = ILLEGAL_FLAG_MSG + flag;

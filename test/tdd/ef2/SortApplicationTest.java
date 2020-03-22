@@ -1,11 +1,15 @@
 package tdd.ef2;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.SortException;
+import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import tdd.util.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,17 +18,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
-import tdd.util.TestUtil;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
 
 /**
  * Tests for sort command.
@@ -56,11 +55,11 @@ public class SortApplicationTest {
     @BeforeAll
     static void setupAll() {
         String path = ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "test"
-                + StringUtils.fileSeparator() + "tdd"
-                + StringUtils.fileSeparator() + "util"
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "SortTestFolder";
+          + StringUtils.fileSeparator() + "test"
+          + StringUtils.fileSeparator() + "tdd"
+          + StringUtils.fileSeparator() + "util"
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "SortTestFolder";
         if (Files.isDirectory(TestUtil.resolveFilePath(path))) {
             Environment.currentDirectory = TestUtil.resolveFilePath(path).toString();
         }
@@ -107,7 +106,6 @@ public class SortApplicationTest {
     }
 
 
-
     @Test
     public void testNFlagNumberSort() {
         String[] args = new String[]{"-n", "numbersOnly.txt"};
@@ -115,10 +113,10 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("1" + StringUtils.STRING_NEWLINE +
-                    "3" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "5" + StringUtils.STRING_NEWLINE +
-                    "6"));
+              "3" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "5" + StringUtils.STRING_NEWLINE +
+              "6"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage()); // NOPMD
         }
@@ -131,12 +129,12 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("!" + StringUtils.STRING_NEWLINE +
-                    "#" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "%" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "@" + StringUtils.STRING_NEWLINE +
-                    "^"));
+              "#" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "%" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "@" + StringUtils.STRING_NEWLINE +
+              "^"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -149,12 +147,12 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("A" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "f"));
+              "C" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "G" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "f"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -167,20 +165,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("#" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "f"));
+              "$" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "G" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "f"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -193,10 +191,10 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("6" + StringUtils.STRING_NEWLINE +
-                    "5" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "3" + StringUtils.STRING_NEWLINE +
-                    "1"));
+              "5" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "3" + StringUtils.STRING_NEWLINE +
+              "1"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -209,12 +207,12 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("^" + StringUtils.STRING_NEWLINE +
-                    "@" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "%" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#" + StringUtils.STRING_NEWLINE +
-                    "!"));
+              "@" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "%" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#" + StringUtils.STRING_NEWLINE +
+              "!"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -227,12 +225,12 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("f" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "A"));
+              "d" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "G" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "A"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -245,20 +243,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("f" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#"));
+              "d" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "G" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -271,12 +269,12 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("A" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "G"));
+              "b" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "f" + StringUtils.STRING_NEWLINE +
+              "G"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -289,20 +287,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("#" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "G"));
+              "$" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "f" + StringUtils.STRING_NEWLINE +
+              "G"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -315,20 +313,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("f" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#"));
+              "d" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "G" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -341,20 +339,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("#" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "G"));
+              "$" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "f" + StringUtils.STRING_NEWLINE +
+              "G"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -367,20 +365,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#"));
+              "f" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -393,20 +391,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#"));
+              "f" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -419,25 +417,25 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, System.in, stdout);
             assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "5" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "3" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#"));
+              "f" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "5" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "3" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -446,20 +444,20 @@ public class SortApplicationTest {
     @Test
     public void testStdinSort() {
         String stdInString = "&" + StringUtils.STRING_NEWLINE +
-                "*" + StringUtils.STRING_NEWLINE +
-                "$" + StringUtils.STRING_NEWLINE +
-                "#" + StringUtils.STRING_NEWLINE +
-                "A" + StringUtils.STRING_NEWLINE +
-                "b" + StringUtils.STRING_NEWLINE +
-                "C" + StringUtils.STRING_NEWLINE +
-                "d" + StringUtils.STRING_NEWLINE +
-                "E" + StringUtils.STRING_NEWLINE +
-                "f" + StringUtils.STRING_NEWLINE +
-                "G" + StringUtils.STRING_NEWLINE +
-                "4" + StringUtils.STRING_NEWLINE +
-                "6" + StringUtils.STRING_NEWLINE +
-                "8" + StringUtils.STRING_NEWLINE +
-                "1";
+          "*" + StringUtils.STRING_NEWLINE +
+          "$" + StringUtils.STRING_NEWLINE +
+          "#" + StringUtils.STRING_NEWLINE +
+          "A" + StringUtils.STRING_NEWLINE +
+          "b" + StringUtils.STRING_NEWLINE +
+          "C" + StringUtils.STRING_NEWLINE +
+          "d" + StringUtils.STRING_NEWLINE +
+          "E" + StringUtils.STRING_NEWLINE +
+          "f" + StringUtils.STRING_NEWLINE +
+          "G" + StringUtils.STRING_NEWLINE +
+          "4" + StringUtils.STRING_NEWLINE +
+          "6" + StringUtils.STRING_NEWLINE +
+          "8" + StringUtils.STRING_NEWLINE +
+          "1";
 
         InputStream stdin = new ByteArrayInputStream(stdInString.getBytes());
         String[] args = new String[]{"-nrf"};
@@ -467,20 +465,20 @@ public class SortApplicationTest {
         try {
             sortApp.run(args, stdin, stdout);
             assertTrue(stdout.toString().contains("G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "#"));
+              "f" + StringUtils.STRING_NEWLINE +
+              "E" + StringUtils.STRING_NEWLINE +
+              "d" + StringUtils.STRING_NEWLINE +
+              "C" + StringUtils.STRING_NEWLINE +
+              "b" + StringUtils.STRING_NEWLINE +
+              "A" + StringUtils.STRING_NEWLINE +
+              "8" + StringUtils.STRING_NEWLINE +
+              "6" + StringUtils.STRING_NEWLINE +
+              "4" + StringUtils.STRING_NEWLINE +
+              "1" + StringUtils.STRING_NEWLINE +
+              "*" + StringUtils.STRING_NEWLINE +
+              "&" + StringUtils.STRING_NEWLINE +
+              "$" + StringUtils.STRING_NEWLINE +
+              "#"));
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
         }

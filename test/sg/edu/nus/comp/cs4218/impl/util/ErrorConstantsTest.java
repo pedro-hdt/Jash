@@ -9,9 +9,9 @@ package sg.edu.nus.comp.cs4218.impl.util;
 import org.junit.jupiter.api.Test;
 
 public class ErrorConstantsTest {
-
-  @Test
-  public void test0()  throws Throwable  {
-      ErrorConstants errorConstants0 = new ErrorConstants();
-  }
+    
+    @Test
+    public void test0() throws Throwable {
+        ErrorConstants errorConstants0 = new ErrorConstants();
+    }
 }

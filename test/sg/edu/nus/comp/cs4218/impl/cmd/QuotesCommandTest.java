@@ -58,7 +58,7 @@ public class QuotesCommandTest {
     @Test
     public void testInvalidCommandQuotes() {
         Exception exception = assertThrows(ShellException.class, ()
-                -> shell.parseAndEvaluate("echo \" \"hi\"", stdout));
+          -> shell.parseAndEvaluate("echo \" \"hi\"", stdout));
 
         TestUtils.assertMsgContains(exception, ERR_SYNTAX);
     }
@@ -168,9 +168,6 @@ public class QuotesCommandTest {
 
         assertTrue(stdout.toString().contains(" |h<a>*p'p'\ty;"));
     }
-
-
-
 
 
 }

@@ -17,7 +17,7 @@ public interface SortInterface extends Application {
      */
     String sortFromFiles(Boolean isFirstWordNumber, Boolean isReverseOrder, Boolean isCaseIndependent,
                          String... fileName) throws Exception;
-
+    
     /**
      * Returns string containing the orders of the lines from the standard input
      *

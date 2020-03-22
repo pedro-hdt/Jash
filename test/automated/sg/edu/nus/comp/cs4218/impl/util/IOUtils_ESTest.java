@@ -6,8 +6,9 @@
 package automated.sg.edu.nus.comp.cs4218.impl.util;
 
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,102 +17,100 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("PMD")
 public class IOUtils_ESTest {
-
-  @Test
-  public void test00()  throws Throwable  {
-      OutputStream outputStream0 = IOUtils.openOutputStream("8m");
-      assertNotNull(outputStream0);
-  }
-
-  @Test 
-  public void test01()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        IOUtils.resolveFilePath((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-      }
-  }
-
-  @Test 
-  public void test02()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        IOUtils.openOutputStream((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-      }
-  }
-
-  @Test 
-  public void test03()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        IOUtils.openInputStream((String) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-      }
-  }
-
-  @Test 
-  public void test04()  throws Throwable  {
-      try { 
-        IOUtils.getLinesFromInputStream((InputStream) null);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
+    
+    @Test
+    public void test00() throws Throwable {
+        OutputStream outputStream0 = IOUtils.openOutputStream("8m");
+        assertNotNull(outputStream0);
+    }
+    
+    @Test
+    public void test01() throws Throwable {
+        // Undeclared exception!
+        try {
+            IOUtils.resolveFilePath((String) null);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
+        }
+    }
+    
+    @Test
+    public void test02() throws Throwable {
+        // Undeclared exception!
+        try {
+            IOUtils.openOutputStream((String) null);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
+        }
+    }
+    
+    @Test
+    public void test03() throws Throwable {
+        // Undeclared exception!
+        try {
+            IOUtils.openInputStream((String) null);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
+        }
+    }
+    
+    @Test
+    public void test04() throws Throwable {
+        try {
+            IOUtils.getLinesFromInputStream((InputStream) null);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
 //         verifyException("java.io.Reader", e);
-      }
-  }
-
-  @Test 
-  public void test05()  throws Throwable  {
-      byte[] byteArray0 = new byte[8];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-670), 3139);
-      try { 
-        IOUtils.getLinesFromInputStream(byteArrayInputStream0);
-        fail("Expecting exception: ArrayIndexOutOfBoundsException");
-      
-      } catch(ArrayIndexOutOfBoundsException e) {
-      }
-  }
-
-  @Test 
-  public void test06()  throws Throwable  {
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      try { 
-        IOUtils.getLinesFromInputStream(pipedInputStream0);
-        fail("Expecting exception: IOException");
-      
-      } catch(IOException e) {
-         //
-         // Pipe not connected
-         //
+        }
+    }
+    
+    @Test
+    public void test05() throws Throwable {
+        byte[] byteArray0 = new byte[8];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (-670), 3139);
+        try {
+            IOUtils.getLinesFromInputStream(byteArrayInputStream0);
+            fail("Expecting exception: ArrayIndexOutOfBoundsException");
+            
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+    }
+    
+    @Test
+    public void test06() throws Throwable {
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        try {
+            IOUtils.getLinesFromInputStream(pipedInputStream0);
+            fail("Expecting exception: IOException");
+            
+        } catch (IOException e) {
+            //
+            // Pipe not connected
+            //
 //         verifyException("java.io.PipedInputStream", e);
-      }
-  }
+        }
+    }
 
 //  @Test
 //  public void test07()  throws Throwable  {
@@ -138,12 +137,12 @@ public class IOUtils_ESTest {
 //      SequenceInputStream sequenceInputStream0 = new SequenceInputStream(enumeration0);
 //      IOUtils.closeInputStream(sequenceInputStream0);
 //  }
-
-  @Test 
-  public void test09()  throws Throwable  {
-      Path path0 = IOUtils.resolveFilePath("oracle.jrockit.jfr.settings.PresetFile$PresetFileFilter");
-      assertNotNull(path0);
-  }
+    
+    @Test
+    public void test09() throws Throwable {
+        Path path0 = IOUtils.resolveFilePath("oracle.jrockit.jfr.settings.PresetFile$PresetFileFilter");
+        assertNotNull(path0);
+    }
 
 //  @Test
 //  public void test10()  throws Throwable  {
@@ -163,11 +162,11 @@ public class IOUtils_ESTest {
 //      List<String> list0 = IOUtils.getLinesFromInputStream(inputStream0);
 //      assertFalse(list0.contains("<Fb1>_"));
 //  }
-
-  @Test 
-  public void test12()  throws Throwable  {
-      IOUtils.closeOutputStream((OutputStream) null);
-  }
+    
+    @Test
+    public void test12() throws Throwable {
+        IOUtils.closeOutputStream((OutputStream) null);
+    }
 
 //  @Test
 //  public void test13()  throws Throwable  {
@@ -183,38 +182,38 @@ public class IOUtils_ESTest {
 //      InputStream inputStream0 = IOUtils.openInputStream("<Fb1>_");
 //      IOUtils.closeInputStream(inputStream0);
 //  }
-
-  @Test 
-  public void test15()  throws Throwable  {
-      IOUtils.closeInputStream((InputStream) null);
-  }
-
-  @Test 
-  public void test16()  throws Throwable  {
-      // Undeclared exception!
-      try { 
-        IOUtils.openOutputStream("");
-        fail("Expecting exception: ClassCastException");
-      
-      } catch(ClassCastException | ShellException e) {
-         //
-         // org.evosuite.runtime.mock.java.lang.MockThrowable cannot be cast to sg.edu.nus.comp.cs4218.exception.ShellException
-         //
+    
+    @Test
+    public void test15() throws Throwable {
+        IOUtils.closeInputStream((InputStream) null);
+    }
+    
+    @Test
+    public void test16() throws Throwable {
+        // Undeclared exception!
+        try {
+            IOUtils.openOutputStream("");
+            fail("Expecting exception: ClassCastException");
+            
+        } catch (ClassCastException | ShellException e) {
+            //
+            // org.evosuite.runtime.mock.java.lang.MockThrowable cannot be cast to sg.edu.nus.comp.cs4218.exception.ShellException
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.util.IOUtils", e);
-      }
-  }
-
-  @Test 
-  public void test17()  throws Throwable  {
-      try { 
-        IOUtils.openInputStream("\"");
-        fail("Expecting exception: Exception");
-      
-      } catch(Exception e) {
-         //
-         // shell: No such file or directory
-         //
+        }
+    }
+    
+    @Test
+    public void test17() throws Throwable {
+        try {
+            IOUtils.openInputStream("\"");
+            fail("Expecting exception: Exception");
+            
+        } catch (Exception e) {
+            //
+            // shell: No such file or directory
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.util.IOUtils", e);
-      }
-  }
+        }
+    }
 }

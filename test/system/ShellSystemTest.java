@@ -1,9 +1,16 @@
 package system;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.ExitException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,24 +20,16 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.security.Permission;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ExitException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ShellSystemTest {
-
+    
     public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
     OutputStream stdout = new ByteArrayOutputStream();
-
+    
     private static class NoExitSecurityManager extends SecurityManager {
         @Override
         public void checkPermission(Permission perm) {
@@ -52,8 +51,8 @@ public class ShellSystemTest {
     @BeforeAll
     static void setupAll() {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "SystemTestFolder");
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "SystemTestFolder");
     }
 
     @AfterAll
@@ -70,8 +69,8 @@ public class ShellSystemTest {
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "SystemTestFolder");
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "SystemTestFolder");
 
         stdout.flush();
     }
@@ -82,20 +81,20 @@ public class ShellSystemTest {
     @Test
     @DisplayName("System Test")
     public void systemTest() throws IOException {
-
+    
         String commandsToRun = "ls" + StringUtils.STRING_NEWLINE
-                + "echo hi" + StringUtils.STRING_NEWLINE
-                + "cd .. ; ls" + StringUtils.STRING_NEWLINE
-                + "cd SystemTestFolder" + StringUtils.STRING_NEWLINE
-                + "echo yo > file1.txt" + StringUtils.STRING_NEWLINE
-                + "wc -c > newfile.txt" + StringUtils.STRING_NEWLINE
-                + "rm newfile.txt" + StringUtils.STRING_NEWLINE
-                + "sort < testCommands.txt > result.txt" + StringUtils.STRING_NEWLINE
-                + "diff testCommands.txt result.txt" + StringUtils.STRING_NEWLINE
-                + "cp result.txt result-dup.txt" + StringUtils.STRING_NEWLINE
-                + "cut -c 1-2 result.txt" + StringUtils.STRING_NEWLINE
-                + "sed abc" + StringUtils.STRING_NEWLINE
-                + "exit" + StringUtils.STRING_NEWLINE;
+          + "echo hi" + StringUtils.STRING_NEWLINE
+          + "cd .. ; ls" + StringUtils.STRING_NEWLINE
+          + "cd SystemTestFolder" + StringUtils.STRING_NEWLINE
+          + "echo yo > file1.txt" + StringUtils.STRING_NEWLINE
+          + "wc -c > newfile.txt" + StringUtils.STRING_NEWLINE
+          + "rm newfile.txt" + StringUtils.STRING_NEWLINE
+          + "sort < testCommands.txt > result.txt" + StringUtils.STRING_NEWLINE
+          + "diff testCommands.txt result.txt" + StringUtils.STRING_NEWLINE
+          + "cp result.txt result-dup.txt" + StringUtils.STRING_NEWLINE
+          + "cut -c 1-2 result.txt" + StringUtils.STRING_NEWLINE
+          + "sed abc" + StringUtils.STRING_NEWLINE
+          + "exit" + StringUtils.STRING_NEWLINE;
 
 
         try {
@@ -111,18 +110,18 @@ public class ShellSystemTest {
             assertTrue(stdout.toString().contains("SystemTestFolder"));
             assertTrue(stdout.toString().contains("sed: Invalid replacement rule"));
             assertFalse(Files.exists(IOUtils.resolveFilePath("newfile.txt")));
-
-
+    
+    
             String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("result.txt")));
             String str2 = new String(Files.readAllBytes(IOUtils.resolveFilePath("result-dup.txt")));
             assertEquals(str1, str2);
-
-            assertEquals(stdout.toString().chars().filter(ch -> ch =='$').count(), 13);
-
+    
+            assertEquals(stdout.toString().chars().filter(ch -> ch == '$').count(), 13);
+    
             Files.deleteIfExists(IOUtils.resolveFilePath("result.txt"));
             Files.deleteIfExists(IOUtils.resolveFilePath("result-dup.txt"));
             assertEquals("exit: terminating execution", e.getMessage());
-
+    
         } catch (Exception e) {
             fail();
         }

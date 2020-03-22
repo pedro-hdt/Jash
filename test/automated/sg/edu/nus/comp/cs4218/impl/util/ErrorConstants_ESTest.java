@@ -11,9 +11,9 @@ import sg.edu.nus.comp.cs4218.impl.util.ErrorConstants;
 
 @SuppressWarnings("PMD")
 public class ErrorConstants_ESTest {
-
-  @Test
-  public void test0()  throws Throwable  {
-      ErrorConstants errorConstants0 = new ErrorConstants();
-  }
+    
+    @Test
+    public void test0() throws Throwable {
+        ErrorConstants errorConstants0 = new ErrorConstants();
+    }
 }

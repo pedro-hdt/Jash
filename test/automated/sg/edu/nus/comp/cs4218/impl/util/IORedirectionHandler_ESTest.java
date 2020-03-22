@@ -6,11 +6,9 @@
 package automated.sg.edu.nus.comp.cs4218.impl.util;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.IORedirectionHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -20,23 +18,20 @@ import java.io.PipedOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-import sg.edu.nus.comp.cs4218.impl.util.IORedirectionHandler;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("PMD")
 public class IORedirectionHandler_ESTest {
-
-  @Test
-  public void test0()  throws Throwable  {
-      LinkedList<String> linkedList0 = new LinkedList<String>();
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(linkedList0, pipedInputStream0, (OutputStream) null, argumentResolver0);
-      OutputStream outputStream0 = iORedirectionHandler0.getOutputStream();
-      assertNull(outputStream0);
-  }
+    
+    @Test
+    public void test0() throws Throwable {
+        LinkedList<String> linkedList0 = new LinkedList<String>();
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        ArgumentResolver argumentResolver0 = new ArgumentResolver();
+        IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(linkedList0, pipedInputStream0, (OutputStream) null, argumentResolver0);
+        OutputStream outputStream0 = iORedirectionHandler0.getOutputStream();
+        assertNull(outputStream0);
+    }
 
 //  @Test
 //  public void test1()  throws Throwable  {
@@ -53,64 +48,64 @@ public class IORedirectionHandler_ESTest {
 //      InputStream inputStream0 = iORedirectionHandler0.getInputStream();
 //      assertNull(inputStream0);
 //  }
-
-  @Test 
-  public void test2()  throws Throwable  {
-      LinkedList<String> linkedList0 = new LinkedList<String>();
-      byte[] byteArray0 = new byte[6];
-      linkedList0.offerLast((String) null);
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte) (-48), (-2441));
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(linkedList0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
-      // Undeclared exception!
-      try { 
+    
+    @Test
+    public void test2() throws Throwable {
+        LinkedList<String> linkedList0 = new LinkedList<String>();
+        byte[] byteArray0 = new byte[6];
+        linkedList0.offerLast((String) null);
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0, (byte) (-48), (-2441));
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
+        ArgumentResolver argumentResolver0 = new ArgumentResolver();
+        IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(linkedList0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
+        // Undeclared exception!
+        try {
+            iORedirectionHandler0.extractRedirOptions();
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+        }
+    }
+    
+    @Test
+    public void test3() throws Throwable {
+        ArgumentResolver argumentResolver0 = new ArgumentResolver();
+        List<String> list0 = argumentResolver0.resolveOneArgument("(B|5^.M#_!?");
+        byte[] byteArray0 = new byte[0];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream(pipedInputStream0);
+        IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(list0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
         iORedirectionHandler0.extractRedirOptions();
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-      }
-  }
-
-  @Test 
-  public void test3()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("(B|5^.M#_!?");
-      byte[] byteArray0 = new byte[0];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream(pipedInputStream0);
-      IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(list0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
-      iORedirectionHandler0.extractRedirOptions();
-      List<String> list1 = iORedirectionHandler0.getNoRedirArgsList();
-      assertTrue(list1.contains("(B|5^.M#_!?"));
-  }
-
-  @Test 
-  public void test4()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("(B|5^.M#_!?");
-      byte[] byteArray0 = new byte[0];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream(pipedInputStream0);
-      IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(list0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
-      InputStream inputStream0 = iORedirectionHandler0.getInputStream();
-      assertEquals(0, inputStream0.available());
-  }
-
-  @Test 
-  public void test5()  throws Throwable  {
-      ArgumentResolver argumentResolver0 = new ArgumentResolver();
-      List<String> list0 = argumentResolver0.resolveOneArgument("(B|5^.M#_!?");
-      byte[] byteArray0 = new byte[0];
-      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-      PipedInputStream pipedInputStream0 = new PipedInputStream();
-      PipedOutputStream pipedOutputStream0 = new PipedOutputStream(pipedInputStream0);
-      IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(list0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
-      OutputStream outputStream0 = iORedirectionHandler0.getOutputStream();
-      assertSame(pipedOutputStream0, outputStream0);
-  }
+        List<String> list1 = iORedirectionHandler0.getNoRedirArgsList();
+        assertTrue(list1.contains("(B|5^.M#_!?"));
+    }
+    
+    @Test
+    public void test4() throws Throwable {
+        ArgumentResolver argumentResolver0 = new ArgumentResolver();
+        List<String> list0 = argumentResolver0.resolveOneArgument("(B|5^.M#_!?");
+        byte[] byteArray0 = new byte[0];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream(pipedInputStream0);
+        IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(list0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
+        InputStream inputStream0 = iORedirectionHandler0.getInputStream();
+        assertEquals(0, inputStream0.available());
+    }
+    
+    @Test
+    public void test5() throws Throwable {
+        ArgumentResolver argumentResolver0 = new ArgumentResolver();
+        List<String> list0 = argumentResolver0.resolveOneArgument("(B|5^.M#_!?");
+        byte[] byteArray0 = new byte[0];
+        ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
+        PipedInputStream pipedInputStream0 = new PipedInputStream();
+        PipedOutputStream pipedOutputStream0 = new PipedOutputStream(pipedInputStream0);
+        IORedirectionHandler iORedirectionHandler0 = new IORedirectionHandler(list0, byteArrayInputStream0, pipedOutputStream0, argumentResolver0);
+        OutputStream outputStream0 = iORedirectionHandler0.getOutputStream();
+        assertSame(pipedOutputStream0, outputStream0);
+    }
 
 //  @Test
 //  public void test6()  throws Throwable  {

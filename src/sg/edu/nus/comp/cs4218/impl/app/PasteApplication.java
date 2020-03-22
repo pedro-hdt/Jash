@@ -20,13 +20,13 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplication implements PasteInterface {
-
+    
     @Override
     public String mergeStdin(InputStream stdin) throws PasteException {
-
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));//NOPMD
         StringBuilder sb = new StringBuilder();//NOPMD
-
+        
         String line;
         try {
             line = reader.readLine();
@@ -38,24 +38,24 @@ public class PasteApplication implements PasteInterface {
         } catch (IOException e) {
             throw (PasteException) new PasteException(ERR_IO_EXCEPTION).initCause(e);
         }
-
+        
         return sb.toString().trim();
-
+        
     }
-
+    
     @Override
     public String mergeFile(String... fileName) throws PasteException {
-
+        
         return mergeFileAndStdin(System.in, fileName);
-
+        
     }
-
+    
     @Override
     public String mergeFileAndStdin(InputStream stdin, String... fileName) throws PasteException {
-
+        
         List<BufferedReader> fileReaders = buildReadersList(stdin, fileName);
         StringBuilder sb = new StringBuilder(); //NOPMD
-
+        
         try {
             boolean notDone;
             do {
@@ -76,24 +76,24 @@ public class PasteApplication implements PasteInterface {
             if (sb.length() != 0) {
                 sb.delete(sb.length() - fileReaders.size(), sb.length()); // remove extra tab chars
             }
-
+            
             for (BufferedReader reader : fileReaders) {//NOPMD
                 reader.close();
             }
         } catch (IOException e) {
             throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
         }
-
+        
         return sb.toString();
-
+        
     }
-
-
+    
+    
     private List<BufferedReader> buildReadersList(InputStream stdin, String... files) throws PasteException {
-
+        
         List<BufferedReader> readers = new ArrayList<>();
         BufferedReader stdinBufReader = new BufferedReader(new InputStreamReader(stdin)); //NOPMD
-
+        
         for (String f : files) {
             try {
                 if ("-".equals(f)) {
@@ -113,33 +113,33 @@ public class PasteApplication implements PasteInterface {
                 throw (PasteException) new IOException(ERR_IO_EXCEPTION).initCause(e);
             }
         }
-
+        
         return readers;
     }
-
-
+    
+    
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws PasteException {
-
+        
         if (args == null) {
             throw new PasteException(ERR_NULL_ARGS);
         }
-
+        
         if (stdin == null) {
             throw new PasteException(ERR_NO_ISTREAM);
         }
-
+        
         if (stdout == null) {
             throw new PasteException(ERR_NO_OSTREAM);
         }
-
+        
         if (args.length == 0) {
             throw new PasteException(ERR_NO_ARGS);
         }
-
+        
         boolean hasStdin = Arrays.stream(args).anyMatch((x) -> "-".equals(x));
         boolean hasFiles = !Arrays.stream(args).allMatch((x) -> "-".equals(x));
-
+        
         String result;
         if (hasStdin) {
             if (hasFiles) {
@@ -161,7 +161,7 @@ public class PasteApplication implements PasteInterface {
         } else {
             result = mergeFile(args);
         }
-
+        
         try {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());

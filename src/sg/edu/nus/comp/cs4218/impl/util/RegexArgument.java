@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
+import sg.edu.nus.comp.cs4218.Environment;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -10,25 +10,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
 
 @SuppressWarnings("PMD.AvoidStringBufferField")
 public final class RegexArgument {
     private StringBuilder plaintext;
     private StringBuilder regex;
     private boolean isRegex;
-
+    
     public RegexArgument() {
         this.plaintext = new StringBuilder();
         this.regex = new StringBuilder();
         this.isRegex = false;
     }
-
+    
     public RegexArgument(String str) {
         this();
         merge(str);
     }
-
+    
     // Used for `find` command.
     // `text` here corresponds to the folder that we want to look in.
     public RegexArgument(String str, String text, boolean isRegex) {
@@ -44,32 +44,32 @@ public final class RegexArgument {
             }
         }
     }
-
+    
     public void append(char chr) {
         plaintext.append(chr);
         regex.append(Pattern.quote(String.valueOf(chr)));
     }
-
+    
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
         regex.append("[^" + StringUtils.fileSeparator() + "]*");
         isRegex = true;
     }
-
+    
     public void merge(RegexArgument other) {
         plaintext.append(other.plaintext);
         regex.append(other.regex);
         isRegex = isRegex || other.isRegex;
     }
-
+    
     public void merge(String str) {
         plaintext.append(str);
         regex.append(Pattern.quote(str));
     }
-
+    
     public List<String> globFiles() {
         List<String> globbedFiles = new LinkedList<>();
-
+        
         if (isRegex) {
             Pattern regexPattern = Pattern.compile(regex.toString());
             StringBuilder dir = new StringBuilder();
@@ -77,9 +77,9 @@ public final class RegexArgument {
             for (int i = 0; i < tokens.length - 1; i++) {
                 dir.append(tokens[i]).append(StringUtils.fileSeparator());
             }
-
+            
             File currentDir = Paths.get(Environment.currentDirectory + StringUtils.fileSeparator() + dir.toString()).toFile();
-
+            
             if (currentDir == null || currentDir.list() == null) {
                 return Collections.singletonList(plaintext.toString());
             }
@@ -88,21 +88,21 @@ public final class RegexArgument {
                     globbedFiles.add(dir + candidate);
                 }
             }
-
+            
             Collections.sort(globbedFiles);
         }
-
+        
         if (globbedFiles.isEmpty()) {
             globbedFiles.add(plaintext.toString());
         }
-
+        
         return globbedFiles;
     }
-
+    
     public boolean isEmpty() {
         return plaintext.length() == 0;
     }
-
+    
     public String toString() {
         return plaintext.toString();
     }

@@ -6,39 +6,38 @@
 package automated.sg.edu.nus.comp.cs4218.impl.parser;
 
 
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
-
 @SuppressWarnings("PMD")
 public class MvArgsParser_ESTest {
-
-  @Test
-  public void test00()  throws Throwable  {
-      MvArgsParser mvArgsParser0 = new MvArgsParser();
-      String[] stringArray0 = new String[1];
-      stringArray0[0] = "illegal option -- ";
-      mvArgsParser0.parse(stringArray0);
-      String string0 = mvArgsParser0.getTargetOperand();
-      assertEquals("illegal option -- ", string0);
-  }
-
-  @Test 
-  public void test01()  throws Throwable  {
-      MvArgsParser mvArgsParser0 = new MvArgsParser();
-      assertTrue(mvArgsParser0.shouldOverwrite());
-      
-      String[] stringArray0 = new String[2];
-      stringArray0[0] = "illegal option -- ";
-      stringArray0[1] = "";
-      mvArgsParser0.parse(stringArray0);
-      String string0 = mvArgsParser0.getTargetOperand();
-      assertEquals("", string0);
-  }
+    
+    @Test
+    public void test00() throws Throwable {
+        MvArgsParser mvArgsParser0 = new MvArgsParser();
+        String[] stringArray0 = new String[1];
+        stringArray0[0] = "illegal option -- ";
+        mvArgsParser0.parse(stringArray0);
+        String string0 = mvArgsParser0.getTargetOperand();
+        assertEquals("illegal option -- ", string0);
+    }
+    
+    @Test
+    public void test01() throws Throwable {
+        MvArgsParser mvArgsParser0 = new MvArgsParser();
+        assertTrue(mvArgsParser0.shouldOverwrite());
+        
+        String[] stringArray0 = new String[2];
+        stringArray0[0] = "illegal option -- ";
+        stringArray0[1] = "";
+        mvArgsParser0.parse(stringArray0);
+        String string0 = mvArgsParser0.getTargetOperand();
+        assertEquals("", string0);
+    }
 
 //  @Test
 //  public void test02()  throws Throwable  {
@@ -170,49 +169,49 @@ public class MvArgsParser_ESTest {
 //      boolean boolean0 = mvArgsParser0.shouldOverwrite();
 //      assertFalse(boolean0);
 //  }
-
-  @Test 
-  public void test09()  throws Throwable  {
-      MvArgsParser mvArgsParser0 = new MvArgsParser();
-      boolean boolean0 = mvArgsParser0.shouldOverwrite();
-      assertTrue(boolean0);
-  }
-
-  @Test 
-  public void test10()  throws Throwable  {
-      MvArgsParser mvArgsParser0 = new MvArgsParser();
-      // Undeclared exception!
-      try { 
-        mvArgsParser0.getTargetOperand();
-        fail("Expecting exception: ArrayIndexOutOfBoundsException");
-      
-      } catch(ArrayIndexOutOfBoundsException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-      }
-  }
-
-  @Test 
-  public void test11()  throws Throwable  {
-      MvArgsParser mvArgsParser0 = new MvArgsParser();
-      // Undeclared exception!
-      try { 
-        mvArgsParser0.getSourceOperands();
-        fail("Expecting exception: IllegalArgumentException");
-      
-      } catch(IllegalArgumentException e) {
-         //
-         // fromIndex(0) > toIndex(-1)
-         //
-      }
-  }
-
+    
     @Test
-    public void test12() throws Throwable  {
+    public void test09() throws Throwable {
+        MvArgsParser mvArgsParser0 = new MvArgsParser();
+        boolean boolean0 = mvArgsParser0.shouldOverwrite();
+        assertTrue(boolean0);
+    }
+    
+    @Test
+    public void test10() throws Throwable {
+        MvArgsParser mvArgsParser0 = new MvArgsParser();
+        // Undeclared exception!
+        try {
+            mvArgsParser0.getTargetOperand();
+            fail("Expecting exception: ArrayIndexOutOfBoundsException");
+            
+        } catch (ArrayIndexOutOfBoundsException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
+        }
+    }
+    
+    @Test
+    public void test11() throws Throwable {
+        MvArgsParser mvArgsParser0 = new MvArgsParser();
+        // Undeclared exception!
+        try {
+            mvArgsParser0.getSourceOperands();
+            fail("Expecting exception: IllegalArgumentException");
+            
+        } catch (IllegalArgumentException e) {
+            //
+            // fromIndex(0) > toIndex(-1)
+            //
+        }
+    }
+    
+    @Test
+    public void test12() throws Throwable {
         MvArgsParser mvArgsParser0 = new MvArgsParser();
         mvArgsParser0.parse("file1.txt", "dir");
         assertEquals(1, mvArgsParser0.getSourceOperands().size());
-
+        
     }
 }

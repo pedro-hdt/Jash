@@ -1,14 +1,14 @@
 package tdd.bf;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_EMPTY_REGEX;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_RULE;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_X;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_REP_RULE;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.SedException;
+import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,15 +17,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.SedException;
-import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 @SuppressWarnings("PMD")
 class SedApplicationTest {
@@ -43,23 +36,23 @@ class SedApplicationTest {
     private static final String FILENAME1 = "sedFile1";
     private static final String FILENAME2 = "sedFile2";
     private String expected;
-
+    
     @BeforeEach
     public void setUp() throws Exception {
         String currentDir = Environment.currentDirectory;
         dir = new File(currentDir + StringUtils.fileSeparator() + DIR_NAME);
         dir.mkdir();
-
+        
         file1 = new File(currentDir + StringUtils.fileSeparator() + DIR_NAME + StringUtils.fileSeparator() + FILENAME1);
         Files.write(file1.toPath(), TEXT1.getBytes());
         file2 = new File(currentDir + StringUtils.fileSeparator() + DIR_NAME + StringUtils.fileSeparator() + FILENAME2);
         Files.write(file2.toPath(), TEXT1.getBytes());
-
+        
         stdin = new ByteArrayInputStream(TEXT1.getBytes());
         stdout = new ByteArrayOutputStream();
         sedApplication = new SedApplication();
     }
-
+    
     @AfterEach
     public void tearDown() throws Exception {
         stdin.close();
@@ -69,7 +62,7 @@ class SedApplicationTest {
         stdin.close();
         stdout.close();
     }
-
+    
     @Test
     public void testEmptyRegexStdin() throws Exception {
         try {
@@ -80,7 +73,7 @@ class SedApplicationTest {
             assertEquals(String.format("ERR_EMPTY_REGEX"), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testRegexMatchAddLeadBracketStdin() throws Exception {
         expected = "> Hello testing! Hello testing!" + System.lineSeparator() + "> Hello Software testing! Hello Software testing!" + System.lineSeparator();
@@ -89,7 +82,7 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(expected, sedApplication.replaceSubstringInStdin(pattern, replacement, replacementIndex, stdin));
     }
-
+    
     @Test
     public void testNothingToReplaceStdin() throws Exception {
         String pattern = ">";
@@ -97,7 +90,7 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(TEXT1, sedApplication.replaceSubstringInStdin(pattern, replacement, replacementIndex, stdin));
     }
-
+    
     @Test
     public void testNeverReachReplacementIndexStdin() throws Exception {
         String pattern = "ab";
@@ -105,7 +98,7 @@ class SedApplicationTest {
         int replacementIndex = 50;
         assertEquals(TEXT1, sedApplication.replaceSubstringInStdin(pattern, replacement, replacementIndex, stdin));
     }
-
+    
     @Test
     public void testReachReplacementIndexStdin() throws Exception {
         String pattern = "ing";
@@ -113,7 +106,7 @@ class SedApplicationTest {
         int replacementIndex = 2;
         assertEquals(REPLACED_SECOND, sedApplication.replaceSubstringInStdin(pattern, replacement, replacementIndex, stdin));
     }
-
+    
     @Test
     public void testEmptyReplacementStdin() throws Exception {
         String pattern = "Hello";
@@ -121,8 +114,8 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(DELETE_TEXT, sedApplication.replaceSubstringInStdin(pattern, replacement, replacementIndex, stdin));
     }
-
-
+    
+    
     @Test
     @Disabled("empty regex is not allowed and throws error message and hence this test case is not similar to UNIX impl")
     public void testEmptyRegexFile() throws Exception {
@@ -131,7 +124,7 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(TEXT1, sedApplication.replaceSubstringInFile(pattern, replacement, replacementIndex, file1.toString()));
     }
-
+    
     @Test
     public void testRegexMatchFile() throws Exception {
         expected = "> Hello testing! Hello testing!" + System.lineSeparator() + "> Hello Software testing! Hello Software testing!" + System.lineSeparator();
@@ -140,7 +133,7 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(expected, sedApplication.replaceSubstringInFile(pattern, replacement, replacementIndex, file1.toString()));
     }
-
+    
     @Test
     public void testNothingToReplaceFile() throws Exception {
         String pattern = ">";
@@ -148,7 +141,7 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(TEXT1, sedApplication.replaceSubstringInFile(pattern, replacement, replacementIndex, file1.toString()));
     }
-
+    
     @Test
     public void testNeverReachReplacementIndexFile() throws Exception {
         String pattern = "ab";
@@ -156,7 +149,7 @@ class SedApplicationTest {
         int replacementIndex = 50;
         assertEquals(TEXT1, sedApplication.replaceSubstringInFile(pattern, replacement, replacementIndex, file1.toString()));
     }
-
+    
     @Test
     public void testReachReplacementIndexFile() throws Exception {
         String pattern = "ing";
@@ -164,7 +157,7 @@ class SedApplicationTest {
         int replacementIndex = 2;
         assertEquals(REPLACED_SECOND, sedApplication.replaceSubstringInFile(pattern, replacement, replacementIndex, file1.toString()));
     }
-
+    
     @Test
     public void testEmptyReplacementFile() throws Exception {
         String pattern = "Hello";
@@ -172,7 +165,7 @@ class SedApplicationTest {
         int replacementIndex = 1;
         assertEquals(DELETE_TEXT, sedApplication.replaceSubstringInFile(pattern, replacement, replacementIndex, file1.toString()));
     }
-
+    
     @Test
     public void testFileNotExists() throws Exception {
         try {
@@ -184,7 +177,7 @@ class SedApplicationTest {
             assertEquals(String.format(ERR_FILE_NOT_FOUND), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testFileIsDirectory() throws Exception {
         try {
@@ -196,7 +189,7 @@ class SedApplicationTest {
             assertEquals(String.format(ERR_IS_DIR), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testReplacementRuleMissing() throws Exception {
         try {
@@ -206,7 +199,7 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_INVALID_REP_RULE), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testInvalidSynaxWithoutS() throws Exception {
         try {
@@ -216,7 +209,7 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_INVALID_REP_RULE), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testReplacementRuleNegativeIndex() throws Exception {
         try {
@@ -226,7 +219,7 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_INVALID_REP_X), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testNoStdInAndNoInputFile() throws Exception {
         try {
@@ -236,7 +229,7 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_NULL_STREAMS), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testInvalidSyntaxMissSeparateSymbol() throws Exception {
         try {
@@ -246,7 +239,7 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_INVALID_REP_RULE), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testStdoutMissing() throws Exception {
         try {
@@ -256,8 +249,8 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_NULL_STREAMS), expected.getMessage());
         }
     }
-
-
+    
+    
     @Test
     public void testEmptyArguments() throws Exception {
         try {
@@ -267,7 +260,7 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_NO_REP_RULE), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testInvalidReplacementIndex() throws Exception {
         try {
@@ -277,14 +270,14 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_INVALID_REP_X), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testNoReplacementIndex() throws Exception {
         String[] args = {"s/ing/s/", file1.toString()};
         sedApplication.run(args, null, stdout);
         assertEquals(REPLACED_FIRST, stdout.toString());
     }
-
+    
     @Test
     public void testNoRegex() throws Exception {
         try {
@@ -295,20 +288,20 @@ class SedApplicationTest {
             assertEquals("sed: " + String.format(ERR_EMPTY_REGEX), expected.getMessage());
         }
     }
-
+    
     @Test
     public void testOtherSeparateSymbolFile() throws Exception {
         String[] args = {"sxingxsx", file1.toString()};
         sedApplication.run(args, null, stdout);
         assertEquals(REPLACED_FIRST, stdout.toString());
     }
-
+    
     @Test
     public void testOtherSeparateSymbol() throws Exception {
         String[] args = {"s|ing|s|"};
         sedApplication.run(args, stdin, stdout);
         assertEquals(REPLACED_FIRST, stdout.toString());
     }
-
-
+    
+    
 }

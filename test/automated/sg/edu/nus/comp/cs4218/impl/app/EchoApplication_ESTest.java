@@ -6,45 +6,44 @@
 package automated.sg.edu.nus.comp.cs4218.impl.app;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("PMD")
 public class EchoApplication_ESTest {
-
-  @Test
-  public void test0()  throws Throwable  {
-      EchoApplication echoApplication0 = new EchoApplication();
-      String[] stringArray0 = new String[0];
-      String string0 = echoApplication0.constructResult(stringArray0);
-      assertEquals("", string0);
-  }
-
-  @Test 
-  public void test1()  throws Throwable  {
-      EchoApplication echoApplication0 = new EchoApplication();
-      String[] stringArray0 = new String[8];
-      DataOutputStream dataOutputStream0 = new DataOutputStream((OutputStream) null);
-      // Undeclared exception!
-      try { 
-        echoApplication0.run(stringArray0, (InputStream) null, dataOutputStream0);
-        fail("Expecting exception: NullPointerException");
-      
-      } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
+    
+    @Test
+    public void test0() throws Throwable {
+        EchoApplication echoApplication0 = new EchoApplication();
+        String[] stringArray0 = new String[0];
+        String string0 = echoApplication0.constructResult(stringArray0);
+        assertEquals("", string0);
+    }
+    
+    @Test
+    public void test1() throws Throwable {
+        EchoApplication echoApplication0 = new EchoApplication();
+        String[] stringArray0 = new String[8];
+        DataOutputStream dataOutputStream0 = new DataOutputStream((OutputStream) null);
+        // Undeclared exception!
+        try {
+            echoApplication0.run(stringArray0, (InputStream) null, dataOutputStream0);
+            fail("Expecting exception: NullPointerException");
+            
+        } catch (NullPointerException e) {
+            //
+            // no message in exception (getMessage() returned null)
+            //
 //         verifyException("java.io.DataOutputStream", e);
-      }
-  }
+        }
+    }
 //
 //  @Test
 //  public void test2()  throws Throwable  {
@@ -69,45 +68,45 @@ public class EchoApplication_ESTest {
 ////         verifyException("sg.edu.nus.comp.cs4218.impl.app.EchoApplication", e);
 //      }
 //  }
-
-  @Test 
-  public void test3()  throws Throwable  {
-      EchoApplication echoApplication0 = new EchoApplication();
-      String[] stringArray0 = new String[2];
-      String string0 = echoApplication0.constructResult(stringArray0);
-      assertEquals("null null", string0);
-  }
-
-  @Test 
-  public void test4()  throws Throwable  {
-      EchoApplication echoApplication0 = new EchoApplication();
-      String[] stringArray0 = new String[2];
-      try { 
-        echoApplication0.run(stringArray0, (InputStream) null, (OutputStream) null);
-        fail("Expecting exception: Exception");
-      
-      } catch(Exception e) {
-         //
-         // echo: OutputStream not provided
-         //
+    
+    @Test
+    public void test3() throws Throwable {
+        EchoApplication echoApplication0 = new EchoApplication();
+        String[] stringArray0 = new String[2];
+        String string0 = echoApplication0.constructResult(stringArray0);
+        assertEquals("null null", string0);
+    }
+    
+    @Test
+    public void test4() throws Throwable {
+        EchoApplication echoApplication0 = new EchoApplication();
+        String[] stringArray0 = new String[2];
+        try {
+            echoApplication0.run(stringArray0, (InputStream) null, (OutputStream) null);
+            fail("Expecting exception: Exception");
+            
+        } catch (Exception e) {
+            //
+            // echo: OutputStream not provided
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.EchoApplication", e);
-      }
-  }
-
-  @Test 
-  public void test5()  throws Throwable  {
-      EchoApplication echoApplication0 = new EchoApplication();
-      try { 
-        echoApplication0.constructResult((String[]) null);
-        fail("Expecting exception: Exception");
-      
-      } catch(Exception e) {
-         //
-         // echo: Null arguments
-         //
+        }
+    }
+    
+    @Test
+    public void test5() throws Throwable {
+        EchoApplication echoApplication0 = new EchoApplication();
+        try {
+            echoApplication0.constructResult((String[]) null);
+            fail("Expecting exception: Exception");
+            
+        } catch (Exception e) {
+            //
+            // echo: Null arguments
+            //
 //         verifyException("sg.edu.nus.comp.cs4218.impl.app.EchoApplication", e);
-      }
-  }
+        }
+    }
 
 //  @Test
 //  public void test6()  throws Throwable  {

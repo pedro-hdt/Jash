@@ -1,9 +1,18 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,26 +25,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 
 /**
  * Tests globbing by integrating with commands
  */
 public class GlobbingTest {
-
+    
     public static final String MV_FILE_TXT = "mvFile.txt";
     public static final String MATCH1_TXT = "match1.txt";
     public static final String F1_TXT = "f1.txt";
@@ -115,6 +114,7 @@ public class GlobbingTest {
 
     /**
      * Move file with globbing to another directory
+     *
      * @throws AbstractApplicationException
      * @throws ShellException
      */
@@ -131,7 +131,7 @@ public class GlobbingTest {
         // Reset after moving file to dir
         Files.createFile(IOUtils.resolveFilePath(MV_FILE_TXT));
         Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
-                + StringUtils.fileSeparator() + DIRE + StringUtils.fileSeparator() + MV_FILE_TXT));
+          + StringUtils.fileSeparator() + DIRE + StringUtils.fileSeparator() + MV_FILE_TXT));
     }
 
     @Test
@@ -150,14 +150,14 @@ public class GlobbingTest {
         Collections.sort(expected);
         List<String> actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
-
-        input =  "*.t*t";
+    
+        input = "*.t*t";
         expected = Arrays.asList(ABC_TAT_FILE, F1_TXT, MATCH1_TXT, MV_FILE_TXT, "test.txt");
         Collections.sort(expected);
         actual = argumentResolver.resolveOneArgument(input);
         assertEquals(expected, actual);
-
-        input =  "*.*a*";
+    
+        input = "*.*a*";
         expected = Arrays.asList(ABC_TAT_FILE, F1_TAD_FILE);
         Collections.sort(expected);
         actual = argumentResolver.resolveOneArgument(input);

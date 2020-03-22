@@ -1,10 +1,5 @@
 package tdd.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
@@ -12,9 +7,14 @@ import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
 @SuppressWarnings("PMD")
 public class CallCommandStub extends CallCommand {
-
+    
     public enum CallCommandT {
         FIRST_COMMAND,
         SECOND_COMMAND,
@@ -29,17 +29,17 @@ public class CallCommandStub extends CallCommand {
         super(argsList, appRunner, argumentResolver);
         this.commandType = commandType;
     }
-
+    
     @Override
     public void evaluate(InputStream stdin, OutputStream stdout)
-            throws AbstractApplicationException, ShellException {
-
+      throws AbstractApplicationException, ShellException {
+        
         switch (commandType) {
             case FIRST_COMMAND:
                 try {
                     stdout.write(CallCommandT.FIRST_OUTPUT.toString().getBytes());
                 } catch (IOException ignored) {
-
+                
                 }
                 break;
             case SECOND_COMMAND:

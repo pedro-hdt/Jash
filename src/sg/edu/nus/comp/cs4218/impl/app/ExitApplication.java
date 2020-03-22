@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ExitApplication implements ExitInterface {
-
+    
     /**
      * Runs the exit application.
      *
@@ -21,7 +21,7 @@ public class ExitApplication implements ExitInterface {
         // Format: exit
         terminateExecution();
     }
-
+    
     /**
      * Terminate shell.
      *

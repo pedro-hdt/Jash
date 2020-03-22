@@ -6,7 +6,7 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import java.io.OutputStream;
 
 public interface Shell {
-
+    
     /**
      * Parses and evaluates user's command line.
      */

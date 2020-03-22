@@ -1,13 +1,12 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,19 +14,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.AvoidInstanceofChecksInCatchClause"})
 // We argue that in this case having duplicate literals improve readability significantly
 class CommandBuilderTest {
-
+    
     /**
      * Tests parsing of the call command "echo hello world" and checks if the correct tokens
      * and structure was created
@@ -113,10 +108,10 @@ class CommandBuilderTest {
      */
     @Test
     void testParseComplexPipeSeqCommand() throws ShellException {
-
+    
         Command cmd = CommandBuilder.parseCommand(
-                "echo hello ; echo world | grep w ; echo done",
-                new ApplicationRunner());
+          "echo hello ; echo world | grep w ; echo done",
+          new ApplicationRunner());
 
         assertTrue(cmd instanceof SequenceCommand);
         SequenceCommand sequenceCommand = (SequenceCommand) cmd;
@@ -159,10 +154,10 @@ class CommandBuilderTest {
     void testParseComplexPipeSeqIORedirCommand() throws ShellException, IOException {
 
         Path outFile = Files.createTempFile("outfile", "");
-
+    
         Command cmd = CommandBuilder.parseCommand(
-                "echo \"hello\" > " + outFile.toString() + " ; grep 'he' < " + outFile.toString() + " ; echo done | paste -",
-                new ApplicationRunner());
+          "echo \"hello\" > " + outFile.toString() + " ; grep 'he' < " + outFile.toString() + " ; echo done | paste -",
+          new ApplicationRunner());
 
         assertTrue(cmd instanceof SequenceCommand);
         SequenceCommand sequenceCommand = (SequenceCommand) cmd;
@@ -202,10 +197,10 @@ class CommandBuilderTest {
     void testFailsParseCommandWithNewLine() {
 
         ShellException shellException = assertThrows(
-                ShellException.class,
-                () -> CommandBuilder.parseCommand(
-                        "echo hello " + STRING_NEWLINE + "world",
-                        new ApplicationRunner())
+          ShellException.class,
+          () -> CommandBuilder.parseCommand(
+            "echo hello " + STRING_NEWLINE + "world",
+            new ApplicationRunner())
         );
 
         assertMsgContains(shellException, ERR_SYNTAX);
@@ -221,70 +216,70 @@ class CommandBuilderTest {
     void testFailsParseEmptyCommand() {
 
         ShellException shellException = assertThrows(
-                ShellException.class,
-                () -> CommandBuilder.parseCommand("", new ApplicationRunner())
+          ShellException.class,
+          () -> CommandBuilder.parseCommand("", new ApplicationRunner())
         );
 
         assertMsgContains(shellException, ERR_SYNTAX);
 
     }
-
+    
     @Test
     @DisplayName("Automated Testing Tool")
-    public void test0()  throws Throwable  {
+    public void test0() throws Throwable {
         ApplicationRunner appRunner = new ApplicationRunner();
         try {
             CommandBuilder.parseCommand(";\"Y^^P~", appRunner);
             fail("Expecting exception: Exception");
-
-        } catch(Exception e) {
+            
+        } catch (Exception e) {
             assertTrue(e instanceof ShellException);
         }
     }
-
+    
     @Test
     @DisplayName("Automated Testing Tool")
-    public void test1()  throws Throwable  {
+    public void test1() throws Throwable {
         ApplicationRunner appRunner = new ApplicationRunner();
         try {
             CommandBuilder.parseCommand("|.", appRunner);
             fail("Expecting exception: Exception");
-
-        } catch(Exception e) {
+            
+        } catch (Exception e) {
             assertTrue(e instanceof ShellException);
-
+            
         }
     }
-
+    
     @Test
     @DisplayName("Automated Testing Tool")
-    public void test2()  throws Throwable  {
+    public void test2() throws Throwable {
         try {
             CommandBuilder.parseCommand("IUG[*`A}Yr", (ApplicationRunner) null);
             fail("Expecting exception: Exception");
-
-        } catch(Exception e) {
+            
+        } catch (Exception e) {
             assertTrue(e instanceof ShellException);
-
+            
         }
     }
-
+    
     @Test
     @DisplayName("Automated Testing Tool")
-    public void test4()  throws Throwable  {
+    public void test4() throws Throwable {
         ApplicationRunner appRunner = new ApplicationRunner();
         try {
             CommandBuilder.parseCommand("z>{!Fug@B!\"", appRunner);
             fail("Expecting exception: Exception");
-        } catch(Exception e) {
+        } catch (Exception e) {
             assertTrue(e instanceof ShellException);
-
+            
         }
     }
-
+    
     @Test
     @DisplayName("Automated Testing Tool")
-    public void test5()  throws Throwable  {
+    public void test5() throws Throwable {
         ApplicationRunner appRunner = new ApplicationRunner();
         Command command0 = CommandBuilder.parseCommand("we3[zf\u0005|/KX@I<}", appRunner);
         assertNotNull(command0);

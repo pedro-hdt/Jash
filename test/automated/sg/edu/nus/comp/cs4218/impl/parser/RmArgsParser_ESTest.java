@@ -6,14 +6,13 @@
 package automated.sg.edu.nus.comp.cs4218.impl.parser;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SuppressWarnings("PMD")
 public class RmArgsParser_ESTest {
@@ -25,16 +24,16 @@ public class RmArgsParser_ESTest {
 //      List<String> list0 = rmArgsParser0.getFileList();
 //      assertNull(list0);
 //  }
-
-  @Test 
-  public void test1()  throws Throwable  {
-      RmArgsParser rmArgsParser0 = new RmArgsParser();
-      String[] stringArray0 = new String[1];
-      stringArray0[0] = "illegal option -- ";
-      rmArgsParser0.parse(stringArray0);
-      List<String> list0 = rmArgsParser0.getFileList();
-      assertEquals(1, list0.size());
-  }
+    
+    @Test
+    public void test1() throws Throwable {
+        RmArgsParser rmArgsParser0 = new RmArgsParser();
+        String[] stringArray0 = new String[1];
+        stringArray0[0] = "illegal option -- ";
+        rmArgsParser0.parse(stringArray0);
+        List<String> list0 = rmArgsParser0.getFileList();
+        assertEquals(1, list0.size());
+    }
 
 //  @Test
 //  public void test2()  throws Throwable  {
@@ -70,14 +69,14 @@ public class RmArgsParser_ESTest {
 //      rmArgsParser0.isRecursive();
 //      assertTrue(rmArgsParser0.isEmptyFolder());
 //  }
-
-  @Test 
-  public void test5()  throws Throwable  {
-      RmArgsParser rmArgsParser0 = new RmArgsParser();
-      Boolean boolean0 = rmArgsParser0.isRecursive();
-      assertFalse(boolean0);
-      assertFalse(rmArgsParser0.isEmptyFolder());
-  }
+    
+    @Test
+    public void test5() throws Throwable {
+        RmArgsParser rmArgsParser0 = new RmArgsParser();
+        Boolean boolean0 = rmArgsParser0.isRecursive();
+        assertFalse(boolean0);
+        assertFalse(rmArgsParser0.isEmptyFolder());
+    }
 
 //  @Test
 //  public void test6()  throws Throwable  {
@@ -87,20 +86,20 @@ public class RmArgsParser_ESTest {
 //      rmArgsParser0.isEmptyFolder();
 //      assertTrue(rmArgsParser0.isRecursive());
 //  }
-
-  @Test 
-  public void test7()  throws Throwable  {
-      RmArgsParser rmArgsParser0 = new RmArgsParser();
-      Boolean boolean0 = rmArgsParser0.isEmptyFolder();
-      assertFalse(boolean0);
-      assertFalse(rmArgsParser0.isRecursive());
-  }
-
-  @Test 
-  public void test8()  throws Throwable  {
-      RmArgsParser rmArgsParser0 = new RmArgsParser();
-      rmArgsParser0.getFileList();
-      assertFalse(rmArgsParser0.isRecursive());
-      assertFalse(rmArgsParser0.isEmptyFolder());
-  }
+    
+    @Test
+    public void test7() throws Throwable {
+        RmArgsParser rmArgsParser0 = new RmArgsParser();
+        Boolean boolean0 = rmArgsParser0.isEmptyFolder();
+        assertFalse(boolean0);
+        assertFalse(rmArgsParser0.isRecursive());
+    }
+    
+    @Test
+    public void test8() throws Throwable {
+        RmArgsParser rmArgsParser0 = new RmArgsParser();
+        rmArgsParser0.getFileList();
+        assertFalse(rmArgsParser0.isRecursive());
+        assertFalse(rmArgsParser0.isEmptyFolder());
+    }
 }

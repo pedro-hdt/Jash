@@ -1,10 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -14,8 +9,13 @@ import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.CommandBuilder;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-public class ShellImpl implements Shell {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
+public class ShellImpl implements Shell {
+    
     /**
      * Main method for the Shell Interpreter program.
      *
@@ -24,7 +24,7 @@ public class ShellImpl implements Shell {
     public static void main(String... args) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));//NOPMD
         Shell shell = new ShellImpl();
-
+        
         while (true) {
             System.out.print("$ ");
             try {
@@ -34,7 +34,7 @@ public class ShellImpl implements Shell {
                 } catch (IOException e) {
                     return; // Streams are closed, terminate process
                 }
-
+    
                 if (!StringUtils.isBlank(commandString)) {
                     shell.parseAndEvaluate(commandString, System.out);
                 }
@@ -44,12 +44,12 @@ public class ShellImpl implements Shell {
                 System.out.println(e.getMessage());
             }
         }
-
+        
     }
-
+    
     @Override
     public void parseAndEvaluate(String commandString, OutputStream stdout)
-            throws AbstractApplicationException, ShellException {
+      throws AbstractApplicationException, ShellException {
         Command command = CommandBuilder.parseCommand(commandString, new ApplicationRunner());
         command.evaluate(System.in, stdout);
     }

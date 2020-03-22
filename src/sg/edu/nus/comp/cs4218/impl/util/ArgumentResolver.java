@@ -1,10 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_BACK_QUOTE;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_DOUBLE_QUOTE;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_SINGLE_QUOTE;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -15,23 +13,21 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
 
 @SuppressWarnings("PMD.ExcessiveMethodLength")
 public class ArgumentResolver {
-
+    
     private final ApplicationRunner applicationRunner;
-
+    
     public ArgumentResolver() {
         applicationRunner = new ApplicationRunner();
     }
-
+    
     public ApplicationRunner getAppRunner() {
         return applicationRunner;
     }
-
+    
     /**
      * Handle quoting + globing + command substitution for a list of arguments.
      *
@@ -46,7 +42,7 @@ public class ArgumentResolver {
         }
         return parsedArgsList;
     }
-
+    
     /**
      * Unwraps single and double quotes from one argument.
      * Performs globing when there are unquoted asterisks.
@@ -63,10 +59,10 @@ public class ArgumentResolver {
         LinkedList<RegexArgument> parsedArgsSegment = new LinkedList<>();
         RegexArgument parsedArg = makeRegexArgument();
         StringBuilder subCommand = new StringBuilder();
-
+    
         for (int i = 0; i < arg.length(); i++) {
             char chr = arg.charAt(i);
-
+        
             if (chr == CHAR_BACK_QUOTE) {
                 if (unmatchedQuotes.isEmpty() || unmatchedQuotes.peek() == CHAR_DOUBLE_QUOTE) {
                     // start of command substitution
@@ -74,24 +70,24 @@ public class ArgumentResolver {
                         appendParsedArgIntoSegment(parsedArgsSegment, parsedArg);
                         parsedArg = makeRegexArgument();
                     }
-
+    
                     unmatchedQuotes.add(chr);
-
+    
                 } else if (unmatchedQuotes.peek() == chr) {
                     // end of command substitution
                     unmatchedQuotes.pop();
-
+    
                     // evaluate subCommand and get the output
                     String subCommandOutput = evaluateSubCommand(subCommand.toString());
                     subCommand.setLength(0); // Clear the previous subCommand registered
-
+    
                     // check if back quotes are nested
                     if (unmatchedQuotes.isEmpty()) {
                         List<RegexArgument> subOutputSegment = Stream
-                                .of(StringUtils.tokenize(subCommandOutput))
-                                .map(this::makeRegexArgument)
-                                .collect(Collectors.toList());
-
+                          .of(StringUtils.tokenize(subCommandOutput))
+                          .map(this::makeRegexArgument)
+                          .collect(Collectors.toList());
+    
                         // append the first token to the previous parsedArg
                         // e.g. arg: abc`1 2 3`xyz`4 5 6` (contents in `` is after command sub)
                         // expected: [abc1, 2, 3xyz4, 5, 6]
@@ -101,9 +97,9 @@ public class ArgumentResolver {
                             lastParsedArg.merge(firstOutputArg);
                             parsedArgsSegment.add(lastParsedArg);
                         }
-
+    
                         parsedArgsSegment.addAll(new ArrayList<>(subOutputSegment));
-
+    
                     } else {
                         // don't tokenize subCommand output
 //                        appendParsedArgIntoSegment(parsedArgsSegment,
@@ -127,7 +123,7 @@ public class ArgumentResolver {
                 } else if (unmatchedQuotes.peek() == chr) {
                     // end of quote
                     unmatchedQuotes.pop();
-
+    
                     // make sure parsedArgsSegment is not empty
                     appendParsedArgIntoSegment(parsedArgsSegment, makeRegexArgument());
                 } else if (unmatchedQuotes.peek() == CHAR_BACK_QUOTE) {
@@ -161,43 +157,43 @@ public class ArgumentResolver {
                 }
             }
         }
-
+    
         if (!parsedArg.isEmpty()) {
             appendParsedArgIntoSegment(parsedArgsSegment, parsedArg);
         }
-
+    
         // perform globing
         return parsedArgsSegment.stream()
-                .flatMap(regexArgument -> regexArgument.globFiles().stream())
-                .collect(Collectors.toList());
+          .flatMap(regexArgument -> regexArgument.globFiles().stream())
+          .collect(Collectors.toList());
     }
-
+    
     public RegexArgument makeRegexArgument() {
         return new RegexArgument();
     }
-
+    
     public RegexArgument makeRegexArgument(String str) {
         return new RegexArgument(str);
     }
-
+    
     private String evaluateSubCommand(String commandString) throws AbstractApplicationException, ShellException {
         if (StringUtils.isBlank(commandString)) {
             return "";
         }
-
+        
         OutputStream outputStream = new ByteArrayOutputStream();
         Command command = CommandBuilder.parseCommand(commandString, getAppRunner());
         command.evaluate(System.in, outputStream);
-
+        
         String result = outputStream.toString().replace(STRING_NEWLINE, " ");
         if (result.endsWith(" ")) {
             result = result.substring(0, result.length() - 1);
         }
-
+        
         // replace newlines with empty string and last space removed
         return result;
     }
-
+    
     /**
      * Append current parsedArg to the last parsedArg in parsedArgsSegment.
      * If parsedArgsSegment is empty, then just add current parsedArg.

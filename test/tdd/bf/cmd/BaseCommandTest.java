@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("PMD")
 public class BaseCommandTest {
-
+    
     /**
      * Pass the data from an input stream to an output stream
      **/
@@ -19,13 +19,13 @@ public class BaseCommandTest {
             while ((length = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, length);
             }
-
+    
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+    
     }
-
+    
     String getStringFromInputStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -33,7 +33,7 @@ public class BaseCommandTest {
         while ((length = inputStream.read(buffer)) != -1) {
             result.write(buffer, 0, length);
         }
-
+        
         return result.toString(StandardCharsets.UTF_8.name());
     }
 }

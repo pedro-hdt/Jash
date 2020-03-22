@@ -1,9 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.TestUtils;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,11 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.TestUtils;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
 
 /**
  * Tests for IOUtils, focusing only on the openOutputStream method as it was the only one
@@ -87,9 +86,9 @@ class IOUtilsTest {
 
         // path to new file
         Path outFile = Paths.get(Environment.getCurrentDirectory()
-                + StringUtils.fileSeparator() + "dir1"
-                + StringUtils.fileSeparator() + "dir2"
-                + StringUtils.fileSeparator() + "outfile.txt");
+          + StringUtils.fileSeparator() + "dir1"
+          + StringUtils.fileSeparator() + "dir2"
+          + StringUtils.fileSeparator() + "outfile.txt");
         outFile.getParent().getParent().toFile().deleteOnExit();
         outFile.getParent().toFile().deleteOnExit();
         outFile.toFile().deleteOnExit();

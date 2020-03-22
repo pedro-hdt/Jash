@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <i>Only need to check if it successfully exits</i>
  */
 public class ExitApplicationTest {
-
+    
     private static ExitApplication exitApp;
-
+    
     @BeforeEach
     public void setUp() {
         exitApp = new ExitApplication();
     }
-
+    
     /**
      * Test for run() with null args
      */
@@ -29,11 +29,11 @@ public class ExitApplicationTest {
         Exception exception = assertThrows(ExitException.class, () -> {
             exitApp.run(null, null, null);
         });
-
+    
         assertTrue(exception.getMessage().contains("terminating execution"));
-
+    
     }
-
+    
     /**
      * Test for run() with non NullParams
      */
@@ -42,11 +42,11 @@ public class ExitApplicationTest {
         Exception exception = assertThrows(ExitException.class, () -> {
             exitApp.run(new String[0], System.in, System.out);
         });
-
+    
         assertTrue(exception.getMessage().contains("terminating execution"));
-
+    
     }
-
+    
     /**
      * Test for terminateExecution() with null args
      */
@@ -55,11 +55,11 @@ public class ExitApplicationTest {
         Exception exception = assertThrows(ExitException.class, () -> {
             exitApp.terminateExecution();
         });
-
+    
         assertTrue(exception.getMessage().contains("terminating execution"));
-
+    
     }
-
+    
     /**
      * Test with creating mock thread
      */
@@ -71,9 +71,9 @@ public class ExitApplicationTest {
             } catch (ExitException e) {
             }
         });
-
+    
         assertTrue(!thread1.isAlive());
     }
-
-
+    
+    
 }

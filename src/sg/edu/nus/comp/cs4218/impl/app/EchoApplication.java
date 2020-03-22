@@ -1,16 +1,16 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.EchoInterface;
+import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import sg.edu.nus.comp.cs4218.app.EchoInterface;
-import sg.edu.nus.comp.cs4218.exception.EchoException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
  * The echo command writes its arguments separated by spaces and terminates by a newline on the
@@ -21,18 +21,18 @@ import sg.edu.nus.comp.cs4218.exception.EchoException;
  * </p>
  */
 public class EchoApplication implements EchoInterface {
-
+    
     @Override
     public String constructResult(String[] args) throws EchoException {
         if (args == null) {
             throw new EchoException(ERR_NULL_ARGS);
         }
-
+        
         // Note: For consistency, new lines at the end of output are added in the run function instead
         return String.join(" ", args);
-
+        
     }
-
+    
     /**
      * Runs the echo application with the specified arguments.
      *
@@ -46,7 +46,7 @@ public class EchoApplication implements EchoInterface {
         if (stdout == null) {
             throw new EchoException(ERR_NO_OSTREAM);
         }
-
+    
         String result = constructResult(args);
         try {
             stdout.write(result.getBytes());

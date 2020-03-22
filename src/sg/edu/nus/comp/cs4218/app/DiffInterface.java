@@ -21,7 +21,7 @@ public interface DiffInterface extends Application {
      */
     String diffTwoFiles(String fileNameA, String fileNameB, Boolean isShowSame,
                         Boolean isNoBlank, Boolean isSimple) throws Exception;
-
+    
     /**
      * Returns a string of folder diff. Non-recursively enter each folders and perform diff on each
      * files alphabetically. Report which files differ, common directories, and which files are
@@ -41,7 +41,7 @@ public interface DiffInterface extends Application {
      */
     String diffTwoDir(String folderA, String folderB, Boolean isShowSame, Boolean isNoBlank,
                       Boolean isSimple) throws Exception;
-
+    
     /**
      * Returns a string of file and Stdin diff. The diff report contains a list of lines unique to
      * the file and lines unique to the Stdin. Begin the former with '<' for each line. Begin the

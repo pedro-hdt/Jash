@@ -1,13 +1,12 @@
 package tdd.ef2;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.MvException;
+import sg.edu.nus.comp.cs4218.impl.app.MvApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -20,14 +19,14 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.app.MvApplication;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 @SuppressWarnings("PMD")
 class MvApplicationTest {
@@ -403,9 +402,9 @@ class MvApplicationTest {
             if (path.toFile().exists()) {
                 try (Stream<Path> walk = Files.walk(path)) {
                     walk.sorted(Comparator.reverseOrder())
-                            .map(Path::toFile)
-                            //.peek(p -> System.out.println("Deleting " + p.getPath()))
-                            .forEach(File::delete);
+                      .map(Path::toFile)
+                      //.peek(p -> System.out.println("Deleting " + p.getPath()))
+                      .forEach(File::delete);
                 }
             }
         } else {

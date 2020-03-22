@@ -1,8 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,14 +17,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
 
 @SuppressWarnings("PMD.PreserveStackTrace")
 public final class IOUtils {
     private IOUtils() {
     }
-
+    
     /**
      * Open an inputStream based on the file name.
      *
@@ -35,17 +35,17 @@ public final class IOUtils {
      */
     public static InputStream openInputStream(String fileName) throws ShellException {
         String resolvedFileName = resolveFilePath(fileName).toString();
-
+    
         FileInputStream fileInputStream;
         try {
             fileInputStream = new FileInputStream(new File(resolvedFileName));
         } catch (FileNotFoundException e) {
             throw new ShellException(ERR_FILE_NOT_FOUND);
         }
-
+    
         return fileInputStream;
     }
-
+    
     /**
      * Open an outputStream based on the file name.
      *
@@ -55,11 +55,11 @@ public final class IOUtils {
      */
     public static OutputStream openOutputStream(String fileName) throws ShellException {
         String resolvedFileName = resolveFilePath(fileName).toString();
-
+    
         FileOutputStream fileOutputStream;
-
+    
         File file = new File(resolvedFileName);
-
+    
         try {
             file.getParentFile().mkdirs(); // create all necessary parent directories
             file.createNewFile(); // creates file only if it does not exist
@@ -67,10 +67,10 @@ public final class IOUtils {
         } catch (IOException e) {
             throw (ShellException) new ShellException(ERR_IO_EXCEPTION).initCause(e);
         }
-
+    
         return fileOutputStream;
     }
-
+    
     /**
      * Close an inputStream. If inputStream provided is System.in or null, it will be ignored.
      *
@@ -81,14 +81,14 @@ public final class IOUtils {
         if (inputStream == System.in || inputStream == null) {
             return;
         }
-
+    
         try {
             inputStream.close();
         } catch (IOException e) {
             throw new ShellException(ERR_CLOSING_STREAMS);
         }
     }
-
+    
     /**
      * Close an outputStream. If outputStream provided is System.out or null, it will be ignored.
      *
@@ -99,19 +99,19 @@ public final class IOUtils {
         if (outputStream == System.out || outputStream == null) {
             return;
         }
-
+    
         try {
             outputStream.close();
         } catch (IOException e) {
             throw new ShellException(ERR_CLOSING_STREAMS);
         }
     }
-
+    
     public static Path resolveFilePath(String fileName) {
         Path currentDirectory = Paths.get(Environment.currentDirectory);
         return currentDirectory.resolve(fileName);
     }
-
+    
     /**
      * Returns a list of lines based on the given InputStream.
      *

@@ -11,7 +11,7 @@ public interface MvInterface extends Application {
      * @throws Exception
      */
     String mvSrcFileToDestFile(String srcFile, String destFile) throws Exception;
-
+    
     /**
      * move files to destination folder
      *

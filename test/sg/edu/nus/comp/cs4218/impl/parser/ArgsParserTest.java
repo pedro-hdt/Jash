@@ -81,10 +81,10 @@ class ArgsParserTest {
         argsParser.legalFlags.addAll(Arrays.asList('a', 'b', 'c'));
 
         InvalidArgsException invalidArgsEx =
-                assertThrows(
-                        InvalidArgsException.class,
-                        () -> argsParser.parse(new String[]{"echo", "-a", "-b", "-c", "-d", "testing"})
-                );
+          assertThrows(
+            InvalidArgsException.class,
+            () -> argsParser.parse(new String[]{"echo", "-a", "-b", "-c", "-d", "testing"})
+          );
 
         assertMsgContains(invalidArgsEx, ILLEGAL_FLAG_MSG);
 

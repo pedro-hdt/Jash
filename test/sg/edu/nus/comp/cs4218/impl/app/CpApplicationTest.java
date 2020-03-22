@@ -1,13 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,16 +19,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 /**
  * Tests for cp command
@@ -61,16 +60,16 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
  * - Copy multiple files into another directory
  */
 class CpApplicationTest {
-
+    
     private static CpApplication cpApp;
     private static final String DEST_DIR = "destDir";
     private static final String SRC1 = "src1";
     private static final String SRC2 = "src2";
     private static final String DEST_FILE = "destFile";
-
+    
     private static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
-
-
+    
+    
     /**
      * Hashes two files using SHA-256 and returns whether the hashes match
      *
@@ -78,47 +77,47 @@ class CpApplicationTest {
      * @throws IOException
      */
     public static boolean hashesMatch(Path file1, Path file2) throws IOException {
-
+    
         byte[] hash1 = null, hash2 = null;
         try {
-
+    
             // SHA-256 is probably overkill but fine with such small files
             MessageDigest msgDigest = MessageDigest.getInstance("SHA-256");
-
+    
             msgDigest.update(Files.readAllBytes(file1));
             hash1 = msgDigest.digest();
-
+    
             msgDigest.reset();
-
+    
             msgDigest.update(Files.readAllBytes(file2));
             hash2 = msgDigest.digest();
-
+    
         } catch (NoSuchAlgorithmException e) {
             fail(e.getMessage());
         }
-
+    
         return Arrays.equals(hash1, hash2);
     }
-
-
+    
+    
     @BeforeEach
     public void init() {
         cpApp = new CpApplication();
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "CpTestFolder");
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "CpTestFolder");
     }
-
+    
     @AfterEach
     public void resetCurrentDirectory() {
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
-
+    
     @AfterAll
     public static void cleanUp() throws IOException {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "CpTestFolder");
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "CpTestFolder");
         for (File f : IOUtils.resolveFilePath(DEST_DIR).toFile().listFiles()) {
             if (!f.getName().equals("emptyFile.txt")) {
                 f.delete();
@@ -130,229 +129,229 @@ class CpApplicationTest {
         writer.close(); // empty the destination file so validation is meaningful in following runs
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
-
-
+    
+    
     /**
      * Call cp without args
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_NO_ARGS string
      */
     @Test
     public void testFailsWithNoArg() {
-
+    
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, System.out));
+    
         assertMsgContains(cpException, ERR_NO_ARGS);
-
+    
     }
-
-
+    
+    
     /**
      * Call cp with only a filename
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_NO_ARGS string
      */
     @Test
     public void testFailsWithSingleArg() {
-
+    
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(new String[]{"someFileName"}, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(new String[]{"someFileName"}, System.in, System.out));
+    
         assertMsgContains(cpException, ERR_NO_ARGS);
-
+    
     }
-
-
+    
+    
     /**
      * Attempts to copy a file to the same directory it is in
      * Assumption: should fail and throw an exception with "same file" in its message
      */
     @Test
     public void testFailsSingleFileToSameDir() {
-
+    
         String[] args = {SRC1, Environment.getCurrentDirectory()};
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+    
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we
         // assume this replicates such behavior
         assertMsgContains(cpException, "same file");
-
+    
     }
-
-
+    
+    
     /**
      * Attempts to copy a non existent file into a folder
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_FILE_NOT_FOUND string
      */
     @Test
     public void testFailsNonexistentFileToFolder() {
-
+    
         String[] args = {"nonexistent1", DEST_DIR};
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+    
         assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
-
+    
     }
-
+    
     /**
      * Attempts to copy a non existent file into another file
      * Assumption: the exception thrown uses the text in the ErrorConstants.ERR_FILE_NOT_FOUND string
      */
     @Test
     public void testFailsNonexistentFileToFile() {
-
+    
         String[] args = {"nonexistent1", DEST_FILE};
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+    
         assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
-
+    
     }
-
+    
     /**
      * Attempts to copy a file into itself
      */
     @Test
     public void testFailsFileToItself() {
-
+    
         String[] args = {SRC1, SRC1};
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+    
         assertMsgContains(cpException, "same file");
-
+    
     }
-
+    
     /**
      * Attempts to copy an nonexistent file to another new file
      */
     @Test
     public void testFailsNonexistentFileToNewFile() {
-
+    
         String[] args = {"inexistent1", "newfile"};
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+    
         assertMsgContains(cpException, ERR_FILE_NOT_FOUND);
-
+    
     }
-
+    
     /**
      * Call cp with null outstream
      */
     @Test
     public void testFailsWithNullOutputStream() {
-
+    
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, null));
-
+          assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, null));
+    
         assertMsgContains(cpException, ERR_NO_OSTREAM);
-
+    
     }
-
+    
     /**
      * Call cp with null args
      */
     @Test
     public void testFailsWithNullArgs() {
-
+    
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(null, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(null, System.in, System.out));
+    
         assertMsgContains(cpException, ERR_NULL_ARGS);
-
+    
     }
-
+    
     /**
      * Call cp with multiple files into single existing one
      */
     @Test
     public void testFailsWithMultIntoSingle() {
-
+    
         String[] args = {SRC1, SRC2, DEST_FILE};
         CpException cpException =
-                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+    
         assertMsgContains(cpException, "is not a directory");
-
+    
     }
-
-
+    
+    
     /**
      * Copy file to another directory
      */
     @Test
     public void testSingleFileToOtherDir() throws CpException, IOException {
-
+    
         Path src = IOUtils.resolveFilePath(SRC1);
         Path dest = IOUtils.resolveFilePath("destDir/src1");
-
+    
         String[] args = {src.toString(), DEST_DIR};
         cpApp.run(args, System.in, System.out);
-
+    
         assertTrue(Files.exists(dest));
         assertTrue(hashesMatch(src, dest));
-
+    
     }
-
-
+    
+    
     /**
      * Copy file into another new (non-existent) file
      */
     @Test
     public void testSingleFileToNewFile() throws IOException, AbstractApplicationException {
-
+    
         Path src = IOUtils.resolveFilePath(SRC1);
         Path dest = IOUtils.resolveFilePath("inexistent2");
-
+    
         String[] args = {src.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);
-
+    
         assertTrue(Files.exists(dest));
         assertTrue(hashesMatch(src, dest));
-
+    
     }
-
-
+    
+    
     /**
      * Copy single file into another existent file, overwriting it
      */
     @Test
     public void testSingleFileToExistentFile() throws IOException, AbstractApplicationException {
-
+    
         Path src = IOUtils.resolveFilePath(SRC1);
         Path dest = IOUtils.resolveFilePath(DEST_FILE);
-
+    
         String[] args = {src.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);
-
+    
         assertTrue(hashesMatch(src, dest));
-
+    
     }
-
-
+    
+    
     /**
      * Copy multiple files into another directory
      */
     @Test
     public void testMultFilesToDir() throws IOException, AbstractApplicationException {
-
+    
         Path src1 = IOUtils.resolveFilePath(SRC1);
         Path src2 = IOUtils.resolveFilePath(SRC2);
         Path dest = IOUtils.resolveFilePath(DEST_DIR);
-
+    
         String[] args = {src1.toString(), src2.toString(), dest.toString()};
         cpApp.run(args, System.in, System.out);
-
+    
         Path copy1 = IOUtils.resolveFilePath("destDir/src1");
         Path copy2 = IOUtils.resolveFilePath("destDir/src2");
-
+    
         assertTrue(Files.exists(copy1));
         assertTrue(Files.exists(copy2));
         assertTrue(hashesMatch(src1, copy1));
         assertTrue(hashesMatch(src2, copy2));
-
+    
     }
-
+    
 }

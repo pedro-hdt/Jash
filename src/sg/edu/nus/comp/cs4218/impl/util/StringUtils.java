@@ -18,10 +18,10 @@ public final class StringUtils {
     public static final char CHAR_SEMICOLON = ';';
     public static final char CHAR_ASTERISK = '*';
     public static final char CHAR_FLAG_PREFIX = '-';
-
+    
     private StringUtils() {
     }
-
+    
     /**
      * Returns the file separator defined for a particular system.
      * Used for RegexArgument parsing only.
@@ -35,7 +35,7 @@ public final class StringUtils {
         }
         return File.separator;
     }
-
+    
     /**
      * Check if string contains only whitespace
      *
@@ -49,16 +49,16 @@ public final class StringUtils {
         if (str == null || str.isEmpty()) {
             return true;
         }
-
+    
         for (int i = 0; i < str.length(); i++) {
             if (!Character.isWhitespace(str.charAt(i))) {
                 return false;
             }
         }
-
+    
         return true;
     }
-
+    
     /**
      * Tokenize a string delimited by whitespace
      *
