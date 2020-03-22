@@ -29,7 +29,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class SequenceIntegrationCommandTest {
 
-    public static final String INTEGRATION_FOLDER = "IntegrationTestFolder";
+    public static final String INTG_FOLDER = "IntegrationTestFolder";
     public static final String SEQUENCE_FOLDER = "SequencingFolder";
     public static final String TEMPORARY_FILE = "temporaryFile.txt";
     public static final String EMPTY_FILE = "emptyFile.txt";
@@ -37,6 +37,7 @@ public class SequenceIntegrationCommandTest {
 
 
     public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    public static final String DUMMY_TEST_FOLDER = "dummyTestFolder";
 
     ShellImpl shell = new ShellImpl();
     OutputStream stdout = new ByteArrayOutputStream();
@@ -44,8 +45,8 @@ public class SequenceIntegrationCommandTest {
     @BeforeAll
     static void setupAll() {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-            + StringUtils.fileSeparator() + "dummyTestFolder"
-            + StringUtils.fileSeparator() + INTEGRATION_FOLDER);
+            + StringUtils.fileSeparator() + DUMMY_TEST_FOLDER
+            + StringUtils.fileSeparator() + INTG_FOLDER);
     }
 
     @AfterAll
@@ -62,8 +63,8 @@ public class SequenceIntegrationCommandTest {
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
         Environment.setCurrentDirectory(ORIGINAL_DIR
-            + StringUtils.fileSeparator() + "dummyTestFolder"
-            + StringUtils.fileSeparator() + INTEGRATION_FOLDER);
+            + StringUtils.fileSeparator() + DUMMY_TEST_FOLDER
+            + StringUtils.fileSeparator() + INTG_FOLDER);
 
         stdout.flush();
     }
@@ -76,7 +77,7 @@ public class SequenceIntegrationCommandTest {
     public void testCdAndThenLs() throws ShellException, AbstractApplicationException {
         shell.parseAndEvaluate("cd .. ; ls", stdout);
 
-        assertTrue(stdout.toString().contains(INTEGRATION_FOLDER));
+        assertTrue(stdout.toString().contains(INTG_FOLDER));
     }
 
     /**
@@ -113,7 +114,7 @@ public class SequenceIntegrationCommandTest {
 
         Files.delete(Paths.get(Environment.getCurrentDirectory(), TEMPORARY_FILE));
         Environment.setCurrentDirectory(ORIGINAL_DIR
-            + StringUtils.fileSeparator() + "dummyTestFolder"
+            + StringUtils.fileSeparator() + DUMMY_TEST_FOLDER
             + StringUtils.fileSeparator() + "IntegrationTestFolder");
         Files.delete(Paths.get(Environment.getCurrentDirectory(), TEMPORARY_FILE));
     }
@@ -228,19 +229,19 @@ public class SequenceIntegrationCommandTest {
         assertEquals("./emptyFile.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
 
         Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + INTEGRATION_FOLDER);
+                + StringUtils.fileSeparator() + DUMMY_TEST_FOLDER
+                + StringUtils.fileSeparator() + INTG_FOLDER);
     }
 
     @Test
     public void testChangeAfterSequence() {
 
         try {
-            Path f1 = Files.createFile(Paths.get(Environment.currentDirectory, "temp"));
+            Path file1 = Files.createFile(Paths.get(Environment.currentDirectory, "temp"));
             shell.parseAndEvaluate("ls ; rm temp ; ls", stdout);
 
-            assertTrue(stdout.toString().contains(INTEGRATION_FOLDER));
-            assertFalse(Files.exists(f1));
+            assertTrue(stdout.toString().contains(INTG_FOLDER));
+            assertFalse(Files.exists(file1));
 
         } catch (Exception e) {
             fail();

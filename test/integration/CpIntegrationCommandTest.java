@@ -74,7 +74,7 @@ public class CpIntegrationCommandTest {
             fail();
 
         } catch (Exception e) {
-            assertTrue(e instanceof ExitException);
+            assertTrue(e instanceof ExitException); //NOPMD
             assertMsgContains(e, "terminating execution");
         }
     }
@@ -120,17 +120,20 @@ public class CpIntegrationCommandTest {
     @DisplayName("EF1 with EF2")
     public void testCpAndLs() {
         try {
-            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "lsDir"));
-            Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "name.ls"));
+            String lsDir = "lsDir";
+            String nameLs = "name.ls";
+
+            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), lsDir));
+            Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), nameLs));
 
             shell.parseAndEvaluate("cp 'name.ls' lsDir ; ls -R lsDir", stdout);
             assertEquals("lsDir:" + StringUtils.STRING_NEWLINE +
-                    "name.ls" + StringUtils.STRING_NEWLINE, stdout.toString());
+                    nameLs + StringUtils.STRING_NEWLINE, stdout.toString());
 
             assertTrue(Files.exists(filePath1));
-            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "lsDir", "name.ls")));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, lsDir, nameLs)));
 
-            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "lsDir", "name.ls"));
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, lsDir, nameLs));
             Files.deleteIfExists(filePath1);
             Files.deleteIfExists(dirPath);
         } catch (Exception e) {

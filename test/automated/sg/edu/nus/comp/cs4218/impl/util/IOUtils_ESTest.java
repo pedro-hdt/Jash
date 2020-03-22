@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+@SuppressWarnings("PMD")
 public class IOUtils_ESTest {
 
   @Test

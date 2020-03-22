@@ -70,7 +70,7 @@ public class GlobbingIntegrationTest {
     public void testGlobLs() {
         try {
             shell.parseAndEvaluate("ls dir/*", stdout);
-            assertEquals("dir" + StringUtils.fileSeparator() + "empty.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
+            assertEquals("dir" + StringUtils.fileSeparator() + "empty.txt" + StringUtils.STRING_NEWLINE, stdout.toString()); //NOPMD
         } catch (Exception e) {
             fail();
         }
@@ -82,17 +82,18 @@ public class GlobbingIntegrationTest {
     public void testGlobMv() {
         try {
 
-            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "mvDir"));
+            String mvDir = "mvDir";
+            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), mvDir));
             Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "first.mv"));
             Path filePath2 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "second.mv"));
 
             shell.parseAndEvaluate("mv fir*.mv mvDir", stdout);
 
-            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "mvDir", "first.mv")));
-            assertFalse(Files.exists(Paths.get(Environment.currentDirectory, "mvDir", "second.mv")));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, mvDir, "first.mv")));
+            assertFalse(Files.exists(Paths.get(Environment.currentDirectory, mvDir, "second.mv")));
 
             Files.delete(filePath2);
-            Files.delete(Paths.get(Environment.currentDirectory, "mvDir", "first.mv"));
+            Files.delete(Paths.get(Environment.currentDirectory, mvDir, "first.mv"));
             Files.delete(dirPath);
 
         } catch (Exception e) {
@@ -105,19 +106,20 @@ public class GlobbingIntegrationTest {
     public void testGlobCp() {
         try {
 
-            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), "cpDir"));
+            String cpDir = "cpDir";
+            Path dirPath = Files.createDirectory(Paths.get(Environment.getCurrentDirectory(), cpDir));
             Path filePath1 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "first.cp"));
             Path filePath2 = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "second.cp"));
 
             shell.parseAndEvaluate("cp *.cp cpDir", stdout);
 
-            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "cpDir", "first.cp")));
-            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, "cpDir", "second.cp")));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, cpDir, "first.cp")));
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, cpDir, "second.cp")));
 
             Files.delete(filePath1);
             Files.delete(filePath2);
-            Files.delete(Paths.get(Environment.currentDirectory, "cpDir", "first.cp"));
-            Files.delete(Paths.get(Environment.currentDirectory, "cpDir", "second.cp"));
+            Files.delete(Paths.get(Environment.currentDirectory, cpDir, "first.cp"));
+            Files.delete(Paths.get(Environment.currentDirectory, cpDir, "second.cp"));
             Files.delete(dirPath);
 
         } catch (Exception e) {

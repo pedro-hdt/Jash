@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+@SuppressWarnings("PMD")
 public class StringUtils_ESTest {
 
   @Test

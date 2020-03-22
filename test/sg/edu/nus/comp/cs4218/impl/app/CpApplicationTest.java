@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +17,6 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -127,7 +125,7 @@ class CpApplicationTest {
             }
         }
         Files.delete(IOUtils.resolveFilePath("inexistent2"));
-        PrintWriter writer = new PrintWriter(IOUtils.resolveFilePath(DEST_FILE).toFile());
+        PrintWriter writer = new PrintWriter(IOUtils.resolveFilePath(DEST_FILE).toFile()); //NOPMD
         writer.print("");
         writer.close(); // empty the destination file so validation is meaningful in following runs
         Environment.setCurrentDirectory(ORIGINAL_DIR);

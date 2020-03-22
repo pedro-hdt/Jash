@@ -28,6 +28,9 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class ShellSystemTest {
 
+    public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+    OutputStream stdout = new ByteArrayOutputStream();
+
     private static class NoExitSecurityManager extends SecurityManager {
         @Override
         public void checkPermission(Permission perm) {
@@ -45,10 +48,6 @@ public class ShellSystemTest {
             throw new ExitException("terminating execution");
         }
     }
-
-    public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
-
-    OutputStream stdout = new ByteArrayOutputStream();
 
     @BeforeAll
     static void setupAll() {

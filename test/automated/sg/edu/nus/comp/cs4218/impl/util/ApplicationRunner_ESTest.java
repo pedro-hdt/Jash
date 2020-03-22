@@ -25,6 +25,7 @@ import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 
+@SuppressWarnings("PMD")
 public class ApplicationRunner_ESTest {
 
   @Test

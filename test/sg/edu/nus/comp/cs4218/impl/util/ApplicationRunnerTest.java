@@ -24,9 +24,12 @@ import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
+@SuppressWarnings("PMD")
 public class ApplicationRunnerTest {
 
-  @Test
+    public static final String EXCEPTION_FAIL = "Expecting exception: Exception";
+
+    @Test
   public void test00()  throws Throwable  {
       ApplicationRunner applicationRunner0 = new ApplicationRunner();
       PipedOutputStream pipedOutputStream0 = new PipedOutputStream();
@@ -55,7 +58,7 @@ public class ApplicationRunnerTest {
       PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0, 3083269);
       try { 
         applicationRunner0.runApp("", stringArray0, pipedInputStream0, pipedOutputStream0);
-        fail("Expecting exception: Exception");
+        fail(EXCEPTION_FAIL);
       
       } catch(Exception e) {
          //
@@ -132,7 +135,7 @@ public class ApplicationRunnerTest {
       ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream(0);
       try { 
         applicationRunner0.runApp("find", stringArray0, pipedInputStream0, byteArrayOutputStream0);
-        fail("Expecting exception: Exception");
+        fail(EXCEPTION_FAIL);
       
       } catch(Exception e) {
          //
@@ -182,7 +185,7 @@ public class ApplicationRunnerTest {
       ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
       try { 
         applicationRunner0.runApp("diff", stringArray0, pipedInputStream0, byteArrayOutputStream0);
-        fail("Expecting exception: Exception");
+        fail(EXCEPTION_FAIL);
       
       } catch(Exception e) {
          //
@@ -201,36 +204,12 @@ public class ApplicationRunnerTest {
       PipedInputStream pipedInputStream0 = new PipedInputStream(pipedOutputStream0);
       try { 
         applicationRunner0.runApp("sed", stringArray0, pipedInputStream0, pipedOutputStream0);
-        fail("Expecting exception: Exception");
+        fail(EXCEPTION_FAIL);
       
       } catch(Exception e) {
-         //
-         // sed: null
-         //
-//         verifyException("sg.edu.nus.comp.cs4218.impl.app.SedApplication", e);
           assertTrue(e instanceof SedException);
       }
   }
-
-//  @Test
-//  public void test10()  throws Throwable  {
-//      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-//      String[] stringArray0 = new String[9];
-//      PipedInputStream pipedInputStream0 = new PipedInputStream();
-//      MockFile mockFile0 = new MockFile("sg.edu.nus.comp.cs4218.exception.AbstractApplicationException");
-//      MockPrintStream mockPrintStream0 = new MockPrintStream(mockFile0);
-//      // Undeclared exception!
-//      try {
-//        applicationRunner0.runApp("cut", stringArray0, pipedInputStream0, mockPrintStream0);
-//        fail("Expecting exception: NullPointerException");
-//
-//      } catch(NullPointerException e) {
-//         //
-//         // no message in exception (getMessage() returned null)
-//         //
-//         verifyException("sg.edu.nus.comp.cs4218.impl.parser.ArgsParser", e);
-//      }
-//  }
 
   @Test 
   public void test11()  throws Throwable  {
@@ -266,53 +245,10 @@ public class ApplicationRunnerTest {
         fail("Expecting exception: NullPointerException");
       
       } catch(NullPointerException e) {
-         //
-         // no message in exception (getMessage() returned null)
-         //
-//         verifyException("sg.edu.nus.comp.cs4218.impl.parser.ArgsParser", e);
           assertTrue(e instanceof NullPointerException);
       }
   }
 
-//  @Test
-//  public void test13()  throws Throwable  {
-//      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-//      String[] stringArray0 = new String[4];
-//      byte[] byteArray0 = new byte[7];
-//      ByteArrayInputStream byteArrayInputStream0 = new ByteArrayInputStream(byteArray0);
-//      MockFileOutputStream mockFileOutputStream0 = new MockFileOutputStream("exit", true);
-//      // Undeclared exception!
-//      try {
-//        applicationRunner0.runApp("ls", stringArray0, byteArrayInputStream0, mockFileOutputStream0);
-//        fail("Expecting exception: NullPointerException");
-//
-//      } catch(NullPointerException e) {
-//         //
-//         // no message in exception (getMessage() returned null)
-//         //
-//         verifyException("sg.edu.nus.comp.cs4218.impl.parser.ArgsParser", e);
-//      }
-//  }
-
-//  @Test
-//  public void test14()  throws Throwable  {
-//      String[] stringArray0 = new String[7];
-//      ApplicationRunner applicationRunner0 = new ApplicationRunner();
-//      FileDescriptor fileDescriptor0 = new FileDescriptor();
-//      MockFileInputStream mockFileInputStream0 = new MockFileInputStream(fileDescriptor0);
-//      DataInputStream dataInputStream0 = new DataInputStream(mockFileInputStream0);
-//      PushbackInputStream pushbackInputStream0 = new PushbackInputStream(dataInputStream0);
-//      try {
-//        applicationRunner0.runApp("cd", stringArray0, pushbackInputStream0, (OutputStream) null);
-//        fail("Expecting exception: Exception");
-//
-//      } catch(Exception e) {
-//         //
-//         // cd: OutputStream not provided
-//         //
-//         verifyException("sg.edu.nus.comp.cs4218.impl.app.CdApplication", e);
-//      }
-//  }
 
   @Test 
   public void test15()  throws Throwable  {
@@ -322,7 +258,7 @@ public class ApplicationRunnerTest {
       ByteArrayOutputStream byteArrayOutputStream0 = new ByteArrayOutputStream();
       try { 
         applicationRunner0.runApp("cp", stringArray0, pipedInputStream0, byteArrayOutputStream0);
-        fail("Expecting exception: Exception");
+        fail(EXCEPTION_FAIL);
       
       } catch(Exception e) {
          //

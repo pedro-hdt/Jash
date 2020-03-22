@@ -88,7 +88,7 @@ public class IORedirectionIntegrationTest {
             fail();
 
         } catch (Exception e) {
-            assertTrue(e instanceof ShellException);
+            assertTrue(e instanceof ShellException); //NOPMD
             assertMsgContains(e, "shell: Multiple streams provided");
             Path filePath1 = Paths.get(Environment.getCurrentDirectory(), "first");
             Files.delete(filePath1);
@@ -102,7 +102,7 @@ public class IORedirectionIntegrationTest {
             shell.parseAndEvaluate("echo one < non-existent", out);
             fail();
         } catch (Exception e) {
-            assertTrue(e instanceof ShellException);
+            assertTrue(e instanceof ShellException); //NOPMD
             assertMsgContains(e, "shell: No such file or directory");
         }
     }

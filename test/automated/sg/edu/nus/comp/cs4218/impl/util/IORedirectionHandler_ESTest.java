@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IORedirectionHandler;
 
+@SuppressWarnings("PMD")
 public class IORedirectionHandler_ESTest {
 
   @Test

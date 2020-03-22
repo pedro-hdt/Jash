@@ -27,10 +27,10 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 public class QuoteShellIntegrationTest {
     public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
 
-    private ShellImpl shell = new ShellImpl();
+    private final ShellImpl shell = new ShellImpl();
     private String cmdline = "";
     private String expected = "";
-    private ByteArrayOutputStream output = new ByteArrayOutputStream();;
+    private final ByteArrayOutputStream output = new ByteArrayOutputStream();;
 
     @BeforeAll
     static void setupAll() {

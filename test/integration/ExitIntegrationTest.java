@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.ExitException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
+@SuppressWarnings("PMD.AvoidInstanceofChecksInCatchClause")
 public class ExitIntegrationTest {
+    public static final String TERM_EXEC_MSG = "terminating execution";
     private static ShellImpl shell;
     OutputStream stdout = new ByteArrayOutputStream();
 
@@ -35,7 +37,7 @@ public class ExitIntegrationTest {
             shell.parseAndEvaluate("exit | ls", stdout);
         } catch (Exception e) {
             assertTrue(e instanceof ExitException);
-            assertMsgContains(e, "terminating execution");
+            assertMsgContains(e, TERM_EXEC_MSG);
         }
     }
 
@@ -45,7 +47,7 @@ public class ExitIntegrationTest {
             shell.parseAndEvaluate("exit ; ls", stdout);
         } catch (Exception e) {
             assertTrue(e instanceof ExitException);
-            assertMsgContains(e, "terminating execution");
+            assertMsgContains(e, TERM_EXEC_MSG);
         }
     }
 
@@ -55,7 +57,7 @@ public class ExitIntegrationTest {
             shell.parseAndEvaluate("exit > diff *.txt", stdout);
         } catch (Exception e) {
             assertTrue(e instanceof ExitException);
-            assertMsgContains(e, "terminating execution");
+            assertMsgContains(e, TERM_EXEC_MSG);
         }
     }
 
@@ -65,7 +67,7 @@ public class ExitIntegrationTest {
             shell.parseAndEvaluate("exit *", stdout);
         } catch (Exception e) {
             assertTrue(e instanceof ExitException);
-            assertMsgContains(e, "terminating execution");
+            assertMsgContains(e, TERM_EXEC_MSG);
         }
     }
 
@@ -75,7 +77,7 @@ public class ExitIntegrationTest {
             shell.parseAndEvaluate("exit 'hi'", stdout);
         } catch (Exception e) {
             assertTrue(e instanceof ExitException);
-            assertMsgContains(e, "terminating execution");
+            assertMsgContains(e, TERM_EXEC_MSG);
         }
     }
 
@@ -85,7 +87,7 @@ public class ExitIntegrationTest {
             shell.parseAndEvaluate("exit `ls`", stdout);
         } catch (Exception e) {
             assertTrue(e instanceof ExitException);
-            assertMsgContains(e, "terminating execution");
+            assertMsgContains(e, TERM_EXEC_MSG);
         }
     }
 

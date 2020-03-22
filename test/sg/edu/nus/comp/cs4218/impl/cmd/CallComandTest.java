@@ -1,18 +1,18 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,13 +20,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_APP;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 /**
  * Tests for the call commands
@@ -42,6 +48,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
  */
 public class CallComandTest {
 
+    public static final String ECHO_CMD = "echo";
     public CallCommand cmd;
     static ByteArrayOutputStream stdout;
 
@@ -98,17 +105,17 @@ public class CallComandTest {
                 stdout.write(expectedResult.getBytes());
                 return null;
             }
-        }).when(mockAppRunner).runApp("echo", new String[]{hello}, System.in, stdout);
+        }).when(mockAppRunner).runApp(ECHO_CMD, new String[]{hello}, System.in, stdout);
 
         cmd = new CallCommand(
-                Arrays.asList("echo", hello),
+                Arrays.asList(ECHO_CMD, hello),
                 mockAppRunner,
                 new ArgumentResolver());
         cmd.evaluate(System.in, stdout);
 
         assertEquals(expectedResult, stdout.toString());
 
-        verify(mockAppRunner).runApp("echo", new String[]{hello}, System.in, stdout);
+        verify(mockAppRunner).runApp(ECHO_CMD, new String[]{hello}, System.in, stdout);
 
     }
 
@@ -153,7 +160,7 @@ public class CallComandTest {
 
         ShellException exception = assertThrows(ShellException.class,
                 () -> new CallCommand(
-                        Arrays.asList("echo", "hello"),
+                        Arrays.asList(ECHO_CMD, "hello"),
                         null,
                         new ArgumentResolver())
         );
@@ -167,7 +174,7 @@ public class CallComandTest {
 
         ShellException exception = assertThrows(ShellException.class,
                 () -> new CallCommand(
-                        Arrays.asList("echo", "hello"),
+                        Arrays.asList(ECHO_CMD, "hello"),
                         new ApplicationRunner(),
                         null)
         );
