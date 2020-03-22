@@ -133,6 +133,18 @@ public class CommandSubsIntegrationTest {
     
         assertMsgContains(exception, ERR_TOO_MANY_ARGS);
     }
+
+    /**
+     * SubCommands with sub cmd throwing exception
+     */
+    @Test
+    public void testErrorFromSubsCmd2() {
+        Exception exception = assertThrows(CdException.class, ()
+                -> shell.parseAndEvaluate("echo `cd a b c`", stdout));
+
+
+        assertMsgContains(exception, ERR_TOO_MANY_ARGS);
+    }
     
     @Test
     @DisplayName("Integration of single back quote with stub")

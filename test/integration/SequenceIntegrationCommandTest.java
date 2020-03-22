@@ -63,6 +63,20 @@ public class SequenceIntegrationCommandTest {
         
         stdout.flush();
     }
+
+    /**
+     * When exception thrown shows as error message and no Shell Exception
+     */
+    @Test
+    public void testErrorOneOfSequenceException() {
+        try {
+            shell.parseAndEvaluate("ls ; mv empty ", stdout);
+            assertTrue(stdout.toString().contains("No files provided"));
+        } catch (Exception e) {
+            fail();
+        }
+
+    }
     
     /**
      * Tests integration of a command that depends on action of first one

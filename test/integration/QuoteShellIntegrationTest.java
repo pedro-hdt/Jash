@@ -19,8 +19,11 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class QuoteShellIntegrationTest {
@@ -54,6 +57,30 @@ public class QuoteShellIntegrationTest {
           + StringUtils.fileSeparator() + "QuoteShellFolder");
         
         output.flush();
+    }
+
+    /**
+     * Invalid quotes
+     */
+    @Test
+    public void testErrorInvalidSingleQuotes() {
+        Exception exception = assertThrows(ShellException.class, ()
+                -> shell.parseAndEvaluate("echo 'hi", output));
+
+
+        assertMsgContains(exception, ERR_SYNTAX);
+    }
+
+    /**
+     * Invalid quotes
+     */
+    @Test
+    public void testErrorInvalidQuotes() {
+        Exception exception = assertThrows(ShellException.class, ()
+                -> shell.parseAndEvaluate("sed \"s|a|b|c name.txt'", output));
+
+
+        assertMsgContains(exception, ERR_SYNTAX);
     }
     
     @Test

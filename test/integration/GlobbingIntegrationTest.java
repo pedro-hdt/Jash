@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -21,9 +22,11 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
 public class GlobbingIntegrationTest {
     
@@ -62,6 +65,18 @@ public class GlobbingIntegrationTest {
           + StringUtils.fileSeparator() + "GlobbingFolder");
         
         stdout.flush();
+    }
+
+    /**
+     * Globbing throws exception
+     */
+    @Test
+    public void testErrorFromSubsCmd() {
+        Exception exception = assertThrows(CdException.class, ()
+                -> shell.parseAndEvaluate("cd *", stdout));
+
+
+        assertMsgContains(exception, ERR_TOO_MANY_ARGS);
     }
     
     @Test
