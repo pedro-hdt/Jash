@@ -127,7 +127,8 @@ Diff:
     - Fixed extra of newlines at the end of output
     - Better error message when file is not found
     - Better error message when file is a directory
-    - etter error message when fail to write to outstream
+    - Better error message when fail to write to outstream
+    - Pasting empty file was causing an error with the StringBuilder. Fixed now
 - Rm 
     - Decision not to support file permissions as it is beyond the scope of the specification
     - Added better reporting of when files cannot be removed for being directories and not having the right flags specified

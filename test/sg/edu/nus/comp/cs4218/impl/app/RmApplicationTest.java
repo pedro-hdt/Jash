@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
+import static sg.edu.nus.comp.cs4218.impl.app.RmApplication.ERR_DOT_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 /**
@@ -324,6 +325,32 @@ public class RmApplicationTest {
             rmApp.run(args, System.in, System.out);
         });
         assertMsgContains(exception, ArgsParser.ILLEGAL_FLAG_MSG); // verify the correct exceptions is thrown
+
+    }
+
+    /**
+     * Attempt to call rm with null args
+     */
+    @Test
+    public void failsNullArgs() {
+
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(null, System.in, System.out);
+        });
+        assertMsgContains(exception, ERR_NULL_ARGS); // verify the correct exceptions is thrown
+
+    }
+
+    /**
+     * Attempt to call rm with null args
+     */
+    @Test
+    public void failsDirEndInDot() {
+
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(new String[]{"."}, System.in, System.out);
+        });
+        assertMsgContains(exception, ERR_DOT_DIR); // verify the correct exceptions is thrown
 
     }
 

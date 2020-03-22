@@ -1,15 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IO_EXCEPTION;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_WRITE_STREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import sg.edu.nus.comp.cs4218.app.PasteInterface;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.app.PasteInterface;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_TAB;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplication implements PasteInterface {
 
@@ -91,8 +84,10 @@ public class PasteApplication implements PasteInterface {
                     sb.append(STRING_NEWLINE);
                 }
             } while (notDone);
-            sb.delete(sb.length() - readers.size() + 1, sb.length()); // remove extra tab chars
-            sb.deleteCharAt(sb.length() - 1); // remove extra newline
+
+            if (sb.length() != 0) {
+                sb.delete(sb.length() - readers.size(), sb.length()); // remove extra tab chars
+            }
 
             for (BufferedReader reader : readers) {//NOPMD
                 reader.close();
@@ -150,8 +145,9 @@ public class PasteApplication implements PasteInterface {
                     sb.append(STRING_NEWLINE);
                 }
             } while (notDone);
-            sb.delete(sb.length() - fileReaders.size() + 1, sb.length()); // remove extra tab chars
-            sb.deleteCharAt(sb.length() - 1); // remove extra newline
+            if (sb.length() != 0) {
+                sb.delete(sb.length() - fileReaders.size(), sb.length()); // remove extra tab chars
+            }
 
             for (BufferedReader reader : fileReaders) {//NOPMD
                 reader.close();
