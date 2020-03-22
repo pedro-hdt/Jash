@@ -1,8 +1,8 @@
 package sg.edu.nus.comp.cs4218;
 
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-
 import java.nio.file.Files;
+
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 public final class Environment {//NOPMD - Suppressed as it's fine to name like a util class given its a workaround and meaningful
 
@@ -28,9 +28,6 @@ public final class Environment {//NOPMD - Suppressed as it's fine to name like a
      */
     public static String getCurrentDirectory() {
         return currentDirectory;
-    }
-
-    private Environment() {
     }
 
 }

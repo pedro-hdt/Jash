@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_EMPTY_REGEX;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REGEX;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_RULE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_REP_X;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
@@ -160,13 +161,56 @@ public class SedApplicationTest {
     }
 
     /**
-     * Tests when no arguement specified
+     * Tests when null regex
+     */
+    @Test
+    public void testFailsWithNullRegex() {
+        Exception exception = assertThrows(Exception.class, () -> sed.replaceSubstringInStdin(null, "", 1, System.in));
+        assertTrue(exception.getMessage().contains(ERR_NULL_ARGS));
+
+    }
+
+    /**
+     * Tests when invalid replacement index
+     */
+    @Test
+    public void testFailsWithInvalidIndex() {
+        Exception exception = assertThrows(Exception.class, () -> sed.replaceSubstringInStdin("reg", "", -1, System.in));
+        assertTrue(exception.getMessage().contains(ERR_INVALID_REP_X));
+
+    }
+
+    /**
+     * Tests when invalid regex
+     */
+    @Test
+    public void testFailsWithInvalidRegex() {
+        Exception exception = assertThrows(Exception.class, () -> sed.replaceSubstringInStdin("[", "", 1, System.in));
+        assertTrue(exception.getMessage().contains(ERR_INVALID_REGEX));
+
+    }
+
+    /**
+     * Tests when no argument specified
      */
     @Test
     public void testFailsWithLessThanOneArgs() {
         Exception exception = assertThrows(SedException.class, () -> sed.run(new String[0], null, stdout));
         assertTrue(exception.getMessage().contains(ERR_NO_REP_RULE));
 
+    }
+
+    /**
+     * Tests when replacement rule is invalid
+     */
+    @Test
+    public void testInvalidRuleLessLength() {
+
+        String[] args = new String[] {"s||"};
+        stdin = new ByteArrayInputStream("ran".getBytes());
+
+        Exception exception = assertThrows(SedException.class, () -> sed.run(args, stdin, stdout));
+        assertTrue(exception.getMessage().contains(ERR_INVALID_REP_RULE));
     }
 
     /**
