@@ -115,7 +115,7 @@ public class ArgumentResolver_ESTest {
     public void test07() throws Throwable {
         ArgumentResolver argumentResolver0 = new ArgumentResolver();
         List<String> list0 = argumentResolver0.resolveOneArgument("Dt`N;-`");
-        assertEquals(1, list0.size());
+        assertEquals(8, list0.size());
         assertFalse(list0.contains("Dt`N;-`"));
     }
     
@@ -188,6 +188,6 @@ public class ArgumentResolver_ESTest {
         linkedList0.add("Dt`N;-`");
         List<String> list0 = argumentResolver0.parseArguments(linkedList0);
         assertFalse(list0.contains("Dt`N;-`"));
-        assertEquals(1, list0.size());
+        assertEquals(8, list0.size());
     }
 }
