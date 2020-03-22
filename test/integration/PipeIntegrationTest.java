@@ -13,9 +13,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +33,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class PipeIntegrationTest {
@@ -37,12 +41,21 @@ public class PipeIntegrationTest {
     public static ApplicationRunner appRunner;
     public static ArgumentResolver argumentResolver;
     public static ByteArrayOutputStream out;
+    public static ShellImpl shell = new ShellImpl();
+
+    public static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
+
 
     @BeforeAll
     public static void setUp() {
         appRunner = new ApplicationRunner();
         argumentResolver = new ArgumentResolver();
         out = new ByteArrayOutputStream();
+
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "PipeIntegrationTestFolder");
     }
 
     @BeforeEach
@@ -53,6 +66,15 @@ public class PipeIntegrationTest {
     @AfterAll
     public static void tearDown() throws IOException {
         out.close();
+        Environment.currentDirectory = ORIGINAL_DIR;
+    }
+
+    @AfterEach
+    public void tearAfterTest() {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "PipeIntegrationTestFolder");
     }
 
     @Test
@@ -249,19 +271,55 @@ public class PipeIntegrationTest {
     @Test
     public void testTriplePipes() {
         try {
-            ShellImpl shell = new ShellImpl();
             OutputStream stdout = new ByteArrayOutputStream();
-
-            String ORIGINAL_DIR = Environment.getCurrentDirectory();
-            Environment.setCurrentDirectory(ORIGINAL_DIR
-                    + StringUtils.fileSeparator() + "dummyTestFolder"
-                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                    + StringUtils.fileSeparator() + "GlobbingFolder");
 
             shell.parseAndEvaluate("ls | cut -c 1-3 | sort", stdout);
             assertEquals("dir" + StringUtils.STRING_NEWLINE, stdout.toString());
 
-            Environment.currentDirectory = ORIGINAL_DIR;
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testMultiplePipes() {
+        try {
+            OutputStream stdout = new ByteArrayOutputStream();
+            shell.parseAndEvaluate("ls | grep .tat | grep match", stdout);
+            assertEquals("match1.tat" + StringUtils.STRING_NEWLINE +
+                    "match2.tat" + StringUtils.STRING_NEWLINE, stdout.toString());
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testSimplePipe9() {
+        try {
+            OutputStream stdout = new ByteArrayOutputStream();
+            shell.parseAndEvaluate("grep -i [\\d] < text.txt | wc -l", stdout);
+            assertEquals("       4" + StringUtils.STRING_NEWLINE, stdout.toString());
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testSimplePipe10() {
+        try {
+            OutputStream stdout = new ByteArrayOutputStream();
+            shell.parseAndEvaluate("diff match*.tat > output.txt", stdout);
+
+            String str1 = new String(Files.readAllBytes(IOUtils.resolveFilePath("output.txt")));
+            assertEquals("< hi" + StringUtils.STRING_NEWLINE +
+                    "> hie" + StringUtils.STRING_NEWLINE +
+                    "" + StringUtils.STRING_NEWLINE, str1);
+
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, "output.txt"));
+
+
         } catch (Exception e) {
             fail();
         }
