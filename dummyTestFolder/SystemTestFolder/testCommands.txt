@@ -1,7 +1,5 @@
-ls
-echo hi
-cd .. ; ls
-cd SystemTestFolder
-echo yo > file1.txt
-sed abc
-exit
+100
+hi
+ab
+zz
+mm
