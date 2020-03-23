@@ -1,0 +1,219 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CommandBuilder</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">sg.edu.nus.comp.cs4218.impl.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CommandBuilder (sg.edu.nus.comp.cs4218.impl.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CommandBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98%
+  </span>
+  <span class="absValue">
+    (50/ 51)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package sg.edu.nus.comp.cs4218.impl.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import sg.edu.nus.comp.cs4218.Command;
+<i>4</i>&nbsp;import sg.edu.nus.comp.cs4218.exception.ShellException;
+<i>5</i>&nbsp;import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+<i>6</i>&nbsp;import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+<i>7</i>&nbsp;import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.LinkedList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.regex.Matcher;
+<i>12</i>&nbsp;import java.util.regex.Pattern;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+<i>15</i>&nbsp;import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.*;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;@SuppressWarnings({&quot;PMD.ExcessiveMethodLength&quot;, &quot;PMD.ClassNamingConventions&quot;})
+<b class="nc"><i>18</i>&nbsp;public final class CommandBuilder { //NOPMD</b>
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     * Regular expression for extracting valid arguments from the command string:
+<i>21</i>&nbsp;     * (NO_QUOTE | SINGLE_QUOTE | NESTED_BACK_QUOTE | DOUBLE_QUOTE | BACK_QUOTE)+
+<i>22</i>&nbsp;     * &lt;p&gt;
+<i>23</i>&nbsp;     * The order matters because it affects the matching priority.
+<i>24</i>&nbsp;     * &lt;p&gt;
+<i>25</i>&nbsp;     * NO_QUOTE: [^&#39;\&quot;`|&lt;&gt;;\\s]+
+<i>26</i>&nbsp;     * SINGLE_QUOTE: &#39;[^&#39;]*&#39;
+<i>27</i>&nbsp;     * NESTED_BACK_QUOTE: \&quot;([^\&quot;`]*`.*?`[^\&quot;`]*)+\&quot;
+<i>28</i>&nbsp;     * DOUBLE_QUOTE: \&quot;[^\&quot;]*\&quot;
+<i>29</i>&nbsp;     * BACK_QUOTE: `[^`]*`
+<i>30</i>&nbsp;     */
+<b class="fc"><i>31</i>&nbsp;    private static final Pattern ARGUMENT_REGEX = Pattern</b>
+<b class="fc"><i>32</i>&nbsp;      .compile(&quot;([^&#39;\&quot;`|&lt;&gt;;\\s]+|&#39;[^&#39;]*&#39;|\&quot;([^\&quot;`]*`.*?`[^\&quot;`]*)+\&quot;|\&quot;[^\&quot;]*\&quot;|`[^`]*`)+&quot;);</b>
+<i>33</i>&nbsp;    
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Parses and tokenizes the provided command string into command(s) and arguments.
+<i>36</i>&nbsp;     * &lt;p&gt;
+<i>37</i>&nbsp;     * CallCommand takes in a list of tokens, PipeCommand takes in a list of CallCommands,
+<i>38</i>&nbsp;     * and SequenceCommand takes in a list of CallCommands / PipeCommands.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @return Final command to be evaluated.
+<i>41</i>&nbsp;     * @throws ShellException If the provided command string has an invalid syntax.
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public static Command parseCommand(String commandString, ApplicationRunner appRunner)
+<i>44</i>&nbsp;      throws ShellException {
+<b class="fc"><i>45</i>&nbsp;        if (StringUtils.isBlank(commandString) || commandString.contains(STRING_NEWLINE)) {</b>
+<b class="fc"><i>46</i>&nbsp;            throw new ShellException(ERR_SYNTAX);</b>
+<i>47</i>&nbsp;        }
+<i>48</i>&nbsp;        
+<b class="fc"><i>49</i>&nbsp;        ArgumentResolver argumentResolver = new ArgumentResolver();</b>
+<b class="fc"><i>50</i>&nbsp;        List&lt;Command&gt; cmdsForSequence = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>51</i>&nbsp;        List&lt;CallCommand&gt; callCmdsForPipe = new LinkedList&lt;&gt;();</b>
+<b class="fc"><i>52</i>&nbsp;        List&lt;String&gt; tokens = new LinkedList&lt;&gt;();</b>
+<i>53</i>&nbsp;        
+<b class="fc"><i>54</i>&nbsp;        String commandSubstring = commandString;</b>
+<b class="fc"><i>55</i>&nbsp;        while (!commandSubstring.isEmpty()) {</b>
+<b class="fc"><i>56</i>&nbsp;            commandSubstring = commandSubstring.trim();</b>
+<b class="fc"><i>57</i>&nbsp;            Matcher matcher = ARGUMENT_REGEX.matcher(commandSubstring);</b>
+<i>58</i>&nbsp;    
+<i>59</i>&nbsp;            // no valid arguments found
+<b class="fc"><i>60</i>&nbsp;            if (!matcher.find()) {</b>
+<b class="fc"><i>61</i>&nbsp;                throw new ShellException(ERR_SYNTAX);</b>
+<i>62</i>&nbsp;            }
+<i>63</i>&nbsp;    
+<i>64</i>&nbsp;            // found a valid argument at the start of the command substring
+<b class="fc"><i>65</i>&nbsp;            if (matcher.start() == 0) {</b>
+<b class="fc"><i>66</i>&nbsp;                tokens.add(matcher.group());</b>
+<b class="fc"><i>67</i>&nbsp;                commandSubstring = commandSubstring.substring(matcher.end());</b>
+<b class="fc"><i>68</i>&nbsp;                continue;</b>
+<i>69</i>&nbsp;            }
+<i>70</i>&nbsp;    
+<i>71</i>&nbsp;            // found a valid argument but not at the start of the command substring
+<b class="fc"><i>72</i>&nbsp;            char firstChar = commandSubstring.charAt(0);</b>
+<b class="fc"><i>73</i>&nbsp;            commandSubstring = commandSubstring.substring(1);</b>
+<i>74</i>&nbsp;    
+<b class="fc"><i>75</i>&nbsp;            switch (firstChar) {</b>
+<i>76</i>&nbsp;                case CHAR_REDIR_INPUT:
+<i>77</i>&nbsp;                    // add as a separate token on its own
+<b class="fc"><i>78</i>&nbsp;                    tokens.add(String.valueOf(firstChar));</b>
+<b class="fc"><i>79</i>&nbsp;                    break;</b>
+<i>80</i>&nbsp;                case CHAR_REDIR_OUTPUT:
+<i>81</i>&nbsp;                    // add as a separate token on its own
+<b class="fc"><i>82</i>&nbsp;                    tokens.add(String.valueOf(firstChar));</b>
+<b class="fc"><i>83</i>&nbsp;                    break;</b>
+<i>84</i>&nbsp;        
+<i>85</i>&nbsp;                case CHAR_PIPE:
+<b class="fc"><i>86</i>&nbsp;                    if (tokens.isEmpty()) {</b>
+<i>87</i>&nbsp;                        // cannot start a new command with pipe
+<b class="fc"><i>88</i>&nbsp;                        throw new ShellException(ERR_SYNTAX);</b>
+<i>89</i>&nbsp;                    } else {
+<i>90</i>&nbsp;                        // add CallCommand as part of a PipeCommand
+<b class="fc"><i>91</i>&nbsp;                        callCmdsForPipe.add(new CallCommand(tokens, appRunner, argumentResolver));</b>
+<b class="fc"><i>92</i>&nbsp;                        tokens = new LinkedList&lt;&gt;();</b>
+<i>93</i>&nbsp;                    }
+<b class="fc"><i>94</i>&nbsp;                    break;</b>
+<i>95</i>&nbsp;        
+<i>96</i>&nbsp;                case CHAR_SEMICOLON:
+<b class="fc"><i>97</i>&nbsp;                    if (tokens.isEmpty()) {</b>
+<i>98</i>&nbsp;                        // cannot start a new command with semicolon
+<b class="fc"><i>99</i>&nbsp;                        throw new ShellException(ERR_SYNTAX);</b>
+<b class="fc"><i>100</i>&nbsp;                    } else if (callCmdsForPipe.isEmpty()) {</b>
+<i>101</i>&nbsp;                        // add CallCommand as part of a SequenceCommand
+<b class="fc"><i>102</i>&nbsp;                        cmdsForSequence.add(new CallCommand(tokens, appRunner, argumentResolver));</b>
+<b class="fc"><i>103</i>&nbsp;                        tokens = new LinkedList&lt;&gt;();</b>
+<i>104</i>&nbsp;                    } else {
+<i>105</i>&nbsp;                        // add CallCommand as part of ongoing PipeCommand
+<b class="fc"><i>106</i>&nbsp;                        callCmdsForPipe.add(new CallCommand(tokens, appRunner, argumentResolver));</b>
+<b class="fc"><i>107</i>&nbsp;                        tokens = new LinkedList&lt;&gt;();</b>
+<i>108</i>&nbsp;    
+<i>109</i>&nbsp;                        // add PipeCommand as part of a SequenceCommand
+<b class="fc"><i>110</i>&nbsp;                        cmdsForSequence.add(new PipeCommand(callCmdsForPipe));</b>
+<b class="fc"><i>111</i>&nbsp;                        callCmdsForPipe = new LinkedList&lt;&gt;();</b>
+<i>112</i>&nbsp;                    }
+<i>113</i>&nbsp;            
+<b class="fc"><i>114</i>&nbsp;                    break;</b>
+<i>115</i>&nbsp;        
+<i>116</i>&nbsp;                default:
+<i>117</i>&nbsp;                    // encountered a mismatched quote
+<b class="fc"><i>118</i>&nbsp;                    throw new ShellException(ERR_SYNTAX);</b>
+<i>119</i>&nbsp;            }
+<b class="fc"><i>120</i>&nbsp;        }</b>
+<i>121</i>&nbsp;        
+<b class="fc"><i>122</i>&nbsp;        Command finalCommand = new CallCommand(tokens, appRunner, argumentResolver);</b>
+<b class="fc"><i>123</i>&nbsp;        if (!callCmdsForPipe.isEmpty()) {</b>
+<i>124</i>&nbsp;            // add CallCommand as part of ongoing PipeCommand
+<b class="fc"><i>125</i>&nbsp;            callCmdsForPipe.add((CallCommand) finalCommand);</b>
+<b class="fc"><i>126</i>&nbsp;            finalCommand = new PipeCommand(callCmdsForPipe);</b>
+<i>127</i>&nbsp;        }
+<b class="fc"><i>128</i>&nbsp;        if (!cmdsForSequence.isEmpty()) {</b>
+<i>129</i>&nbsp;            // add CallCommand / PipeCommand as part of ongoing SequenceCommand
+<b class="fc"><i>130</i>&nbsp;            cmdsForSequence.add(finalCommand);</b>
+<b class="fc"><i>131</i>&nbsp;            finalCommand = new SequenceCommand(cmdsForSequence);</b>
+<i>132</i>&nbsp;        }
+<i>133</i>&nbsp;        
+<b class="fc"><i>134</i>&nbsp;        return finalCommand;</b>
+<i>135</i>&nbsp;    }
+<i>136</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-23 08:02</div>
+</div>
+</body>
+</html>

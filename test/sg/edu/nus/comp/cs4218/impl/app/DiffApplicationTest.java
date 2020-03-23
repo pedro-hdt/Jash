@@ -15,12 +15,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_STREAMS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TOO_MANY_ARGS;
 
 /**
  * Tests for diff command.
@@ -81,11 +87,52 @@ public class DiffApplicationTest { // NOPMD
     static void reset() {
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
-    
+
+
+    @Test
+    public void testFailsWithNullStream() {
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.run(new String[]{}, null, null));
+        assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
+    }
+
+
+    @Test
+    public void testFailsTooManyFiles() {
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.run(new String[]{"one", "two", "three"}, System.in, System.out));
+        assertTrue(expectedException.getMessage().contains(ERR_TOO_MANY_ARGS));
+    }
+
+    @Test
+    public void testFailsInvalidFlag() {
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.run(new String[]{"one", "two", "-inv"}, System.in, System.out));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_FLAG));
+    }
+
     @Test
     public void testFailsWithInvalidFile() {
         Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidFile.txt", "invalidFile.txt", false, false, false));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
+    }
+
+    @Test
+    public void testFailsWithInvalidFile2() {
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.run(new String[]{"invalidFile.txt", "invalidFile.txt"}, System.in, System.out));
+        assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
+    }
+
+    @Test
+    public void testInvalidUnreadableFile() throws IOException {
+
+        Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(), "unreadablefile.txt"));
+        File file = path.toFile();
+        file.setReadable(false);
+
+        Exception exception = assertThrows(DiffException.class, ()
+                -> diffApp.run(new String[]{"unreadablefile.txt", "random.txt"}, System.in, System.out));
+        assertEquals(exception.getMessage(), "diff: diff: diff: Permission denied");
+
+        file.setReadable(true);
+        file.delete();
     }
     
     @Test

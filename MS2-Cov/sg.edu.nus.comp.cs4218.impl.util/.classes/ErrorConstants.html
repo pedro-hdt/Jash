@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ErrorConstants</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">sg.edu.nus.comp.cs4218.impl.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ErrorConstants (sg.edu.nus.comp.cs4218.impl.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ErrorConstants</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package sg.edu.nus.comp.cs4218.impl.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;@SuppressWarnings({&quot;PMD.ExcessiveMethodLength&quot;, &quot;PMD.ClassNamingConventions&quot;, &quot;PMD.LongVariable&quot;})
+<b class="fc"><i>4</i>&nbsp;public class ErrorConstants {</b>
+<i>5</i>&nbsp;    
+<i>6</i>&nbsp;    // Streams related
+<i>7</i>&nbsp;    public static final String ERR_WRITE_STREAM = &quot;Could not write to output stream&quot;;
+<i>8</i>&nbsp;    public static final String ERR_NULL_STREAMS = &quot;Null Pointer Exception&quot;;
+<i>9</i>&nbsp;    public static final String ERR_CLOSING_STREAMS = &quot;Unable to close streams&quot;;
+<i>10</i>&nbsp;    public static final String ERR_MULTIPLE_STREAMS = &quot;Multiple streams provided&quot;;
+<i>11</i>&nbsp;    public static final String ERR_NO_OSTREAM = &quot;OutputStream not provided&quot;;
+<i>12</i>&nbsp;    public static final String ERR_NO_ISTREAM = &quot;InputStream not provided&quot;;
+<i>13</i>&nbsp;    public static final String ERR_NO_INPUT = &quot;No InputStream and no filenames&quot;;
+<i>14</i>&nbsp;    public static final String ERR_NO_FILE_ARGS = &quot;No files provided&quot;;
+<i>15</i>&nbsp;    
+<i>16</i>&nbsp;    // Arguments related
+<i>17</i>&nbsp;    public static final String ERR_MISSING_ARG = &quot;Missing Argument&quot;;
+<i>18</i>&nbsp;    public static final String ERR_NO_ARGS = &quot;Insufficient arguments&quot;;
+<i>19</i>&nbsp;    public static final String ERR_NULL_ARGS = &quot;Null arguments&quot;;
+<i>20</i>&nbsp;    public static final String ERR_TOO_MANY_ARGS = &quot;Too many arguments&quot;;
+<i>21</i>&nbsp;    public static final String ERR_INVALID_FLAG = &quot;Invalid flag option supplied&quot;;
+<i>22</i>&nbsp;    
+<i>23</i>&nbsp;    // Files and folders related
+<i>24</i>&nbsp;    public static final String ERR_FOLDER_NOT_FOUND = &quot;No such folder or directory&quot;;
+<i>25</i>&nbsp;    public static final String ERR_FILE_NOT_FOUND = &quot;No such file or directory&quot;;
+<i>26</i>&nbsp;    public static final String ERR_IS_DIR = &quot;This is a directory&quot;;
+<i>27</i>&nbsp;    public static final String ERR_IS_NOT_DIR = &quot;Not a directory&quot;;
+<i>28</i>&nbsp;    public static final String ERR_NO_PERM = &quot;Permission denied&quot;;
+<i>29</i>&nbsp;    
+<i>30</i>&nbsp;    // `sed` related
+<i>31</i>&nbsp;    public static final String ERR_NO_REP_RULE = &quot;No replacement rule supplied&quot;;
+<i>32</i>&nbsp;    public static final String ERR_INVALID_REP_RULE = &quot;Invalid replacement rule&quot;;
+<i>33</i>&nbsp;    public static final String ERR_INVALID_REP_X = &quot;X needs to be a number greater than 0&quot;;
+<i>34</i>&nbsp;    public static final String ERR_INVALID_REGEX = &quot;Invalid regular expression supplied&quot;;
+<i>35</i>&nbsp;    public static final String ERR_EMPTY_REGEX = &quot;Regular expression cannot be empty&quot;;
+<i>36</i>&nbsp;    
+<i>37</i>&nbsp;    // `mv` related
+<i>38</i>&nbsp;    public static final String ERR_CANNOT_OVERWRITE = &quot;Cannot overwrite&quot;;
+<i>39</i>&nbsp;    
+<i>40</i>&nbsp;    // `cut` related
+<i>41</i>&nbsp;    public static final String ERR_INVALID_RANGE = &quot;Invalid range&quot;;
+<i>42</i>&nbsp;    public static final String ERR_OUT_OF_RANGE = &quot;Out of range&quot;;
+<i>43</i>&nbsp;    
+<i>44</i>&nbsp;    // General constants
+<i>45</i>&nbsp;    public static final String ERR_INVALID_APP = &quot;Invalid app&quot;;
+<i>46</i>&nbsp;    public static final String ERR_SYNTAX = &quot;Invalid syntax&quot;;
+<i>47</i>&nbsp;    public static final String ERR_GENERAL = &quot;Exception Caught&quot;;
+<i>48</i>&nbsp;    public static final String ERR_IO_EXCEPTION = &quot;IOException&quot;;
+<i>49</i>&nbsp;    
+<i>50</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-23 08:02</div>
+</div>
+</body>
+</html>

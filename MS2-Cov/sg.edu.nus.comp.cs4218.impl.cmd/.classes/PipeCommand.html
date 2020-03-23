@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PipeCommand</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">sg.edu.nus.comp.cs4218.impl.cmd</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PipeCommand (sg.edu.nus.comp.cs4218.impl.cmd)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PipeCommand</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (29/ 29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package sg.edu.nus.comp.cs4218.impl.cmd;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import sg.edu.nus.comp.cs4218.Command;
+<i>4</i>&nbsp;import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+<i>5</i>&nbsp;import sg.edu.nus.comp.cs4218.exception.ShellException;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.io.ByteArrayInputStream;
+<i>8</i>&nbsp;import java.io.ByteArrayOutputStream;
+<i>9</i>&nbsp;import java.io.InputStream;
+<i>10</i>&nbsp;import java.io.OutputStream;
+<i>11</i>&nbsp;import java.util.List;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * A Pipe Command is a sub-command consisting of two Call Commands separated with a pipe,
+<i>15</i>&nbsp; * or a Pipe Command and a Call Command separated with a pipe.
+<i>16</i>&nbsp; * &lt;p&gt;
+<i>17</i>&nbsp; * Command format: &lt;Call&gt; | &lt;Call&gt; or &lt;Pipe&gt; | &lt;Call&gt;
+<i>18</i>&nbsp; */
+<i>19</i>&nbsp;public class PipeCommand implements Command {
+<i>20</i>&nbsp;    private final List&lt;CallCommand&gt; callCommands;
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    public PipeCommand(List&lt;CallCommand&gt; callCommands) {</b>
+<b class="fc"><i>23</i>&nbsp;        this.callCommands = callCommands;</b>
+<b class="fc"><i>24</i>&nbsp;    }</b>
+<i>25</i>&nbsp;    
+<i>26</i>&nbsp;    @Override
+<i>27</i>&nbsp;    public void evaluate(InputStream stdin, OutputStream stdout)
+<i>28</i>&nbsp;      throws AbstractApplicationException, ShellException {
+<b class="fc"><i>29</i>&nbsp;        AbstractApplicationException absAppException = null;</b>
+<b class="fc"><i>30</i>&nbsp;        ShellException shellException = null;</b>
+<i>31</i>&nbsp;        
+<b class="fc"><i>32</i>&nbsp;        InputStream nextInputStream = stdin; //NOPMD</b>
+<i>33</i>&nbsp;        OutputStream nextOutputStream; //NOPMD
+<i>34</i>&nbsp;        
+<b class="fc"><i>35</i>&nbsp;        for (int i = 0; i &lt; callCommands.size(); i++) {</b>
+<b class="fc"><i>36</i>&nbsp;            CallCommand callCommand = callCommands.get(i);</b>
+<i>37</i>&nbsp;            
+<b class="fc"><i>38</i>&nbsp;            if (absAppException != null || shellException != null) {</b>
+<b class="fc"><i>39</i>&nbsp;                callCommand.terminate();</b>
+<b class="fc"><i>40</i>&nbsp;                continue;</b>
+<i>41</i>&nbsp;            }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;            try {
+<b class="fc"><i>44</i>&nbsp;                nextOutputStream = new ByteArrayOutputStream();</b>
+<b class="fc"><i>45</i>&nbsp;                if (i == callCommands.size() - 1) {</b>
+<b class="fc"><i>46</i>&nbsp;                    nextOutputStream = stdout;</b>
+<i>47</i>&nbsp;                }
+<b class="fc"><i>48</i>&nbsp;                callCommand.evaluate(nextInputStream, nextOutputStream);</b>
+<b class="fc"><i>49</i>&nbsp;                if (i != callCommands.size() - 1) {</b>
+<b class="fc"><i>50</i>&nbsp;                    nextInputStream = new ByteArrayInputStream(((ByteArrayOutputStream) nextOutputStream).toByteArray());</b>
+<i>51</i>&nbsp;                }
+<b class="fc"><i>52</i>&nbsp;            } catch (AbstractApplicationException e) {</b>
+<b class="fc"><i>53</i>&nbsp;                absAppException = e;</b>
+<b class="fc"><i>54</i>&nbsp;            } catch (ShellException e) {</b>
+<b class="fc"><i>55</i>&nbsp;                shellException = e;</b>
+<b class="fc"><i>56</i>&nbsp;            }</b>
+<i>57</i>&nbsp;        }
+<i>58</i>&nbsp;
+<b class="fc"><i>59</i>&nbsp;        if (absAppException != null) {</b>
+<b class="fc"><i>60</i>&nbsp;            throw absAppException;</b>
+<i>61</i>&nbsp;        }
+<b class="fc"><i>62</i>&nbsp;        if (shellException != null) {</b>
+<b class="fc"><i>63</i>&nbsp;            throw shellException;</b>
+<i>64</i>&nbsp;        }
+<b class="fc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    @Override
+<i>68</i>&nbsp;    public void terminate() {
+<i>69</i>&nbsp;        // Unused for now
+<b class="fc"><i>70</i>&nbsp;    }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    public List&lt;CallCommand&gt; getCallCommands() {
+<b class="fc"><i>73</i>&nbsp;        return callCommands;</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-23 08:02</div>
+</div>
+</body>
+</html>

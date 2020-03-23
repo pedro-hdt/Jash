@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: IORedirectionHandler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">sg.edu.nus.comp.cs4218.impl.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: IORedirectionHandler (sg.edu.nus.comp.cs4218.impl.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">IORedirectionHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.6%
+  </span>
+  <span class="absValue">
+    (41/ 42)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package sg.edu.nus.comp.cs4218.impl.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+<i>4</i>&nbsp;import sg.edu.nus.comp.cs4218.exception.ShellException;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.io.InputStream;
+<i>7</i>&nbsp;import java.io.OutputStream;
+<i>8</i>&nbsp;import java.util.LinkedList;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.ListIterator;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
+<i>13</i>&nbsp;import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+<i>14</i>&nbsp;import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
+<i>15</i>&nbsp;import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * Utility class responsible for extracting the input and output streams appropriate for IO redirection,
+<i>20</i>&nbsp; * and separates arguments (tokens) which are not redirection related
+<i>21</i>&nbsp; */
+<i>22</i>&nbsp;@SuppressWarnings(&quot;PMD.ExcessiveMethodLength&quot;)
+<i>23</i>&nbsp;public class IORedirectionHandler {
+<i>24</i>&nbsp;    private final List&lt;String&gt; argsList;
+<i>25</i>&nbsp;    private final ArgumentResolver argumentResolver;
+<i>26</i>&nbsp;    private final InputStream origInputStream;
+<i>27</i>&nbsp;    private final OutputStream origOutputStream;
+<i>28</i>&nbsp;    private List&lt;String&gt; noRedirArgsList;
+<i>29</i>&nbsp;    private InputStream inputStream;
+<i>30</i>&nbsp;    private OutputStream outputStream;
+<i>31</i>&nbsp;    
+<i>32</i>&nbsp;    public IORedirectionHandler(List&lt;String&gt; argsList, InputStream origInputStream,
+<b class="fc"><i>33</i>&nbsp;                                OutputStream origOutputStream, ArgumentResolver argumentResolver) {</b>
+<b class="fc"><i>34</i>&nbsp;        this.argsList = argsList;</b>
+<b class="fc"><i>35</i>&nbsp;        this.inputStream = origInputStream;</b>
+<b class="fc"><i>36</i>&nbsp;        this.origInputStream = origInputStream;</b>
+<b class="fc"><i>37</i>&nbsp;        this.outputStream = origOutputStream;</b>
+<b class="fc"><i>38</i>&nbsp;        this.origOutputStream = origOutputStream;</b>
+<b class="fc"><i>39</i>&nbsp;        this.argumentResolver = argumentResolver;</b>
+<b class="fc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;    
+<i>42</i>&nbsp;    public void extractRedirOptions() throws AbstractApplicationException, ShellException {
+<b class="fc"><i>43</i>&nbsp;        if (argsList == null || argsList.isEmpty()) {</b>
+<b class="fc"><i>44</i>&nbsp;            throw new ShellException(ERR_SYNTAX);</b>
+<i>45</i>&nbsp;        }
+<i>46</i>&nbsp;        
+<b class="fc"><i>47</i>&nbsp;        noRedirArgsList = new LinkedList&lt;&gt;();</b>
+<i>48</i>&nbsp;        
+<i>49</i>&nbsp;        // extract redirection operators (with their corresponding files) from argsList
+<b class="fc"><i>50</i>&nbsp;        ListIterator&lt;String&gt; argsIterator = argsList.listIterator();</b>
+<b class="fc"><i>51</i>&nbsp;        while (argsIterator.hasNext()) {</b>
+<b class="fc"><i>52</i>&nbsp;            String arg = argsIterator.next();</b>
+<i>53</i>&nbsp;    
+<i>54</i>&nbsp;            // leave the other args untouched
+<b class="fc"><i>55</i>&nbsp;            if (!isRedirOperator(arg)) {</b>
+<b class="fc"><i>56</i>&nbsp;                noRedirArgsList.add(arg);</b>
+<b class="fc"><i>57</i>&nbsp;                continue;</b>
+<i>58</i>&nbsp;            }
+<i>59</i>&nbsp;    
+<i>60</i>&nbsp;            // if current arg is &lt; or &gt;, check if there is another argument
+<i>61</i>&nbsp;            // if so fast-forward to the next arg to extract the specified file
+<b class="fc"><i>62</i>&nbsp;            if (!argsIterator.hasNext()) {</b>
+<b class="fc"><i>63</i>&nbsp;                throw new ShellException(ERR_SYNTAX); // otherwise ther was a syntac error</b>
+<i>64</i>&nbsp;            }
+<b class="fc"><i>65</i>&nbsp;            String file = argsIterator.next();</b>
+<b class="fc"><i>66</i>&nbsp;            if (isRedirOperator(file)) {</b>
+<b class="fc"><i>67</i>&nbsp;                throw new ShellException(ERR_SYNTAX);</b>
+<i>68</i>&nbsp;            }
+<i>69</i>&nbsp;    
+<i>70</i>&nbsp;            // handle quoting + globing + command substitution in file arg
+<b class="fc"><i>71</i>&nbsp;            List&lt;String&gt; fileSegment = argumentResolver.resolveOneArgument(file);</b>
+<b class="fc"><i>72</i>&nbsp;            if (fileSegment.size() &gt; 1) {</b>
+<i>73</i>&nbsp;                // ambiguous redirect if file resolves to more than one parsed arg
+<b class="fc"><i>74</i>&nbsp;                throw new ShellException(ERR_SYNTAX);</b>
+<i>75</i>&nbsp;            }
+<b class="fc"><i>76</i>&nbsp;            file = fileSegment.get(0);</b>
+<i>77</i>&nbsp;    
+<i>78</i>&nbsp;            // replace existing inputStream / outputStream
+<b class="fc"><i>79</i>&nbsp;            if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {</b>
+<b class="fc"><i>80</i>&nbsp;                IOUtils.closeInputStream(inputStream);</b>
+<b class="fc"><i>81</i>&nbsp;                if (!inputStream.equals(origInputStream)) { // Already have a stream</b>
+<b class="nc"><i>82</i>&nbsp;                    throw new ShellException(ERR_MULTIPLE_STREAMS);</b>
+<i>83</i>&nbsp;                }
+<b class="fc"><i>84</i>&nbsp;                inputStream = IOUtils.openInputStream(file);</b>
+<b class="fc"><i>85</i>&nbsp;            } else if (arg.equals(String.valueOf(CHAR_REDIR_OUTPUT))) {</b>
+<b class="fc"><i>86</i>&nbsp;                IOUtils.closeOutputStream(outputStream);</b>
+<b class="fc"><i>87</i>&nbsp;                if (!outputStream.equals(origOutputStream)) { // Already have a stream</b>
+<b class="fc"><i>88</i>&nbsp;                    throw new ShellException(ERR_MULTIPLE_STREAMS);</b>
+<i>89</i>&nbsp;                }
+<b class="fc"><i>90</i>&nbsp;                outputStream = IOUtils.openOutputStream(file);</b>
+<i>91</i>&nbsp;            }
+<b class="fc"><i>92</i>&nbsp;        }</b>
+<b class="fc"><i>93</i>&nbsp;    }</b>
+<i>94</i>&nbsp;    
+<i>95</i>&nbsp;    public List&lt;String&gt; getNoRedirArgsList() {
+<b class="fc"><i>96</i>&nbsp;        return noRedirArgsList;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;    
+<i>99</i>&nbsp;    public InputStream getInputStream() {
+<b class="fc"><i>100</i>&nbsp;        return inputStream;</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;    
+<i>103</i>&nbsp;    public OutputStream getOutputStream() {
+<b class="fc"><i>104</i>&nbsp;        return outputStream;</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;    
+<i>107</i>&nbsp;    private boolean isRedirOperator(String str) {
+<b class="fc"><i>108</i>&nbsp;        return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-23 08:02</div>
+</div>
+</body>
+</html>
