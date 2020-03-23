@@ -130,7 +130,8 @@ public class PipeIntegrationTest {
     @Test
     public void testSimplePipe4() throws ShellException, AbstractApplicationException {
         
-        String message = "5\n3\n23\n1\n8\n4";
+        String message = "5" + StringUtils.STRING_NEWLINE + "3" + StringUtils.STRING_NEWLINE + "23"
+                + StringUtils.STRING_NEWLINE + "1" + StringUtils.STRING_NEWLINE + "8" + StringUtils.STRING_NEWLINE + "4";
         
         CallCommand echo = new CallCommand(Arrays.asList(ECHO_CMD, message), appRunner, argumentResolver);
         CallCommand sort = new CallCommand(Arrays.asList("sort", "-n"), appRunner, argumentResolver);
@@ -138,8 +139,10 @@ public class PipeIntegrationTest {
         PipeCommand pipeCommand = new PipeCommand(Arrays.asList(echo, sort));
         
         pipeCommand.evaluate(System.in, out);
-        
-        assertEquals("1\n3\n4\n5\n8\n23" + STRING_NEWLINE, out.toString());
+        String expected = "1" + StringUtils.STRING_NEWLINE + "3" + StringUtils.STRING_NEWLINE + "4"
+                + StringUtils.STRING_NEWLINE + "5" + StringUtils.STRING_NEWLINE + "8" + StringUtils.STRING_NEWLINE + "23";
+
+        assertEquals(expected + STRING_NEWLINE, out.toString());
         
     }
     

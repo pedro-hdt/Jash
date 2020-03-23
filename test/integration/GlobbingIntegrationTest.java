@@ -180,8 +180,8 @@ public class GlobbingIntegrationTest {
     public void testWcGlob() {
         try {
             shell.parseAndEvaluate("wc *.txt", stdout);
-            assertEquals("       3       4      19 wc1.txt\n" +
-              "       2       3      14 wc100.txt\n" +
+            assertEquals("       3       4      19 wc1.txt" + StringUtils.STRING_NEWLINE +
+              "       2       3      14 wc100.txt" + StringUtils.STRING_NEWLINE +
               "       5       7      33 total" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail();

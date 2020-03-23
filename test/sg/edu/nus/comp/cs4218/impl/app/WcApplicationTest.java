@@ -85,6 +85,18 @@ public class WcApplicationTest {
         Exception expectedException = assertThrows(WcException.class, () -> wcApp.run(null, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_GENERAL));
     }
+
+    @Test
+    public void testFailsWithNullFile() {
+        Exception expectedException = assertThrows(Exception.class, () -> wcApp.countFromFiles(false, true, false, null));
+        assertTrue(expectedException.getMessage().contains(ERR_GENERAL));
+    }
+
+    @Test
+    public void testFailsWithNullStream() {
+        Exception expectedException = assertThrows(Exception.class, () -> wcApp.getCountReport(null));
+        assertTrue(expectedException.getMessage().contains(ERR_NULL_STREAMS));
+    }
     
     /**
      * Test wc app whether output exception is thrown when there is an IOException

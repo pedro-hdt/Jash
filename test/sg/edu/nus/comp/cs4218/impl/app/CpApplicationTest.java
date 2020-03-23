@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -15,10 +16,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -60,7 +63,9 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
  * - Copy multiple files into another directory
  */
 class CpApplicationTest {
-    
+
+    private static final String FILE_B_TXT = "fileb.txt";
+    private static final String DIR_A = "dirA";
     private static CpApplication cpApp;
     private static final String DEST_DIR = "destDir";
     private static final String SRC1 = "src1";
@@ -352,6 +357,29 @@ class CpApplicationTest {
         assertTrue(hashesMatch(src1, copy1));
         assertTrue(hashesMatch(src2, copy2));
     
+    }
+
+    @Test
+    void testMoveSameFolderWithAnotherValidFile() throws IOException {
+
+        Files.createFile(IOUtils.resolveFilePath(FILE_B_TXT));
+        Files.createDirectory(IOUtils.resolveFilePath(DIR_A));
+
+        String dirA = DIR_A;
+        try {
+            String[] args = {dirA, FILE_B_TXT, dirA};
+            cpApp.run(args, System.in, System.out);
+            fail();
+        } catch (CpException e) {
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, DIR_A, FILE_B_TXT)));
+            assertEquals("cp: " + StringUtils.STRING_NEWLINE +
+                    "dirA skipped: 'dirA' and 'dirA' are the same file", e.getMessage());
+        } finally {
+            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), DIR_A, FILE_B_TXT));
+            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory()
+                    + StringUtils.fileSeparator() + DIR_A));
+            Files.deleteIfExists(Paths.get(Environment.getCurrentDirectory(), FILE_B_TXT));
+        }
     }
     
 }

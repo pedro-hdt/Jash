@@ -237,7 +237,7 @@ public class CommandSubsIntegrationTest {
     public void testPasteWithLs() {
         try {
             shell.parseAndEvaluate("paste `ls x*.txt`", stdout);
-            assertEquals("hi\tboy\n" +
+            assertEquals("hi\tboy" + StringUtils.STRING_NEWLINE +
               "hello\tgirl" + StringUtils.STRING_NEWLINE, stdout.toString());
         } catch (Exception e) {
             fail();
