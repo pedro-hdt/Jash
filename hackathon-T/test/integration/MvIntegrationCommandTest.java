@@ -73,7 +73,7 @@ public class MvIntegrationCommandTest {
             shell.parseAndEvaluate("exit | mv 'name.mv' mvDir", stdout);
             assertEquals("", stdout.toString());
             fail();
-    
+
         } catch (Exception e) {
             assertTrue(e instanceof ExitException); //NOPMD
             assertMsgContains(e, "terminating execution");
