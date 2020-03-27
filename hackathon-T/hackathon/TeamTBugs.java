@@ -399,6 +399,43 @@ public class TeamTBugs {
         assertTrue(exception.getMessage().contains("'.' or '..'")); // verify the correct exceptions is thrown
         
     }
-    
-    
+
+    /**
+     * SubCommands with nested substitution with same commands
+     * Multiple command Subs produces extra empty line at the end
+     */
+    @Test
+    @DisplayName("Bug #26")
+    public void testSameCommandSubsNested() throws AbstractApplicationException, ShellException {
+        shell.parseAndEvaluate("echo `echo `echo hello ``", output);
+
+        assertEquals("echo hello", output.toString());
+    }
+
+
+    /**
+     * StringUtils.isBlank() For loop condition is always true defaulting to infinite loop if not an empty string
+     * Bug found using test generated from automated testing tool EvoSuite
+     */
+    @Test
+    @DisplayName("Bug #27")
+    public void nonEmptyIn() {
+        boolean boolean0 = assertTimeoutPreemptively(Duration.ofSeconds(3), () -> StringUtils.isBlank("\n"));
+        assertTrue(boolean0);
+    }
+
+    /**
+     * Throws error that file doesn't exist when it should be creating the directory needed for files position
+     * Create a file in non existent directory 2 level down and write into it
+     */
+    @Test
+    @DisplayName("Bug #28")
+    public void testCreateDirectoryThroughOutputstreamForFile() {
+        try {
+            shell.parseAndEvaluate("echo yo > dir1/dir2/out.txt", output);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
 }
