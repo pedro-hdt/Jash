@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CpException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.exception.RmException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
@@ -21,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
@@ -58,6 +62,21 @@ public class TeamTBugs {
     }
 
     /**
+     * Spaces around the code which should be ignored and command evaluated
+     * lots of spaces to ignore after tokenizing but handle quotes
+     */
+    @Test()
+    @DisplayName("Bug #1")
+    public void testTokeniseWithQuote() {
+        try {
+            assertTimeoutPreemptively(Duration.ofSeconds(3), () -> shell.parseAndEvaluate("      echo     ''   hi   ' '     ", output));
+            assertEquals(" hi  " + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
      * Double backquote nesting results in wrong execution of commands in CommandSubs
      * For multiple command subs in same command, the combination should be as expected
      */
@@ -67,12 +86,102 @@ public class TeamTBugs {
         try {
         
             shell.parseAndEvaluate("echo abc `echo 1 2 3`xyz`echo 4 5 6`", output);
-            assertEquals("abc 1 2 3xyz4 5 6" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("abc 1 2 3xyz4 5 testTokeniseWithQuote6" + StringUtils.STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
-    
+
+    /**
+     * If `ls *.txt` returns two files, the paste result should contain both files but here it’s only one first files
+     * Fault: Command Subs doesn’t return the result as list of tokenized arguments for the outer command
+     */
+    @Test
+    @DisplayName("Bug #3")
+    public void testPasteWithLs() {
+        try {
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                    + StringUtils.fileSeparator() + "CommandSubsFolder";
+
+            shell.parseAndEvaluate("paste `ls x*.txt`", output);
+            assertEquals("hi\tboy" + StringUtils.STRING_NEWLINE +
+                    "hello\tgirl" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Double quotes disable interpretation of special symbols except backquote
+     * Should print a space before the period.
+     * Fault: CommandSubs within Double quotes trims spaces
+     */
+    @Test
+    @DisplayName("Bug #4")
+    public void testInterpretationOfSpace() throws AbstractApplicationException, ShellException {
+        shell.parseAndEvaluate("echo \"This is space:`echo \" \"`.\"", output);
+
+        assertEquals("This is space: .", output.toString());
+    }
+
+    /**
+     * Globbing which returns multiple files
+     * Ls should not return empty line between files
+     *
+     * Unnecessary extra lines between ls output of files
+     */
+    @Test
+    @DisplayName("Bug #5")
+    public void testGlobbingWithMultipleMatches() throws AbstractApplicationException, ShellException {
+
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "GlobbingTest";
+
+        shell.parseAndEvaluate("ls *.txt", output);
+
+        assertEquals("f1.txt" + StringUtils.STRING_NEWLINE + "match1.txt" + StringUtils.STRING_NEWLINE
+                + "mvFile.txt" + StringUtils.STRING_NEWLINE + "test.txt" + StringUtils.STRING_NEWLINE, output.toString());
+    }
+
+    /**
+     * Irrelevant trimming of actual output when command subs used
+     * Trims wc content when integrated with command subs
+     *
+     * CommandSubs has irrelevant trimming
+     */
+    @Test
+    @DisplayName("Bug #6")
+    public void testEchoWithWc() {
+        try {
+
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                    + StringUtils.fileSeparator() + "CommandSubsFolder";
+
+            shell.parseAndEvaluate("echo \"`wc -c hella.txt` - `wc -c hellz.txt`\"", output);
+            assertEquals("       5 hella.txt -        6 hellz.txt" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
+    /**
+     * ExitCommand untestable due to wrong implementation
+     * Ends test suite process
+     */
+    @Test
+    @DisplayName("Bug #7")
+    public void testExitUntestable() {
+        try {
+
+            shell.parseAndEvaluate("exit", output);
+            assertEquals("       5 hella.txt -        6 hellz.txt" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
     
     /**
      * cp copies a file to the same directory it is in, overwriting itself unnecessarily
