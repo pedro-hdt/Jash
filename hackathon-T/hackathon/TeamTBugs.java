@@ -6,8 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
+import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -20,6 +22,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 
 public class TeamTBugs {
 
@@ -53,7 +56,7 @@ public class TeamTBugs {
      * For multiple command subs in same command, the combination should be as expected
      */
     @Test
-    @DisplayName("Bug Number #2")
+    @DisplayName("Bug #2")
     public void testNestedQuotesMultiple() {
         try {
         
@@ -70,7 +73,7 @@ public class TeamTBugs {
      * Should throw an exception reporting src and dest are the same file like GNU cp
      */
     @Test
-    @DisplayName("Bug Number #12.1")
+    @DisplayName("Bug #12.1")
     public void testFailsSingleFileToSameDir() {
     
         // set curred dir to the folder with test assets
@@ -93,7 +96,7 @@ public class TeamTBugs {
      * Should throw an exception reporting src and dest are the same file like GNU cp
      */
     @Test
-    @DisplayName("Bug Number #12.2")
+    @DisplayName("Bug #12.2")
     public void testFailsSingleFileToItself() {
         
         // set curred dir to the folder with test assets
@@ -117,7 +120,7 @@ public class TeamTBugs {
      * This test assumes the error is reported through an exception and not to stdout
      */
     @Test
-    @DisplayName("Bug Number #13")
+    @DisplayName("Bug #13")
     public void testCpMultipleFilesOneFails() throws IOException {
         
         // set curred dir to the folder with test assets
@@ -147,14 +150,30 @@ public class TeamTBugs {
         
         // ensure the nonexistent file was not created
         assertFalse(Files.exists(nonexistent));
-        
+    
         // ensure existing files were correctly copied
         assertTrue(Files.exists(destDir.resolve(src1)));
         assertTrue(Files.exists(destDir.resolve(src2)));
-        
+    
         // clean up
         Files.deleteIfExists(destDir.resolve(src1));
         Files.deleteIfExists(destDir.resolve(src2));
+    
+    }
+    
+    /**
+     * paste with a null output stream reports 'No InputStream and no filenames'
+     */
+    @Test
+    @DisplayName("Bug #14")
+    public void testPasteNullOutputStream() {
+        
+        PasteApplication pasteApp = new PasteApplication();
+        
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
+        
+        assertMsgContains(exception, ERR_NO_OSTREAM);
         
     }
 }
