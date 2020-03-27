@@ -75,7 +75,7 @@ public class TeamTBugs {
      */
     @Test
     @DisplayName("Bug #12.1")
-    public void testFailsSingleFileToSameDir() {
+    public void testCpFailsSingleFileToSameDir() {
     
         // set curred dir to the folder with test assets
         Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
@@ -98,7 +98,7 @@ public class TeamTBugs {
      */
     @Test
     @DisplayName("Bug #12.2")
-    public void testFailsSingleFileToItself() {
+    public void testCpFailsSingleFileToItself() {
         
         // set curred dir to the folder with test assets
         Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
@@ -191,14 +191,31 @@ public class TeamTBugs {
           + StringUtils.fileSeparator() + "PasteTestFolder";
         
         Path dir = Files.createDirectory(IOUtils.resolveFilePath("dir")); //NOPMD
+    
+        PasteApplication pasteApp = new PasteApplication();
+    
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
+    
+        Files.delete(dir);
+        assertMsgContains(exception, ERR_IS_DIR);
+    
+    }
+    
+    /**
+     * Paste with nonexistent file reports 'No InputStream and no filenames'
+     * Instead it should report 'No such file or directory' (ERR_FILE_NOT_FOUND)
+     */
+    @Test
+    @DisplayName("Bug #16")
+    public void testPasteNonexistentFile() {
         
         PasteApplication pasteApp = new PasteApplication();
         
         PasteException exception =
-          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"fakefile"}, System.in, System.out));
         
-        Files.delete(dir);
-        assertMsgContains(exception, ERR_IS_DIR);
+        assertMsgContains(exception, ERR_FILE_NOT_FOUND);
         
     }
 }
