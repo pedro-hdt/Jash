@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CpException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
+import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -230,7 +232,7 @@ public class TeamTBugs {
      */
     @Test
     @DisplayName("Bug #17")
-    public void pasteTwoStdinArgs() throws IOException, PasteException {
+    public void testPasteTwoStdinArgs() throws IOException, PasteException {
         
         // set curred dir to the folder with test assets
         Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
@@ -247,4 +249,27 @@ public class TeamTBugs {
           output.toString());
         
     }
+    
+    /**
+     * rm with -r flag will not remove empty directories. Displays 'Permission denied'
+     * Should remove folder normally
+     */
+    @Test
+    @DisplayName("Bug #18")
+    public void testRmEmptyFolderRecursive() throws IOException, RmException {
+        
+        // create a temporary directory
+        Path testDir = Files.createTempDirectory("CS4218-rmTest");
+        
+        RmApplication rmApp = new RmApplication();
+        
+        // assemble args and call rm to delete the directory recursively
+        String[] args = {"-r", testDir.toString()};
+        rmApp.run(args, System.in, System.out);
+        
+        // make sure directory no longer exists afterwards
+        assertFalse(Files.exists(testDir));
+        
+    }
+    
 }
