@@ -18,15 +18,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 
 public class TeamTBugs {
 
     ShellImpl shell = new ShellImpl();
     OutputStream output = new ByteArrayOutputStream();
+    static String ORIGINAL_DIR;
 
     @BeforeAll
     static void setupAll() {
+        ORIGINAL_DIR = Environment.currentDirectory;
     }
 
     @AfterAll
@@ -42,6 +45,7 @@ public class TeamTBugs {
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
         output.flush();
+        Environment.currentDirectory = ORIGINAL_DIR;
     }
 
     /**
@@ -59,6 +63,26 @@ public class TeamTBugs {
             fail(e.getMessage());
         }
     }
+    
+    
+    /**
+     * 1. cp copies a file to the same directory it is in, overwriting itself unnecessarily
+     * 2. cp copies file into itself with similar behavior
+     * Should throw an exception reporting src and dest are the same file like GNU cp
+     */
+    @Test
+    @DisplayName("Bug Number #12")
+    public void testFailsSingleFileToSameDir() throws IOException {
+        String[] args = {"src1", Environment.currentDirectory};
+        CpApplication cpApp = new CpApplication();
+        CpException cpException =
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+        
+        // In UNIX cp prints "<FILE> and <FILE> are the same file" so we
+        // assume this replicates such behavior
+        assertMsgContains(cpException, "same file");
+    }
+    
     
     /**
      * cp with multiple files ignores all following files when there is an error with one of them
