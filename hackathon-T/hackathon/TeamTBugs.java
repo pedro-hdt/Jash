@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 
 public class TeamTBugs {
@@ -167,13 +168,37 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #14")
     public void testPasteNullOutputStream() {
+    
+        PasteApplication pasteApp = new PasteApplication();
+    
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
+    
+        assertMsgContains(exception, ERR_NO_OSTREAM);
+    
+    }
+    
+    /**
+     * paste with a directory as the only argument reports 'No InputStream and no filenames'
+     * Instead it should report 'This is a directory' (ERR_IS_DIR)
+     */
+    @Test
+    @DisplayName("Bug #15")
+    public void testPasteDirOnlyArg() throws IOException {
+        
+        // set curred dir to the folder with test assets
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "PasteTestFolder";
+        
+        Path dir = Files.createDirectory(IOUtils.resolveFilePath("dir")); //NOPMD
         
         PasteApplication pasteApp = new PasteApplication();
         
         PasteException exception =
-          assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
         
-        assertMsgContains(exception, ERR_NO_OSTREAM);
+        Files.delete(dir);
+        assertMsgContains(exception, ERR_IS_DIR);
         
     }
 }
