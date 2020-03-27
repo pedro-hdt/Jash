@@ -15,8 +15,6 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -26,8 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
@@ -392,15 +388,15 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #19")
     @Disabled("RUN WITH CAUTION: may delete everything in curr dir")
-    public void failsDirEndInDot() {
-        
+    public void testRmFailsDirEndInDot() {
+    
         RmApplication rmApp = new RmApplication();
-        
+    
         RmException exception = assertThrows(RmException.class, () -> {
             rmApp.run(new String[]{"-rd", "."}, System.in, System.out);
         });
         assertTrue(exception.getMessage().contains("'.' or '..'")); // verify the correct exceptions is thrown
-        
+    
     }
 
     /**

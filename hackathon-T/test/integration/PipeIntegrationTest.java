@@ -197,18 +197,18 @@ public class PipeIntegrationTest {
     }
     
     
-//    @Test
-//    public void testSimplePipe8() throws ShellException {
-//
-//        CallCommand lsCmd = new CallCommand(Arrays.asList("ls"), appRunner, argumentResolver);
-//        CallCommand exit = new CallCommand(Arrays.asList("exit"), appRunner, argumentResolver);
-//
-//        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(lsCmd, exit));
-//
-//        ExitException exitException = assertThrows(ExitException.class, () -> pipeCommand.evaluate(System.in, out));
-//        assertMsgContains(exitException, "terminating execution");
-//
-//    }
+    @Test
+    public void testSimplePipe8() throws ShellException {
+
+        CallCommand lsCmd = new CallCommand(Arrays.asList("ls"), appRunner, argumentResolver);
+        CallCommand exit = new CallCommand(Arrays.asList("exit"), appRunner, argumentResolver);
+
+        PipeCommand pipeCommand = new PipeCommand(Arrays.asList(lsCmd, exit));
+
+        ExitException exitException = assertThrows(ExitException.class, () -> pipeCommand.evaluate(System.in, out));
+        assertMsgContains(exitException, "terminating execution");
+
+    }
     
     
     @Test
