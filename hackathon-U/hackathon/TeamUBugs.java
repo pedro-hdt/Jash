@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
+import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
@@ -23,7 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class TeamUBugs {
     
@@ -214,6 +219,114 @@ public class TeamUBugs {
               + StringUtils.fileSeparator() + dirA));
             Files.deleteIfExists(Paths.get(Environment.currentDirectory, fileB));
         }
+    
+    }
+    
+    
+    /**
+     * paste with null input stream displays Null Pointer Exception without specifying the cause
+     */
+    @Test
+    @DisplayName("Bug #9.1")
+    public void testPasteNullInputStream() {
+        
+        PasteApplication pasteApp = new PasteApplication();
+        
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[0], null, output));
+        
+        assertTrue(exception.getMessage().contains(ERR_NO_ISTREAM));
+        
+    }
+    
+    /**
+     * paste with null output stream displays Null Pointer Exception without specifying the cause
+     */
+    @Test
+    @DisplayName("Bug #9.2")
+    public void testPasteNullOutputStream() {
+        
+        PasteApplication pasteApp = new PasteApplication();
+        
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
+        
+        assertTrue(exception.getMessage().contains(ERR_NO_OSTREAM));
+        
+    }
+    
+    
+    /**
+     * Incorrect error message when calling paste with a directory as argument.
+     * “No such file or directory” implies the user provided a nonexistent file.
+     */
+    @Test
+    @DisplayName("Bug #10")
+    public void testPasteDirOnlyFiles() throws IOException {
+        
+        PasteApplication pasteApp = new PasteApplication();
+        
+        Files.deleteIfExists(IOUtils.resolveFilePath("dir"));
+        Path dir = Files.createDirectory(IOUtils.resolveFilePath("dir"));
+        
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
+        
+        Files.delete(dir);
+        assertTrue(exception.getMessage().contains(ERR_IS_DIR));
+        
+    }
+    
+    
+    /**
+     * ‘paste - -’ causes input to stdin to be printed twice such that if the user inputs
+     * ‘a’ on a line and ‘b’ on the following line then terminates the command, the output generated is:
+     * a\ta\nb\tb\n
+     * instead of:
+     * a\tb\n
+     */
+    @Test
+    @DisplayName("Bug #11")
+    public void testPasteTwoStdinArgs() throws IOException, PasteException {
+        
+        // set curred dir to the folder with test assets
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "PasteTestFolder";
+        
+        input = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath("pasteFile1.txt")));
+        
+        PasteApplication pasteApp = new PasteApplication();
+        
+        pasteApp.run(new String[]{"-", "-"}, input, output);
+        
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("pasteFile1-2cols.txt")))
+            + STRING_NEWLINE,
+          output.toString());
+        
+    }
+    
+    
+    /**
+     * File not found when using ‘paste - file’ (pasting files with stdin) because filenames
+     * are not resolved against current directory
+     */
+    @Test
+    @DisplayName("Bug #12")
+    public void pasteOneFileOneStdinArgs() throws PasteException, IOException {
+        
+        // set curred dir to the folder with test assets
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "PasteTestFolder";
+        
+        input = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath("FILE2")));
+        
+        PasteApplication pasteApp = new PasteApplication();
+        
+        pasteApp.run(new String[]{"pasteFile1.txt", "-"}, input, output);
+        
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("pasteFiles1and2.txt")))
+            + STRING_NEWLINE,
+          output.toString());
         
     }
     
