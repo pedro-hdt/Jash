@@ -2,6 +2,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -257,19 +258,39 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #18")
     public void testRmEmptyFolderRecursive() throws IOException, RmException {
-        
+    
         // create a temporary directory
-        Path testDir = Files.createTempDirectory("CS4218-rmTest");
-        
+        Files.deleteIfExists(IOUtils.resolveFilePath("CS4218-rmTest"));
+        Path testDir = Files.createDirectory(IOUtils.resolveFilePath("CS4218-rmTest"));
+    
+        // make sure the right permissions are given
+        testDir.getParent().toFile().setExecutable(true, true);
+        testDir.getParent().toFile().setWritable(true, true);
+    
         RmApplication rmApp = new RmApplication();
-        
+    
         // assemble args and call rm to delete the directory recursively
         String[] args = {"-r", testDir.toString()};
         rmApp.run(args, System.in, System.out);
-        
+    
         // make sure directory no longer exists afterwards
         assertFalse(Files.exists(testDir));
+    
+    }
+    
+    @Test
+    @DisplayName("Bug #19")
+    @Disabled("RUN WITH CAUTION: may delete everything in curr dir")
+    public void failsDirEndInDot() {
+        
+        RmApplication rmApp = new RmApplication();
+        
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(new String[]{"-rd", "."}, System.in, System.out);
+        });
+        assertMsgContains(exception, "'.' or '..'"); // verify the correct exceptions is thrown
         
     }
+    
     
 }
