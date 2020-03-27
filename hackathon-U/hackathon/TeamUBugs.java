@@ -20,11 +20,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 
 public class TeamUBugs {
     
@@ -161,9 +160,60 @@ public class TeamUBugs {
         CpApplication cpApp = new CpApplication();
         CpException cpException =
           assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-        
+    
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
         assertTrue(cpException.getMessage().contains("same file"));
+    
+    }
+    
+    
+    /**
+     * cp with null output stream displays Null Pointer Exception without specifying the cause
+     */
+    @Test
+    @DisplayName("Bug #7")
+    public void testCpFailsNullOutputStream() {
+        
+        CpApplication cpApp = new CpApplication();
+        
+        CpException cpException =
+          assertThrows(CpException.class, () -> cpApp.run(new String[0], System.in, null));
+        
+        assertTrue(cpException.getMessage().contains(ERR_NO_OSTREAM));
+        
+    }
+    
+    
+    /**
+     * cp directory into itself creates infinite recursive nesting
+     * Should skip the directory and report that it is the same file
+     */
+    @Test
+    @DisplayName("Bug #8")
+    public void testCpFolderToItselfWithAnotherValidFile() throws IOException {
+        
+        String fileB = "fileB.txt";
+        String dirA = "dirA";
+        
+        CpApplication cpApp = new CpApplication();
+        
+        Files.createFile(IOUtils.resolveFilePath(fileB));
+        Files.createDirectory(IOUtils.resolveFilePath(dirA));
+        
+        try {
+            String[] args = {dirA, fileB, dirA};
+            cpApp.run(args, System.in, System.out);
+            fail();
+        } catch (CpException e) {
+            assertTrue(Files.exists(Paths.get(Environment.currentDirectory, dirA, fileB)));
+            assertEquals("cp: " + StringUtils.STRING_NEWLINE +
+              "dirA skipped: 'dirA' and 'dirA' are the same file", e.getMessage());
+        } finally {
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, dirA, fileB));
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory
+              + StringUtils.fileSeparator() + dirA));
+            Files.deleteIfExists(Paths.get(Environment.currentDirectory, fileB));
+        }
         
     }
     
