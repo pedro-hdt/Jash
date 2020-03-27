@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
@@ -136,6 +137,24 @@ public class TeamUBugs {
         assertTrue(exception.getMessage().contains("'.' or '..'")); // verify the correct exceptions is thrown
         
     }
+
+    /**
+     * Ls Returns files .txt present.
+     * Here ls *.txt should output all txt extension files, however it shows:
+     * ls: cannot access 'a.txt': No such file or directory
+     */
+    @Test
+    @DisplayName("Bug #5")
+    public void testLsWithFiles() throws AbstractApplicationException, ShellException {
+
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "GlobbingTest";
+
+        shell.parseAndEvaluate("ls *.txt", output);
+
+        assertEquals("f1.txt" + StringUtils.STRING_NEWLINE + "match1.txt" + StringUtils.STRING_NEWLINE
+                + "mvFile.txt" + StringUtils.STRING_NEWLINE + "test.txt" + StringUtils.STRING_NEWLINE, output.toString());
+    }
     
     
     /**
@@ -144,7 +163,7 @@ public class TeamUBugs {
      * Should not print an extra space before the period
      */
     @Test
-    @DisplayName("Bug Number #4")
+    @DisplayName("Bug #4")
     public void testDoubleQuotesWithBackQuote() throws AbstractApplicationException, ShellException {
         shell.parseAndEvaluate("echo \"This is random:`echo \"random\"`.\"", output);
         
@@ -195,6 +214,32 @@ public class TeamUBugs {
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
         assertTrue(cpException.getMessage().contains("same file"));
     
+    }
+
+
+    /**
+     * Tests if directory being moved overwrite non-empty directory
+     * Throws error message if not able to write to output stream when error occurs in not being able to replace a NonEmptyDirectory
+     * Exception wrongly caught and different error message given
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisplayName("Bug #6")
+    public void testCantMoveToNonEmptyDir() {
+
+        try {
+
+            // set curred dir to the folder with test assets
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "MvTestFolder";
+
+            shell.parseAndEvaluate("mv toBeMoved abc", output);
+            fail();
+        } catch (Exception e) {
+            assertEquals("mv: cannot overwrite", e.getMessage());
+        }
+
     }
     
     
@@ -423,8 +468,21 @@ public class TeamUBugs {
               + StringUtils.STRING_NEWLINE + "./wc1.txt"
               + StringUtils.STRING_NEWLINE + "./wc100.txt" + StringUtils.STRING_NEWLINE, output.toString());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            fail();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Throws error that file doesn't exist when it should be creating the directory needed for files position
+     * Create a file in non existent directory 2 level down and write into it
+     */
+    @Test
+    @DisplayName("Bug #30")
+    public void testCreateDirectoryThroughOutputstreamForFile() {
+        try {
+            shell.parseAndEvaluate("echo yo > dir1/dir2/out.txt", output);
+        } catch (Exception e) {
+            fail(e.getMessage());
         }
     }
     
