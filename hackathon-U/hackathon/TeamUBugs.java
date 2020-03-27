@@ -2,6 +2,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -62,18 +63,7 @@ public class TeamUBugs {
         output.reset();
     }
 
-    /**
-     * Double quotes interprets back quotes
-     * CommandSubs within Double quotes adds extra spaces
-     * Should not print an extra space before the period
-     */
-    @Test
-    @DisplayName("Bug Number #4")
-    public void testDoubleQuotesWithBackQuote() throws AbstractApplicationException, ShellException {
-        shell.parseAndEvaluate("echo \"This is random:`echo \"random\"`.\"", output);
     
-        assertEquals(output.toString(), "This is random:random.");
-    }
     
     /**
      * rm with -r flag will not remove non-empty directories. Prints “This is a directory”
@@ -128,6 +118,37 @@ public class TeamUBugs {
         // make sure directory no longer exists afterwards
         assertFalse(Files.exists(testDir));
     
+    }
+    
+    /**
+     * ‘rm -rd .’ removes all files in the current directory, which should not be possible
+     */
+    @Test
+    @DisplayName("Bug #2")
+    @Disabled("RUN WITH CAUTION: may delete everything in curr dir")
+    public void testRmFailsDirEndInDot() {
+        
+        RmApplication rmApp = new RmApplication();
+        
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(new String[]{"-rd", "."}, System.in, System.out);
+        });
+        assertTrue(exception.getMessage().contains("'.' or '..'")); // verify the correct exceptions is thrown
+        
+    }
+    
+    
+    /**
+     * Double quotes interprets back quotes
+     * CommandSubs within Double quotes adds extra spaces
+     * Should not print an extra space before the period
+     */
+    @Test
+    @DisplayName("Bug Number #4")
+    public void testDoubleQuotesWithBackQuote() throws AbstractApplicationException, ShellException {
+        shell.parseAndEvaluate("echo \"This is random:`echo \"random\"`.\"", output);
+        
+        assertEquals(output.toString(), "This is random:random.");
     }
     
     
@@ -317,16 +338,16 @@ public class TeamUBugs {
      */
     @Test
     @DisplayName("Bug #12")
-    public void pasteOneFileOneStdinArgs() throws PasteException, IOException {
+    public void testPasteOneFileOneStdinArgs() throws PasteException, IOException {
         
         // set curred dir to the folder with test assets
         Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
           + StringUtils.fileSeparator() + "PasteTestFolder";
         
         input = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath("FILE2")));
-    
+        
         PasteApplication pasteApp = new PasteApplication();
-    
+        
         pasteApp.run(new String[]{"pasteFile1.txt", "-"}, input, output);
     
         assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("pasteFiles1and2.txt")))
