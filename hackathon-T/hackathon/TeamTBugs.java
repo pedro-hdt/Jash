@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
@@ -92,7 +91,7 @@ public class TeamTBugs {
           assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
     
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
-        assertMsgContains(cpException, "same file");
+        assertTrue(cpException.getMessage().contains("same file"));
     
     }
     
@@ -115,7 +114,7 @@ public class TeamTBugs {
           assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
         
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
-        assertMsgContains(cpException, "same file");
+        assertTrue(cpException.getMessage().contains("same file"));
         
     }
     
@@ -179,7 +178,7 @@ public class TeamTBugs {
         PasteException exception =
           assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
     
-        assertMsgContains(exception, ERR_NO_OSTREAM);
+        assertTrue(exception.getMessage().contains(ERR_NO_OSTREAM));
     
     }
     
@@ -203,7 +202,7 @@ public class TeamTBugs {
           assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
     
         Files.delete(dir);
-        assertMsgContains(exception, ERR_IS_DIR);
+        assertTrue(exception.getMessage().contains(ERR_IS_DIR));
     
     }
     
@@ -220,7 +219,7 @@ public class TeamTBugs {
         PasteException exception =
           assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"fakefile"}, System.in, System.out));
     
-        assertMsgContains(exception, ERR_FILE_NOT_FOUND);
+        assertTrue(exception.getMessage().contains(ERR_FILE_NOT_FOUND));
     
     }
     
@@ -288,7 +287,7 @@ public class TeamTBugs {
         RmException exception = assertThrows(RmException.class, () -> {
             rmApp.run(new String[]{"-rd", "."}, System.in, System.out);
         });
-        assertMsgContains(exception, "'.' or '..'"); // verify the correct exceptions is thrown
+        assertTrue(exception.getMessage().contains("'.' or '..'")); // verify the correct exceptions is thrown
         
     }
     

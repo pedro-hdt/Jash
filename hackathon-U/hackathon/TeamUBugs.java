@@ -1,33 +1,36 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class TeamUBugs {
-
+    
     ShellImpl shell = new ShellImpl();
-    OutputStream output = new ByteArrayOutputStream();
-
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    ByteArrayInputStream input;
+    static String ORIGINAL_DIR;
+    
     @BeforeAll
     static void setupAll() {
+        ORIGINAL_DIR = Environment.currentDirectory;
     }
-
+    
     @AfterAll
     static void reset() {
     }
-
+    
     @BeforeEach
     public void setup() {
         shell = new ShellImpl();
@@ -36,7 +39,7 @@ public class TeamUBugs {
 
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
-        output.flush();
+        output.reset();
     }
 
     /**
@@ -51,4 +54,6 @@ public class TeamUBugs {
 
         assertEquals(output.toString(), "This is random:random.");
     }
+    
+    
 }
