@@ -66,21 +66,48 @@ public class TeamTBugs {
     
     
     /**
-     * 1. cp copies a file to the same directory it is in, overwriting itself unnecessarily
-     * 2. cp copies file into itself with similar behavior
+     * cp copies a file to the same directory it is in, overwriting itself unnecessarily
      * Should throw an exception reporting src and dest are the same file like GNU cp
      */
     @Test
-    @DisplayName("Bug Number #12")
-    public void testFailsSingleFileToSameDir() throws IOException {
+    @DisplayName("Bug Number #12.1")
+    public void testFailsSingleFileToSameDir() {
+    
+        // set curred dir to the folder with test assets
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "CpTestFolder";
+    
         String[] args = {"src1", Environment.currentDirectory};
         CpApplication cpApp = new CpApplication();
         CpException cpException =
           assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
-        
-        // In UNIX cp prints "<FILE> and <FILE> are the same file" so we
-        // assume this replicates such behavior
+    
+        // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
         assertMsgContains(cpException, "same file");
+    
+    }
+    
+    
+    /**
+     * cp copies file into itself with similar behavior
+     * Should throw an exception reporting src and dest are the same file like GNU cp
+     */
+    @Test
+    @DisplayName("Bug Number #12.2")
+    public void testFailsSingleFileToItself() {
+        
+        // set curred dir to the folder with test assets
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "CpTestFolder";
+        
+        String[] args = {"src1", "src1"};
+        CpApplication cpApp = new CpApplication();
+        CpException cpException =
+          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+        
+        // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
+        assertMsgContains(cpException, "same file");
+        
     }
     
     
