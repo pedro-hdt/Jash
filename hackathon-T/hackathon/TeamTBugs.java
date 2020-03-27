@@ -415,6 +415,7 @@ public class TeamTBugs {
     /**
      * StringUtils.isBlank() For loop condition is always true defaulting to infinite loop if not an empty string
      * Bug found using test generated from automated testing tool EvoSuite
+     * Part of initial injected bugs: missing loop increment
      */
     @Test
     @DisplayName("Bug #27")
