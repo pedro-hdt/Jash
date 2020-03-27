@@ -35,7 +35,7 @@ public class SedIntegrationCommandTest {
         Environment.setCurrentDirectory(ORIGINAL_DIR
           + StringUtils.fileSeparator() + "dummyTestFolder"
           + StringUtils.fileSeparator() + "IntegrationTestFolder"
-          + StringUtils.fileSeparator() + "SedIntegrationTestFolder");
+          + StringUtils.fileSeparator() + "SedIntegrationFolder");
     }
     
     @AfterAll
@@ -55,7 +55,7 @@ public class SedIntegrationCommandTest {
         Environment.setCurrentDirectory(ORIGINAL_DIR
           + StringUtils.fileSeparator() + "dummyTestFolder"
           + StringUtils.fileSeparator() + "IntegrationTestFolder"
-          + StringUtils.fileSeparator() + "SedIntegrationTestFolder");
+          + StringUtils.fileSeparator() + "SedIntegrationFolder");
         
         stdout.flush();
     }
@@ -111,10 +111,8 @@ public class SedIntegrationCommandTest {
     public void testWithWcAndIoredir() {
         
         try {
-            String stdin = "abc" + StringUtils.STRING_NEWLINE + "mmm";
-            System.setIn(new ByteArrayInputStream(stdin.getBytes()));
             
-            shell.parseAndEvaluate("sed 's/abc/zzz/' > result.txt ; wc -cl result.txt", stdout);
+            shell.parseAndEvaluate("sed 's/abc/zzz/' test.txt > result.txt ; wc -cl result.txt", stdout);
             assertEquals("       2       8 result.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
             
             Files.delete(Paths.get(Environment.currentDirectory, "result.txt"));
@@ -128,10 +126,7 @@ public class SedIntegrationCommandTest {
     public void testWithFind() {
         
         try {
-            String stdin = "abc" + StringUtils.STRING_NEWLINE + "mmm";
-            System.setIn(new ByteArrayInputStream(stdin.getBytes()));
-            
-            shell.parseAndEvaluate("sed 's/abc/zzz/' > find.txt | find ./ -name 'find.txt'", stdout);
+            shell.parseAndEvaluate("sed 's/abc/zzz/' test.txt > find.txt | find ./ -name 'find.txt'", stdout);
             assertEquals("./find.txt" + StringUtils.STRING_NEWLINE, stdout.toString());
             
             Files.delete(Paths.get(Environment.currentDirectory, "find.txt"));

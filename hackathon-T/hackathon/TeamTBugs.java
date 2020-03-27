@@ -423,10 +423,11 @@ public class TeamTBugs {
     /**
      * StringUtils.isBlank() For loop condition is always true defaulting to infinite loop if not an empty string
      * Bug found using test generated from automated testing tool EvoSuite
+     * Part of initial injected bugs: missing loop increment
      */
     @Test
     @DisplayName("Bug #27")
-    public void nonEmptyIn() {
+    public void nonEmptyInputToStringUtils() {
         boolean boolean0 = assertTimeoutPreemptively(Duration.ofSeconds(3), () -> StringUtils.isBlank("\n"));
         assertTrue(boolean0);
     }
@@ -446,9 +447,92 @@ public class TeamTBugs {
     }
 
     /**
-     * Grep doesn't throw an error when no file is provided and stdin
+     * Ls Integration with Diff gives no result and ununderstable error messsage when there shouldnt be one
+     * The tokenisation of sub command is done wrong making outer diff to produce wrong result
+     */
+    @Test
+    @DisplayName("Bug #29")
+    public void testLsWithDiffCommandSubs() {
+        try {
+
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                    + StringUtils.fileSeparator() + "LsIntegrationFolder";
+
+            shell.parseAndEvaluate("diff `ls diff*.txt`", output);
+            assertEquals("< azz" + StringUtils.STRING_NEWLINE +
+                    "< ccc" + StringUtils.STRING_NEWLINE +
+                    "> zza" + StringUtils.STRING_NEWLINE +
+                    "> ccd" + StringUtils.STRING_NEWLINE + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Wrong tokenisation of result of command subs.
+     * Only first word retained and everything else removed and not passed into echo
+     */
+    @Test
+    @DisplayName("Bug #30")
+    public void testEchoWithDiffCommandSubs() {
+        try {
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                    + StringUtils.fileSeparator() + "CommandSubsFolder";
+
+            shell.parseAndEvaluate("echo `diff hella.txt hellz.txt`", output);
+            assertEquals("< first > second" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Command subs deletes first word of commandResult and only passed the rest
+     * Second should also be displayed
      *
-     * @throws AbstractApplicationException
+     * Filters file names present in findInFile.txt and sorts those files. The first output hellz.txt is ignored from result of grep
+     */
+    @Test
+    @DisplayName("Bug #31")
+    public void testGrepWithSort() {
+        try {
+
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                    + StringUtils.fileSeparator() + "CommandSubsFolder";
+
+            shell.parseAndEvaluate("sort `grep hell findInFile.txt`", output);
+            assertEquals("first" + StringUtils.STRING_NEWLINE + "second" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    /**
+     * Extra empty lines being outputted by cut on a single line to be cut passed through echo
+     */
+    @Test
+    @DisplayName("Bug #32")
+    public void testPipeWithEchoAndCut() {
+        try {
+            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                    + StringUtils.fileSeparator() + "PipeTestFolder";
+
+            shell.parseAndEvaluate("echo 'not yet cut' | cut -c 9-11 ", output);
+            assertEquals("cut" + STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail();
+        }
+
+    }
+
+    
+    /**
+     * Grep doesn't throw an error when no file is provided and stdin
+     *  @throws AbstractApplicationException
      */
     @Test
     @DisplayName("Bug #33")
