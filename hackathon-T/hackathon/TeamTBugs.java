@@ -13,9 +13,9 @@ import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -24,18 +24,20 @@ import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class TeamTBugs {
-
+    
     ShellImpl shell = new ShellImpl();
-    OutputStream output = new ByteArrayOutputStream();
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    ByteArrayInputStream input;
     static String ORIGINAL_DIR;
-
+    
     @BeforeAll
     static void setupAll() {
         ORIGINAL_DIR = Environment.currentDirectory;
     }
-
+    
     @AfterAll
     static void reset() {
     }
@@ -48,7 +50,7 @@ public class TeamTBugs {
 
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
-        output.flush();
+        output.reset();
         Environment.currentDirectory = ORIGINAL_DIR;
     }
 
@@ -209,13 +211,40 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #16")
     public void testPasteNonexistentFile() {
+    
+        PasteApplication pasteApp = new PasteApplication();
+    
+        PasteException exception =
+          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"fakefile"}, System.in, System.out));
+    
+        assertMsgContains(exception, ERR_FILE_NOT_FOUND);
+    
+    }
+    
+    /**
+     * ‘paste - -’ causes input to stdin to be printed twice such that if the user inputs
+     * ‘a’ on a line and ‘b’ on the following line then terminates the command, the output generated is:
+     * a\ta\nb\tb\n
+     * instead of:
+     * a\tb\n
+     */
+    @Test
+    @DisplayName("Bug #17")
+    public void pasteTwoStdinArgs() throws IOException, PasteException {
+        
+        // set curred dir to the folder with test assets
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "PasteTestFolder";
+        
+        input = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath("pasteFile1.txt")));
         
         PasteApplication pasteApp = new PasteApplication();
         
-        PasteException exception =
-          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"fakefile"}, System.in, System.out));
+        pasteApp.run(new String[]{"-", "-"}, input, output);
         
-        assertMsgContains(exception, ERR_FILE_NOT_FOUND);
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("pasteFile1-2cols.txt")))
+            + STRING_NEWLINE,
+          output.toString());
         
     }
 }
