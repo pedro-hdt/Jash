@@ -14,6 +14,8 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
 import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
 import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.util.IORedirectionHandler;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -23,11 +25,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class TeamUBugs {
@@ -319,15 +324,87 @@ public class TeamUBugs {
           + StringUtils.fileSeparator() + "PasteTestFolder";
         
         input = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath("FILE2")));
-        
+    
         PasteApplication pasteApp = new PasteApplication();
-        
+    
         pasteApp.run(new String[]{"pasteFile1.txt", "-"}, input, output);
-        
+    
         assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("pasteFiles1and2.txt")))
             + STRING_NEWLINE,
           output.toString());
+    
+    }
+    
+    
+    /**
+     * NoSuchElementException exposed to user when the user attempts to redirect output without
+     * a destination file (‘cmd args >’, e.g. ‘echo hello >’).
+     * Correct behavior would be to report a syntax error
+     */
+    @Test
+    @DisplayName("Bug #13")
+    public void testOutputRedirFailsNoDest() {
         
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
+          Arrays.asList("echo", "hello", ">"),
+          System.in,
+          System.out,
+          new ArgumentResolver()
+        );
+        
+        ShellException shellException =
+          assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+        
+        assertTrue(shellException.getMessage().contains(ERR_SYNTAX));
+    }
+    
+    
+    /**
+     * Bug #14
+     * Cannot finish executing paste command with stdin input without terminating the shell
+     * 'paste -' only terminates on EOF, but EOF terminates the entire shell application.
+     */
+    
+    
+    /**
+     * Find with globs causes an unexpected error: ‘Paths must precede -name’.
+     * The problem should be that you can only search for a single name
+     */
+    @Test
+    @DisplayName("Bug #15")
+    public void testFindGlobInvalid() {
+        try {
+            shell.parseAndEvaluate("find ./ -name *", output);
+            fail();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            assertMsgContains(e, "find: Only one filename is allowed");
+        }
+    }
+    
+    
+    /**
+     * Find with quoted glob causes inexplicable exception ‘Dangling meta character '*' near index 0’
+     */
+    @Test
+    @DisplayName("Bug #16")
+    public void testFindGlob() {
+        
+        Environment.currentDirectory = ORIGINAL_DIR
+          + StringUtils.fileSeparator() + "dummyTestFolder"
+          + StringUtils.fileSeparator() + "IntegrationTestFolder"
+          + StringUtils.fileSeparator() + "GlobbingFolder";
+        
+        try {
+            shell.parseAndEvaluate("find ./ -name \"*\"", output);
+            assertEquals("./dir"
+              + StringUtils.STRING_NEWLINE + "./dir/empty.txt"
+              + StringUtils.STRING_NEWLINE + "./wc1.txt"
+              + StringUtils.STRING_NEWLINE + "./wc100.txt" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            fail();
+        }
     }
     
     
