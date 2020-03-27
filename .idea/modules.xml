@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CS4218-Shell-2020.iml" filepath="$PROJECT_DIR$/CS4218-Shell-2020.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hackathon-T/hackathon-T.iml" filepath="$PROJECT_DIR$/hackathon-T/hackathon-T.iml" />
     </modules>
   </component>
 </project>
