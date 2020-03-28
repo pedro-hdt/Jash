@@ -373,7 +373,7 @@ public class TeamTBugs {
      * Sort command implementation output differs from what is required when > 1 file is read with some flags
      */
     @Test
-    @DisplayName("Bug #9.5")
+    @DisplayName("Bug #9.6")
     public void testMoreThanOneFileSort() {
         String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
         SortApplication sortApp = new SortApplication();
@@ -402,6 +402,88 @@ public class TeamTBugs {
                     "$" + StringUtils.STRING_NEWLINE +
                     "#", output.toString());
         } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command show different output format than what is expected
+     */
+    @Test
+    @DisplayName("Bug #10.1")
+    public void testDiffFilesWithDifferentContentUsingFlagQ() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF2_FILE = "diff2.txt";
+
+        try {
+            String actual = diffApp.diffTwoFiles(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE, false, false, true);
+            assertEquals("Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " " + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE + "] differ", actual); // NOPMD
+        } catch (DiffException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command show different output format than what is expected
+     */
+    @Test
+    @DisplayName("Bug #10.2")
+    public void testDiffFileAndStdinWithSameContentUsingFlagS() throws FileNotFoundException {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE)); //NOPMD
+
+        try {
+            String actual = diffApp.diffFileAndStdin(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, inputStream, true, false, true);
+            assertEquals("Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " -] are identical", actual);
+        } catch (DiffException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command show different output format than what is expected
+     */
+    @Test
+    @DisplayName("Bug #10.3")
+    public void testDiffFilesWithSameContentUsingFlagSB() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF1_BLANK_LINES_FILE = "diff1-blank-lines.txt";
+
+        try {
+            String actual = diffApp.diffTwoFiles(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE, true, true, true);
+            assertEquals("Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " " + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE + "] are identical", actual); // NOPMD
+        } catch (DiffException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command has implementation error that differ from expectations
+     */
+    @Test
+    @DisplayName("Bug #10.4")
+    public void testDiffFileAndStdinWithDifferentContent() throws DiffException {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF2_FILE = "diff2.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE)); //NOPMD
+            String actual = diffApp.diffFileAndStdin(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, inputStream, false, false, false);
+            assertEquals("< test A" + StringUtils.STRING_NEWLINE +
+                    "< test B" + StringUtils.STRING_NEWLINE +
+                    "< test C" + StringUtils.STRING_NEWLINE +
+                    "> test D" + StringUtils.STRING_NEWLINE +
+                    "> test E" + StringUtils.STRING_NEWLINE +
+                    "> test F" + StringUtils.STRING_NEWLINE, actual);
+        } catch (IOException e) {
             fail("should not fail: " + e.getMessage());
         }
     }
@@ -745,7 +827,6 @@ public class TeamTBugs {
         }
 
     }
-
 
     /**
      * Grep doesn't throw an error when no file is provided and stdin
