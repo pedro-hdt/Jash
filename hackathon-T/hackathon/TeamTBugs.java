@@ -529,7 +529,7 @@ public class TeamTBugs {
 
     }
 
-    
+
     /**
      * Grep doesn't throw an error when no file is provided and stdin
      *  @throws AbstractApplicationException
@@ -561,6 +561,4 @@ public class TeamTBugs {
         });
         assertEquals("cd: " + cdpath + ": " + ERR_NO_PERM, exception.getMessage());
     }
-
-
 }
