@@ -53,6 +53,7 @@ public class TeamUBugs {
 
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
+        Environment.currentDirectory =  ORIGINAL_DIR;
         output.reset();
     }
 
@@ -136,7 +137,7 @@ public class TeamUBugs {
      * ls: cannot access 'a.txt': No such file or directory
      */
     @Test
-    @DisplayName("Bug #5")
+    @DisplayName("Bug #3")
     public void testLsWithFiles() throws AbstractApplicationException, ShellException {
 
         Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
