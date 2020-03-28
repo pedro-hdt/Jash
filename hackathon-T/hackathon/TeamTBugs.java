@@ -50,7 +50,7 @@ public class TeamTBugs {
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
         output.reset();
-        Environment.currentDirectory = ORIGINAL_DIR;
+        Environment.currentDirectory +=  ORIGINAL_DIR;
     }
 
     /**
@@ -793,10 +793,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #20")
     public void testWcThenCut() throws ShellException, AbstractApplicationException {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "WcIntegrationFolder");
+                + StringUtils.fileSeparator() + "WcIntegrationFolder";
 
         String expected = "       2 wctest.txt" + STRING_NEWLINE +
                 "1" + STRING_NEWLINE;
@@ -812,10 +812,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #21")
     public void testSortThenCut() throws ShellException, AbstractApplicationException {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+                + StringUtils.fileSeparator() + "SortIntegrationFolder";
 
         String expected = "G" + STRING_NEWLINE;
         String cmdline = "sort -nrf sorttest.txt | cut -b 1 -";
@@ -831,10 +831,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #22")
     public void testSortThenCutNegative() throws ShellException, AbstractApplicationException {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+                + StringUtils.fileSeparator() + "SortIntegrationFolder";
 
         String expected = "" + STRING_NEWLINE;
         String cmdline = "sort -nrf sorttest.txt | cut -b 2 -";
@@ -849,10 +849,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #23")
     public void testSortThenFindNegative() throws ShellException, AbstractApplicationException {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+                + StringUtils.fileSeparator() + "SortIntegrationFolder";
 
         String expected = "G" + STRING_NEWLINE +
                 "f" + STRING_NEWLINE +
@@ -881,10 +881,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #24.1")
     public void testEchoThenDiff() throws Exception {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String expected = "Files [- difftest.txt] differ" + STRING_NEWLINE;
         String argument = "echo difftestdifftest | diff -q - difftest.txt";
@@ -899,10 +899,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #24.2")
     public void testEchoThenDiff2() throws Exception {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String expected = "Files [- difftest.txt] are identical" + STRING_NEWLINE;
         String argument = "echo 'difftest!!!!!!!' | diff -s - difftest.txt";
@@ -917,10 +917,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #24.3")
     public void testPasteThenDiff2() throws Exception {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String cmdline = "paste difftest.txt | diff -s difftest.txt - ";
         String expected = "Files [difftest.txt -] are identical" + STRING_NEWLINE;
@@ -934,10 +934,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #25")
     public void testPasteThenDiff() throws Exception {
-        Environment.setCurrentDirectory(ORIGINAL_DIR
-                + StringUtils.fileSeparator() + "dummyTestFolder"
+        Environment.currentDirectory +=
+                StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String cmdline = "paste difftest.txt | diff difftest.txt - ";
         String expected = "";
