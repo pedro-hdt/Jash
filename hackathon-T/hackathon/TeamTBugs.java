@@ -489,6 +489,87 @@ public class TeamTBugs {
     }
 
     /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.1")
+    public void testCutOnStdinWithSingleNumberUsingFlagB() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-b", "5", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("y" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.2")
+    public void testCutOnStdinWithSingleNumberUsingFlagC() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-c", "5", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("y" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage()); // NOPMD
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.3")
+    public void testCutOnStdinWithCommaSeparatedNumbersUsingFlagB() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-b", "5,10", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.4")
+    public void testCutOnStdinWithCommaSeparatedNumbersUsingFlagC() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-c", "5,10", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+
+    /**
      * cp copies a file to the same directory it is in, overwriting itself unnecessarily
      * Should throw an exception reporting src and dest are the same file like GNU cp
      */
