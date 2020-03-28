@@ -71,7 +71,7 @@ public class CpIntegrationCommandTest {
             shell.parseAndEvaluate("exit | cp 'name.cp' cpDir", stdout);
             assertEquals("", stdout.toString());
             fail();
-    
+
         } catch (Exception e) {
             assertTrue(e instanceof ExitException); //NOPMD
             assertMsgContains(e, "terminating execution");
