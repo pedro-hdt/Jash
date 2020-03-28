@@ -1,0 +1,2 @@
+Sometimes tests need to be written for marks. You are a lucky person to take this module.
+That is why take CS4218, and learn software testing.
