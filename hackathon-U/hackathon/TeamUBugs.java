@@ -485,6 +485,35 @@ public class TeamUBugs {
             fail(e.getMessage());
         }
     }
-    
-    
+
+    /**
+     * Ls With -R in multiple nested directory gives result in wrong format
+     * Missing line breaks and empty lines
+     */
+    @Test
+    @DisplayName("Bug #31")
+    public void testLsWithRecursiveDirectory() {
+        try {
+
+            Environment.currentDirectory = ORIGINAL_DIR
+                    + StringUtils.fileSeparator() + "dummyTestFolder"
+                    + StringUtils.fileSeparator() + "LsTestFolder";
+
+            shell.parseAndEvaluate("ls -R dire", output);
+            assertEquals("dire:\n" +
+                    "abc\n" +
+                    "def\n" +
+                    "new.txt\n" +
+                    "\n" +
+                    "dire/abc:\n" +
+                    "a.txt\n" +
+                    "zz\n" +
+                    "\n" +
+                    "dire/abc/zz:\n" +
+                    "b.txt\n" + StringUtils.STRING_NEWLINE + "dire/def:\n" +
+                    "f.txt", output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
 }
