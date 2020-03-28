@@ -788,6 +788,164 @@ public class TeamTBugs {
     }
 
     /**
+     * Extra unexpected output when running wc command then cut command
+     */
+    @Test
+    @DisplayName("Bug #20")
+    public void testWcThenCut() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "WcIntegrationFolder");
+
+        String expected = "       2 wctest.txt" + STRING_NEWLINE +
+                "1" + STRING_NEWLINE;
+        String cmdline = "wc -l wctest.txt; cut -b 2 wctest.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Unexpected output when running sort command and then piping output to cut command
+     */
+    @Test
+    @DisplayName("Bug #21")
+    public void testSortThenCut() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+
+        String expected = "G" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt | cut -b 1 -";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+
+    /**
+     * Unexpected amount of carriage returns when running sort command and then piping output to cut command
+     */
+    @Test
+    @DisplayName("Bug #22")
+    public void testSortThenCutNegative() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+
+        String expected = "" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt | cut -b 2 -";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Wrong order of sort command output
+     */
+    @Test
+    @DisplayName("Bug #23")
+    public void testSortThenFindNegative() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+
+        String expected = "G" + STRING_NEWLINE +
+                "f" + STRING_NEWLINE +
+                "E" + STRING_NEWLINE +
+                "d" + STRING_NEWLINE +
+                "C" + STRING_NEWLINE +
+                "b" + STRING_NEWLINE +
+                "A" + STRING_NEWLINE +
+                "8" + STRING_NEWLINE +
+                "6" + STRING_NEWLINE +
+                "4" + STRING_NEWLINE +
+                "1" + STRING_NEWLINE +
+                "*" + STRING_NEWLINE +
+                "&" + STRING_NEWLINE +
+                "$" + STRING_NEWLINE +
+                "#" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt; find ../ -name wcteste.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Stdin should be printed as ‘-’
+     */
+    @Test
+    @DisplayName("Bug #24.1")
+    public void testEchoThenDiff() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String expected = "Files [- difftest.txt] differ" + STRING_NEWLINE;
+        String argument = "echo difftestdifftest | diff -q - difftest.txt";
+        shell.parseAndEvaluate(argument, output);
+
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Stdin should be printed as ‘-’
+     */
+    @Test
+    @DisplayName("Bug #24.2")
+    public void testEchoThenDiff2() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String expected = "Files [- difftest.txt] are identical" + STRING_NEWLINE;
+        String argument = "echo 'difftest!!!!!!!' | diff -s - difftest.txt";
+        shell.parseAndEvaluate(argument, output);
+
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Stdin should be printed as ‘-’
+     */
+    @Test
+    @DisplayName("Bug #24.3")
+    public void testPasteThenDiff2() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String cmdline = "paste difftest.txt | diff -s difftest.txt - ";
+        String expected = "Files [difftest.txt -] are identical" + STRING_NEWLINE;
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Extra carriage return in diff command
+     */
+    @Test
+    @DisplayName("Bug #25")
+    public void testPasteThenDiff() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String cmdline = "paste difftest.txt | diff difftest.txt - ";
+        String expected = "";
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
      * SubCommands with nested substitution with same commands
      * Multiple command Subs produces extra empty line at the end
      */
