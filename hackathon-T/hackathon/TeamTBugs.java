@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -1167,5 +1168,36 @@ public class TeamTBugs {
                         , System.in, output)));
         assertTrue(expectedException.getMessage().contains("No input provided even after long time"));
     }
+
+    /**
+     * Bug in argument resolver not being able to get the actual size after resolving an random command
+     * @throws Throwable
+     */
+    @Test
+    @DisplayName("Bug #38")
+    public void testUnexpectedResolvingOfArgs() throws Throwable {
+        String arg = "Dt`N;-`";
+        ArgumentResolver argResolver = new ArgumentResolver();
+        List<String> list0 = argResolver.resolveOneArgument(arg);
+        assertEquals(8, list0.size());
+        assertFalse(list0.contains(arg));
+    }
+
+    /**
+     * Irregular parsing of command when there is a sequence inside command subs.
+     * Stands true for any bug where special char like | > < inside ``
+     */
+    @Test
+    @DisplayName("Bug #39")
+    public void testSequenceInsideCommandSubs() {
+        try {
+            shell.parseAndEvaluate("echo `echo hi ; echo sup` bye", output);
+            assertEquals("hi sup bye" + STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
+
 
 }
