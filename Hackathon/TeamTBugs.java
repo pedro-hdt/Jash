@@ -5,15 +5,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
+
+import sg.edu.nus.comp.cs4218.EnvironmentUtils;
 import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.*;
-import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
-import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+import sg.edu.nus.comp.cs4218.impl.app.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.app.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.app.util.ArgumentResolver;
+import sg.edu.nus.comp.cs4218.impl.app.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.app.util.StringUtils;
+
 
 import java.io.*;
 import java.nio.file.Files;
@@ -23,11 +25,8 @@ import java.util.Arrays;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
-import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.app.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.app.util.StringUtils.STRING_NEWLINE;
 
 public class TeamTBugs {
 
@@ -42,7 +41,7 @@ public class TeamTBugs {
 
     @BeforeAll
     static void setupAll() {
-        ORIGINAL_DIR = Environment.currentDirectory;
+        ORIGINAL_DIR = EnvironmentUtils.currentDirectory;
     }
 
     @AfterAll
@@ -58,7 +57,7 @@ public class TeamTBugs {
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
         output.reset();
-        Environment.currentDirectory =  ORIGINAL_DIR;
+        EnvironmentUtils.currentDirectory =  ORIGINAL_DIR;
     }
 
     /**
@@ -71,7 +70,7 @@ public class TeamTBugs {
     public void testTokeniseWithQuote() {
         try {
             assertTimeoutPreemptively(Duration.ofSeconds(3), () -> shell.parseAndEvaluate("      echo     ''   hi   ' '     ", output));
-            assertEquals(" hi  " + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals(" hi  " + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -88,7 +87,7 @@ public class TeamTBugs {
         try {
 
             shell.parseAndEvaluate("echo abc `echo 1 2 3`xyz`echo 4 5 6`", output);
-            assertEquals("abc 1 2 3xyz4 5 testTokeniseWithQuote6" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("abc 1 2 3xyz4 5 testTokeniseWithQuote6" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -103,13 +102,13 @@ public class TeamTBugs {
     @DisplayName("Bug #3")
     public void testPasteWithLs() {
         try {
-            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+            EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                     + StringUtils.fileSeparator() + "IntegrationTestFolder"
                     + StringUtils.fileSeparator() + "CommandSubsFolder";
 
             shell.parseAndEvaluate("paste `ls x*.txt`", output);
-            assertEquals("hi\tboy" + StringUtils.STRING_NEWLINE +
-                    "hello\tgirl" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("hi\tboy" + STRING_NEWLINE +
+                    "hello\tgirl" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -140,13 +139,13 @@ public class TeamTBugs {
     @DisplayName("Bug #5")
     public void testGlobbingWithMultipleMatches() throws AbstractApplicationException, ShellException {
 
-        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+        EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                 + StringUtils.fileSeparator() + "GlobbingTest";
 
         shell.parseAndEvaluate("ls *.txt", output);
 
-        assertEquals("f1.txt" + StringUtils.STRING_NEWLINE + "match1.txt" + StringUtils.STRING_NEWLINE
-                + "mvFile.txt" + StringUtils.STRING_NEWLINE + "test.txt" + StringUtils.STRING_NEWLINE, output.toString());
+        assertEquals("f1.txt" + STRING_NEWLINE + "match1.txt" + STRING_NEWLINE
+                + "mvFile.txt" + STRING_NEWLINE + "test.txt" + STRING_NEWLINE, output.toString());
     }
 
     /**
@@ -161,12 +160,12 @@ public class TeamTBugs {
     public void testEchoWithWc() {
         try {
 
-            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+            EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                     + StringUtils.fileSeparator() + "IntegrationTestFolder"
                     + StringUtils.fileSeparator() + "CommandSubsFolder";
 
             shell.parseAndEvaluate("echo \"`wc -c hella.txt` - `wc -c hellz.txt`\"", output);
-            assertEquals("       5 hella.txt -        6 hellz.txt" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("       5 hella.txt -        6 hellz.txt" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail();
         }
@@ -201,7 +200,7 @@ public class TeamTBugs {
             InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
             WcApplication wcApp = new WcApplication();
             wcApp.run(null, inputStream, output);
-            assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, output.toString()); // filename is empty for standard input
+            assertEquals("       1       2      14" + STRING_NEWLINE, output.toString()); // filename is empty for standard input
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -219,20 +218,20 @@ public class TeamTBugs {
 
         try {
             sortApp.run(args, System.in, output);
-            assertEquals( "G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
+            assertEquals( "G" + STRING_NEWLINE +
+                    "f" + STRING_NEWLINE +
+                    "E" + STRING_NEWLINE +
+                    "d" + STRING_NEWLINE +
+                    "C" + STRING_NEWLINE +
+                    "b" + STRING_NEWLINE +
+                    "A" + STRING_NEWLINE +
+                    "8" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "*" + STRING_NEWLINE +
+                    "&" + STRING_NEWLINE +
+                    "$" + STRING_NEWLINE +
                     "#", output.toString());
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -251,20 +250,20 @@ public class TeamTBugs {
 
         try {
             sortApp.run(args, System.in, output);
-            assertEquals("#" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
+            assertEquals("#" + STRING_NEWLINE +
+                    "$" + STRING_NEWLINE +
+                    "&" + STRING_NEWLINE +
+                    "*" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "8" + STRING_NEWLINE +
+                    "A" + STRING_NEWLINE +
+                    "C" + STRING_NEWLINE +
+                    "E" + STRING_NEWLINE +
+                    "G" + STRING_NEWLINE +
+                    "b" + STRING_NEWLINE +
+                    "d" + STRING_NEWLINE +
                     "f", output.toString());
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -283,20 +282,20 @@ public class TeamTBugs {
 
         try {
             sortApp.run(args, System.in, output);
-            assertEquals("#" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
+            assertEquals("#" + STRING_NEWLINE +
+                    "$" + STRING_NEWLINE +
+                    "&" + STRING_NEWLINE +
+                    "*" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "8" + STRING_NEWLINE +
+                    "A" + STRING_NEWLINE +
+                    "b" + STRING_NEWLINE +
+                    "C" + STRING_NEWLINE +
+                    "d" + STRING_NEWLINE +
+                    "E" + STRING_NEWLINE +
+                    "f" + STRING_NEWLINE +
                     "G", output.toString());
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -315,20 +314,20 @@ public class TeamTBugs {
 
         try {
             sortApp.run(args, System.in, output);
-            assertEquals("f" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "G" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
+            assertEquals("f" + STRING_NEWLINE +
+                    "d" + STRING_NEWLINE +
+                    "b" + STRING_NEWLINE +
+                    "G" + STRING_NEWLINE +
+                    "E" + STRING_NEWLINE +
+                    "C" + STRING_NEWLINE +
+                    "A" + STRING_NEWLINE +
+                    "8" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "*" + STRING_NEWLINE +
+                    "&" + STRING_NEWLINE +
+                    "$" + STRING_NEWLINE +
                     "#", output.toString());
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -342,20 +341,20 @@ public class TeamTBugs {
     @DisplayName("Bug #9.5")
     public void testStdinSort() {
         SortApplication sortApp = new SortApplication();
-        String stdInString = "&" + StringUtils.STRING_NEWLINE +
-                "*" + StringUtils.STRING_NEWLINE +
-                "$" + StringUtils.STRING_NEWLINE +
-                "#" + StringUtils.STRING_NEWLINE +
-                "A" + StringUtils.STRING_NEWLINE +
-                "b" + StringUtils.STRING_NEWLINE +
-                "C" + StringUtils.STRING_NEWLINE +
-                "d" + StringUtils.STRING_NEWLINE +
-                "E" + StringUtils.STRING_NEWLINE +
-                "f" + StringUtils.STRING_NEWLINE +
-                "G" + StringUtils.STRING_NEWLINE +
-                "4" + StringUtils.STRING_NEWLINE +
-                "6" + StringUtils.STRING_NEWLINE +
-                "8" + StringUtils.STRING_NEWLINE +
+        String stdInString = "&" + STRING_NEWLINE +
+                "*" + STRING_NEWLINE +
+                "$" + STRING_NEWLINE +
+                "#" + STRING_NEWLINE +
+                "A" + STRING_NEWLINE +
+                "b" + STRING_NEWLINE +
+                "C" + STRING_NEWLINE +
+                "d" + STRING_NEWLINE +
+                "E" + STRING_NEWLINE +
+                "f" + STRING_NEWLINE +
+                "G" + STRING_NEWLINE +
+                "4" + STRING_NEWLINE +
+                "6" + STRING_NEWLINE +
+                "8" + STRING_NEWLINE +
                 "1";
 
         InputStream stdin = new ByteArrayInputStream(stdInString.getBytes());
@@ -363,20 +362,20 @@ public class TeamTBugs {
 
         try {
             sortApp.run(args, stdin, output);
-            assertEquals("G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
+            assertEquals("G" + STRING_NEWLINE +
+                    "f" + STRING_NEWLINE +
+                    "E" + STRING_NEWLINE +
+                    "d" + STRING_NEWLINE +
+                    "C" + STRING_NEWLINE +
+                    "b" + STRING_NEWLINE +
+                    "A" + STRING_NEWLINE +
+                    "8" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "*" + STRING_NEWLINE +
+                    "&" + STRING_NEWLINE +
+                    "$" + STRING_NEWLINE +
                     "#", output.toString());
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -395,25 +394,25 @@ public class TeamTBugs {
 
         try {
             sortApp.run(args, System.in, output);
-            assertEquals("G" + StringUtils.STRING_NEWLINE +
-                    "f" + StringUtils.STRING_NEWLINE +
-                    "E" + StringUtils.STRING_NEWLINE +
-                    "d" + StringUtils.STRING_NEWLINE +
-                    "C" + StringUtils.STRING_NEWLINE +
-                    "b" + StringUtils.STRING_NEWLINE +
-                    "A" + StringUtils.STRING_NEWLINE +
-                    "8" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "6" + StringUtils.STRING_NEWLINE +
-                    "5" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "4" + StringUtils.STRING_NEWLINE +
-                    "3" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "1" + StringUtils.STRING_NEWLINE +
-                    "*" + StringUtils.STRING_NEWLINE +
-                    "&" + StringUtils.STRING_NEWLINE +
-                    "$" + StringUtils.STRING_NEWLINE +
+            assertEquals("G" + STRING_NEWLINE +
+                    "f" + STRING_NEWLINE +
+                    "E" + STRING_NEWLINE +
+                    "d" + STRING_NEWLINE +
+                    "C" + STRING_NEWLINE +
+                    "b" + STRING_NEWLINE +
+                    "A" + STRING_NEWLINE +
+                    "8" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "6" + STRING_NEWLINE +
+                    "5" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "4" + STRING_NEWLINE +
+                    "3" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "1" + STRING_NEWLINE +
+                    "*" + STRING_NEWLINE +
+                    "&" + STRING_NEWLINE +
+                    "$" + STRING_NEWLINE +
                     "#", output.toString());
         } catch (SortException e) {
             fail("should not fail: " + e.getMessage());
@@ -491,12 +490,12 @@ public class TeamTBugs {
         try {
             InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE)); //NOPMD
             String actual = diffApp.diffFileAndStdin(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, inputStream, false, false, false);
-            assertEquals("< test A" + StringUtils.STRING_NEWLINE +
-                    "< test B" + StringUtils.STRING_NEWLINE +
-                    "< test C" + StringUtils.STRING_NEWLINE +
-                    "> test D" + StringUtils.STRING_NEWLINE +
-                    "> test E" + StringUtils.STRING_NEWLINE +
-                    "> test F" + StringUtils.STRING_NEWLINE, actual);
+            assertEquals("< test A" + STRING_NEWLINE +
+                    "< test B" + STRING_NEWLINE +
+                    "< test C" + STRING_NEWLINE +
+                    "> test D" + STRING_NEWLINE +
+                    "> test E" + STRING_NEWLINE +
+                    "> test F" + STRING_NEWLINE, actual);
         } catch (IOException e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -516,7 +515,7 @@ public class TeamTBugs {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, output);
-            assertEquals("y" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("y" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -536,7 +535,7 @@ public class TeamTBugs {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, output);
-            assertEquals("y" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("y" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage()); // NOPMD
         }
@@ -556,7 +555,7 @@ public class TeamTBugs {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, output);
-            assertEquals("yT" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("yT" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -576,7 +575,7 @@ public class TeamTBugs {
         try {
             InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
             cutApp.run(args, inputStream, output);
-            assertEquals("yT" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("yT" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail("should not fail: " + e.getMessage());
         }
@@ -592,13 +591,13 @@ public class TeamTBugs {
     public void testCpFailsSingleFileToSameDir() {
 
         // set curred dir to the folder with test assets
-        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
-          + StringUtils.fileSeparator() + "CpTestFolder";
+        EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "CpTestFolder";
 
-        String[] args = {"src1", Environment.currentDirectory};
+        String[] args = {"src1", EnvironmentUtils.currentDirectory};
         CpApplication cpApp = new CpApplication();
         CpException cpException =
-          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
 
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
         assertTrue(cpException.getMessage().contains("same file"));
@@ -615,13 +614,13 @@ public class TeamTBugs {
     public void testCpFailsSingleFileToItself() {
 
         // set curred dir to the folder with test assets
-        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
-          + StringUtils.fileSeparator() + "CpTestFolder";
+        EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "CpTestFolder";
 
         String[] args = {"src1", "src1"};
         CpApplication cpApp = new CpApplication();
         CpException cpException =
-          assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
+                assertThrows(CpException.class, () -> cpApp.run(args, System.in, System.out));
 
         // In UNIX cp prints "<FILE> and <FILE> are the same file" so we assume this replicates such behavior
         assertTrue(cpException.getMessage().contains("same file"));
@@ -639,8 +638,8 @@ public class TeamTBugs {
     public void testCpMultipleFilesOneFails() throws IOException {
 
         // set curred dir to the folder with test assets
-        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
-          + StringUtils.fileSeparator() + "CpTestFolder";
+        EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "CpTestFolder";
 
         Path src1 = IOUtils.resolveFilePath("src1");
         Path nonexistent = IOUtils.resolveFilePath("nonexistent");
@@ -686,7 +685,7 @@ public class TeamTBugs {
         PasteApplication pasteApp = new PasteApplication();
 
         PasteException exception =
-          assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
+                assertThrows(PasteException.class, () -> pasteApp.run(new String[0], System.in, null));
 
         assertTrue(exception.getMessage().contains(ERR_NO_OSTREAM));
 
@@ -701,15 +700,15 @@ public class TeamTBugs {
     public void testPasteDirOnlyArg() throws IOException {
 
         // set curred dir to the folder with test assets
-        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
-          + StringUtils.fileSeparator() + "PasteTestFolder";
+        EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "PasteTestFolder";
 
         Path dir = Files.createDirectory(IOUtils.resolveFilePath("dir")); //NOPMD
 
         PasteApplication pasteApp = new PasteApplication();
 
         PasteException exception =
-          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
+                assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"dir"}, System.in, System.out));
 
         Files.delete(dir);
         assertTrue(exception.getMessage().contains(ERR_IS_DIR));
@@ -727,7 +726,7 @@ public class TeamTBugs {
         PasteApplication pasteApp = new PasteApplication();
 
         PasteException exception =
-          assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"fakefile"}, System.in, System.out));
+                assertThrows(PasteException.class, () -> pasteApp.run(new String[]{"fakefile"}, System.in, System.out));
 
         assertTrue(exception.getMessage().contains(ERR_FILE_NOT_FOUND));
 
@@ -745,8 +744,8 @@ public class TeamTBugs {
     public void testPasteTwoStdinArgs() throws IOException, PasteException {
 
         // set curred dir to the folder with test assets
-        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
-          + StringUtils.fileSeparator() + "PasteTestFolder";
+        EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "PasteTestFolder";
 
         input = new ByteArrayInputStream(Files.readAllBytes(IOUtils.resolveFilePath("pasteFile1.txt")));
 
@@ -755,8 +754,8 @@ public class TeamTBugs {
         pasteApp.run(new String[]{"-", "-"}, input, output);
 
         assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("pasteFile1-2cols.txt")))
-            + STRING_NEWLINE,
-          output.toString());
+                        + STRING_NEWLINE,
+                output.toString());
 
     }
 
@@ -811,10 +810,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #20")
     public void testWcThenCut() throws ShellException, AbstractApplicationException {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "WcIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "WcIntegrationFolder";
 
         String expected = "       2 wctest.txt" + STRING_NEWLINE +
                 "1" + STRING_NEWLINE;
@@ -830,10 +829,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #21")
     public void testSortThenCut() throws ShellException, AbstractApplicationException {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "SortIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "SortIntegrationFolder";
 
         String expected = "G" + STRING_NEWLINE;
         String cmdline = "sort -nrf sorttest.txt | cut -b 1 -";
@@ -849,10 +848,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #22")
     public void testSortThenCutNegative() throws ShellException, AbstractApplicationException {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "SortIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "SortIntegrationFolder";
 
         String expected = "" + STRING_NEWLINE;
         String cmdline = "sort -nrf sorttest.txt | cut -b 2 -";
@@ -867,10 +866,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #23")
     public void testSortThenFindNegative() throws ShellException, AbstractApplicationException {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "SortIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "SortIntegrationFolder";
 
         String expected = "G" + STRING_NEWLINE +
                 "f" + STRING_NEWLINE +
@@ -899,10 +898,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #24.1")
     public void testEchoThenDiff() throws Exception {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String expected = "Files [- difftest.txt] differ" + STRING_NEWLINE;
         String argument = "echo difftestdifftest | diff -q - difftest.txt";
@@ -917,10 +916,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #24.2")
     public void testEchoThenDiff2() throws Exception {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String expected = "Files [- difftest.txt] are identical" + STRING_NEWLINE;
         String argument = "echo 'difftest!!!!!!!' | diff -s - difftest.txt";
@@ -935,10 +934,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #24.3")
     public void testPasteThenDiff2() throws Exception {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String cmdline = "paste difftest.txt | diff -s difftest.txt - ";
         String expected = "Files [difftest.txt -] are identical" + STRING_NEWLINE;
@@ -952,10 +951,10 @@ public class TeamTBugs {
     @Test
     @DisplayName("Bug #25")
     public void testPasteThenDiff() throws Exception {
-        Environment.currentDirectory +=
+        EnvironmentUtils.currentDirectory +=
                 StringUtils.fileSeparator() + "dummyTestFolder"
-                + StringUtils.fileSeparator() + "IntegrationTestFolder"
-                + StringUtils.fileSeparator() + "DiffIntegrationFolder";
+                        + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                        + StringUtils.fileSeparator() + "DiffIntegrationFolder";
 
         String cmdline = "paste difftest.txt | diff difftest.txt - ";
         String expected = "";
@@ -1011,15 +1010,15 @@ public class TeamTBugs {
     public void testLsWithDiffCommandSubs() {
         try {
 
-            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+            EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                     + StringUtils.fileSeparator() + "IntegrationTestFolder"
                     + StringUtils.fileSeparator() + "LsIntegrationFolder";
 
             shell.parseAndEvaluate("diff `ls diff*.txt`", output);
-            assertEquals("< azz" + StringUtils.STRING_NEWLINE +
-                    "< ccc" + StringUtils.STRING_NEWLINE +
-                    "> zza" + StringUtils.STRING_NEWLINE +
-                    "> ccd" + StringUtils.STRING_NEWLINE + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("< azz" + STRING_NEWLINE +
+                    "< ccc" + STRING_NEWLINE +
+                    "> zza" + STRING_NEWLINE +
+                    "> ccd" + STRING_NEWLINE + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -1033,12 +1032,12 @@ public class TeamTBugs {
     @DisplayName("Bug #30")
     public void testEchoWithDiffCommandSubs() {
         try {
-            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+            EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                     + StringUtils.fileSeparator() + "IntegrationTestFolder"
                     + StringUtils.fileSeparator() + "CommandSubsFolder";
 
             shell.parseAndEvaluate("echo `diff hella.txt hellz.txt`", output);
-            assertEquals("< first > second" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("< first > second" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -1055,12 +1054,12 @@ public class TeamTBugs {
     public void testGrepWithSort() {
         try {
 
-            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+            EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                     + StringUtils.fileSeparator() + "IntegrationTestFolder"
                     + StringUtils.fileSeparator() + "CommandSubsFolder";
 
             shell.parseAndEvaluate("sort `grep hell findInFile.txt`", output);
-            assertEquals("first" + StringUtils.STRING_NEWLINE + "second" + StringUtils.STRING_NEWLINE, output.toString());
+            assertEquals("first" + STRING_NEWLINE + "second" + STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail();
         }
@@ -1073,7 +1072,7 @@ public class TeamTBugs {
     @DisplayName("Bug #32")
     public void testPipeWithEchoAndCut() {
         try {
-            Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+            EnvironmentUtils.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
                     + StringUtils.fileSeparator() + "IntegrationTestFolder"
                     + StringUtils.fileSeparator() + "PipeTestFolder";
 
@@ -1095,7 +1094,7 @@ public class TeamTBugs {
         GrepApplication grepApplication = new GrepApplication();
         Exception expectedException = assertThrows(GrepException.class,
                 () -> assertTimeoutPreemptively(Duration.ofSeconds(3), () ->grepApplication.run(new String[]{"ff"}
-            , System.in, output)));
+                        , System.in, output)));
         assertTrue(expectedException.getMessage().contains("No input provided even after long time"));
     }
 
@@ -1106,7 +1105,7 @@ public class TeamTBugs {
     @DisplayName("Bug #34")
     public void testChangeToDirectoryWithNoReadPermission() {
         CdApplication cdApp = new CdApplication();
-        String cdpath = Environment.currentDirectory + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
+        String cdpath = EnvironmentUtils.currentDirectory + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
 
         File testDir = new File(cdpath);
         testDir.mkdir();
