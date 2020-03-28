@@ -55,7 +55,7 @@ public class TeamTBugs {
     @AfterEach
     public void resetCurrentDirectory() throws IOException {
         output.reset();
-        Environment.currentDirectory +=  ORIGINAL_DIR;
+        Environment.currentDirectory =  ORIGINAL_DIR;
     }
 
     /**
