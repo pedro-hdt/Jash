@@ -9,6 +9,9 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.app.*;
+import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
+import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -16,11 +19,13 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Arrays;
+
 
 import static org.junit.jupiter.api.Assertions.*;
+import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_PERM;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -56,6 +61,7 @@ public class TeamTBugs {
     /**
      * Spaces around the code which should be ignored and command evaluated
      * lots of spaces to ignore after tokenizing but handle quotes
+     * Command:       echo     ''   hi   ' '
      */
     @Test()
     @DisplayName("Bug #1")
@@ -71,6 +77,7 @@ public class TeamTBugs {
     /**
      * Double backquote nesting results in wrong execution of commands in CommandSubs
      * For multiple command subs in same command, the combination should be as expected
+     * Command: echo abc `echo 1 2 3`xyz`echo 4 5 6`
      */
     @Test
     @DisplayName("Bug #2")
@@ -87,6 +94,7 @@ public class TeamTBugs {
     /**
      * If `ls *.txt` returns two files, the paste result should contain both files but here it’s only one first files
      * Fault: Command Subs doesn’t return the result as list of tokenized arguments for the outer command
+     * Command: paste `ls x*.txt`
      */
     @Test
     @DisplayName("Bug #3")
@@ -108,6 +116,7 @@ public class TeamTBugs {
      * Double quotes disable interpretation of special symbols except backquote
      * Should print a space before the period.
      * Fault: CommandSubs within Double quotes trims spaces
+     * Command: echo "This is space:`echo " "`."
      */
     @Test
     @DisplayName("Bug #4")
@@ -122,6 +131,7 @@ public class TeamTBugs {
      * Ls should not return empty line between files
      *
      * Unnecessary extra lines between ls output of files
+     * Command: ls *.txt
      */
     @Test
     @DisplayName("Bug #5")
@@ -141,6 +151,7 @@ public class TeamTBugs {
      * Trims wc content when integrated with command subs
      *
      * CommandSubs has irrelevant trimming
+     * Command: echo "`wc -c hella.txt` - `wc -c hellz.txt`"
      */
     @Test
     @DisplayName("Bug #6")
@@ -162,6 +173,7 @@ public class TeamTBugs {
     /**
      * ExitCommand untestable due to wrong implementation
      * Ends test suite process
+     * Command: exit
      */
     @Test
     @DisplayName("Bug #7")
@@ -169,7 +181,6 @@ public class TeamTBugs {
         try {
 
             shell.parseAndEvaluate("exit", output);
-            assertEquals("       5 hella.txt -        6 hellz.txt" + StringUtils.STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -773,6 +784,10 @@ public class TeamTBugs {
 
     }
 
+    /**
+     * ‘rm -rd .’ removes everything in the current directory.
+     * This should never be allowed (GNU rm does not allow removing ‘.’ or `..`
+     */
     @Test
     @DisplayName("Bug #19")
     @Disabled("RUN WITH CAUTION: may delete everything in curr dir")
@@ -1099,5 +1114,40 @@ public class TeamTBugs {
         assertEquals("cd: " + cdpath + ": " + ERR_NO_PERM, exception.getMessage());
     }
 
+    /**
+     * Null AppRunner for command
+     */
+    @Test
+    @DisplayName("Bug #35")
+    public void testFailsNullAppRunner() throws ShellException {
+
+        ShellException exception = assertThrows(ShellException.class,
+                () -> new CallCommand(
+                        Arrays.asList("echo", "hello"),
+                        null,
+                        new ArgumentResolver())
+        );
+
+        assertMsgContains(exception, "Null App Runner");
+
+    }
+
+    /**
+     * Null ArgumentResolver for command
+     */
+    @Test
+    @DisplayName("Bug #36")
+    public void testFailsNullArgResolver() throws ShellException {
+
+        ShellException exception = assertThrows(ShellException.class,
+                () -> new CallCommand(
+                        Arrays.asList("echo", "hello"),
+                        new ApplicationRunner(),
+                        null)
+        );
+
+        assertMsgContains(exception, "Null Argument Resolver");
+
+    }
 
 }

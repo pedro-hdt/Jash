@@ -30,7 +30,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 
 public class GrepApplicationTest {
-    
+
     public static final String FOLDER1 = "Test-folder-1";
     public static final String FOLDER2 = "Test-folder-2";
     public static final String TEXTFILE = "textfile.txt";
@@ -38,34 +38,34 @@ public class GrepApplicationTest {
     public static final String PATTERN = "pattern";
     public static final String CONTENT1 = "Patience is the key to success";
     public static final String UNREADABLE_FILE = "unreadableFile.txt";
-    
+
     static final String ORIGINAL_DIR = Environment.getCurrentDirectory();
     private static GrepApplication grepApplication;
     private static OutputStream stdout;
-    
+
     @BeforeAll
     static void setupAll() {
         Environment.setCurrentDirectory(ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() +
           "GrepTestFolder");
     }
-    
+
     @AfterAll
     static void reset() {
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
-    
-    
+
+
     @BeforeEach
     void setUp() {
         grepApplication = new GrepApplication();
         stdout = new ByteArrayOutputStream();
     }
-    
+
     @AfterEach
     void tearDown() throws IOException {
         stdout.flush();
     }
-    
+
     /**
      * Try grep command with no file name
      */
@@ -75,7 +75,7 @@ public class GrepApplicationTest {
           , null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NO_INPUT));
     }
-    
+
     /**
      * Try grep command with null pattern and file name
      */
@@ -85,7 +85,7 @@ public class GrepApplicationTest {
           false, false));
         assertTrue(expectedException.getMessage().contains(NULL_POINTER));
     }
-    
+
     /**
      * Try grep with null pattern only
      */
@@ -95,7 +95,7 @@ public class GrepApplicationTest {
           , System.in, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_SYNTAX));
     }
-    
+
     /**
      * Try grep with no pattern but proper file name
      */
@@ -105,7 +105,7 @@ public class GrepApplicationTest {
           "", FOLDER1 + StringUtils.fileSeparator() + TEXTFILE}, null, stdout));
         assertTrue(expectedException.getMessage().contains(EMPTY_PATTERN));
     }
-    
+
     /**
      * Try grep with options other than -i and -c
      */
@@ -116,7 +116,7 @@ public class GrepApplicationTest {
           , System.in, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_SYNTAX));
     }
-    
+
     /**
      * Try grep with a directory instead of a file
      *
@@ -127,7 +127,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{PATTERN, FOLDER1}, null, stdout);
         assertTrue(stdout.toString().contains(IS_DIRECTORY));
     }
-    
+
     /**
      * Try grep with correct option and pattern but no file name
      */
@@ -137,7 +137,7 @@ public class GrepApplicationTest {
           PATTERN}, null, stdout));
         assertTrue(expectedException.getMessage().contains(ERR_NO_INPUT));
     }
-    
+
     /**
      * Try grep with invalid  regex
      */
@@ -147,7 +147,7 @@ public class GrepApplicationTest {
           FOLDER1 + StringUtils.fileSeparator() + "textfile.txt"));
         assertTrue(expectedException.getMessage().contains(ERR_INVALID_REGEX));
     }
-    
+
     /**
      * Try grep with invalid  regex
      */
@@ -157,7 +157,7 @@ public class GrepApplicationTest {
           System.in));
         assertTrue(expectedException.getMessage().contains(ERR_INVALID_REGEX));
     }
-    
+
     /**
      * Try Grep With NullStream
      */
@@ -167,7 +167,7 @@ public class GrepApplicationTest {
           null));
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
     }
-    
+
     /**
      * Try grep with a not existing file
      *
@@ -177,9 +177,9 @@ public class GrepApplicationTest {
     public void testGrepWithNonExistentFile() throws AbstractApplicationException {
         grepApplication.run(new String[]{PATTERN, FOLDER1 + StringUtils.fileSeparator() + "text.txt"}, null, stdout);
         assertTrue(stdout.toString().contains(ERR_FILE_NOT_FOUND));
-    
+
     }
-    
+
     /**
      * Try grep with one file matching pattern correctly
      *
@@ -190,7 +190,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{PATTERN, FOLDER1 + StringUtils.fileSeparator() + TEXTFILE}, null, stdout);
         assertEquals(PATTERN + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with no file containing matching pattern
      *
@@ -201,7 +201,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"patterns", FOLDER1 + StringUtils.fileSeparator() + TEXTFILE}, null, stdout);
         assertEquals("", stdout.toString());
     }
-    
+
     /**
      * Try grep with multiple files but only one file matching pattern correctly
      *
@@ -215,21 +215,21 @@ public class GrepApplicationTest {
         assertEquals(FOLDER2 + StringUtils.fileSeparator() + "textfile.txt: patterns" + StringUtils.STRING_NEWLINE,
           stdout.toString());
     }
-    
+
     @Test
     public void testGrepWithNotReadableFile() throws AbstractApplicationException, IOException {
-        
+
         Path path = Files.createFile(Paths.get(Environment.getCurrentDirectory(), FOLDER1, UNREADABLE_FILE));
         File file = path.toFile();
         file.setReadable(false);
-        
+
         grepApplication.run(new String[]{PATTERN, FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE}, System.in, stdout);
         assertEquals(FOLDER1 + StringUtils.fileSeparator() + UNREADABLE_FILE + ": " + ERR_NO_PERM + StringUtils.STRING_NEWLINE, stdout.toString());
-        
+
         file.setReadable(true);
         file.delete();
     }
-    
+
     /**
      * Try grep with multiple files matching pattern correctly
      *
@@ -244,7 +244,7 @@ public class GrepApplicationTest {
             "Test-folder-3" + StringUtils.fileSeparator() + "textfile.txt: pattern" + StringUtils.STRING_NEWLINE,
           stdout.toString());
     }
-    
+
     /**
      * Try grep with pattern not matching due to sensitive case (by default)
      *
@@ -255,7 +255,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"Pattern", FOLDER1 + StringUtils.fileSeparator() + TEXTFILE}, null, stdout);
         assertEquals("", stdout.toString());
     }
-    
+
     /**
      * Try grep with option -i to check insensitive pattern matching
      *
@@ -267,7 +267,7 @@ public class GrepApplicationTest {
           stdout);
         assertEquals(PATTERN + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with option -c to count number of lines matching
      *
@@ -279,7 +279,7 @@ public class GrepApplicationTest {
           stdout);
         assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with option -i and -c together
      *
@@ -291,7 +291,7 @@ public class GrepApplicationTest {
           null, stdout);
         assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with input from stdin with no matching pattern
      *
@@ -302,10 +302,10 @@ public class GrepApplicationTest {
         String content = CONTENT1;
         InputStream inputstream = new ByteArrayInputStream(content.getBytes());
         String out = "";
-        grepApplication.run(new String[]{"patience"}, inputstream, stdout);
+        grepApplication.run(new String[]{"patience"}, System.in, stdout);
         assertEquals("", stdout.toString());
     }
-    
+
     /**
      * Try grep with input from stdin with matching pattern
      *
@@ -319,7 +319,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"Patience"}, inputstream, stdout);
         assertEquals(CONTENT1 + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with input from stdin with case insensitive matching pattern
      *
@@ -333,7 +333,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"-i", "patience"}, inputstream, stdout);
         assertEquals(CONTENT1 + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with input from stdin with option -c
      *
@@ -347,7 +347,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"-c", "Patience"}, inputstream, stdout);
         assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with multi-line input from stdin with one matching pattern
      *
@@ -363,7 +363,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"-c", "Patience"}, inputstream, stdout);
         assertEquals("1" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep with multi-line input from stdin with multiple matching patterns
      *
@@ -379,7 +379,7 @@ public class GrepApplicationTest {
         grepApplication.run(new String[]{"-c", "success"}, inputstream, stdout);
         assertEquals("2" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
-    
+
     /**
      * Try grep input from stdin with-all options
      *
