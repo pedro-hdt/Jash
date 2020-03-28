@@ -1153,4 +1153,18 @@ public class TeamTBugs {
 
     }
 
+    /**
+     * Sed doesn't throw an error when no file is provided and stdin with any timeout
+     *  @throws AbstractApplicationException
+     */
+    @Test
+    @DisplayName("Bug #37")
+    public void testSedWhenNoFileIsProvided() throws AbstractApplicationException {
+        SedApplication sedApplication = new SedApplication();
+        Exception expectedException = assertThrows(GrepException.class,
+                () -> assertTimeoutPreemptively(Duration.ofSeconds(3), () ->sedApplication.run(new String[]{"s|abc|def|"}
+                        , System.in, output)));
+        assertTrue(expectedException.getMessage().contains("No input provided even after long time"));
+    }
+
 }

@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -731,6 +732,21 @@ public class TeamUBugs {
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[]{"A",
             "-i", "test"}, System.in, output));
         assertTrue(expectedException.getMessage().contains("Wrong flag provided"));
+    }
+
+
+    /**
+     * Sed doesn't throw an error when no file is provided and stdin with any timeout
+     *  @throws AbstractApplicationException
+     */
+    @Test
+    @DisplayName("Bug #33")
+    public void testSedWhenNoFileIsProvided() throws AbstractApplicationException {
+        SedApplication sedApplication = new SedApplication();
+        Exception expectedException = assertThrows(GrepException.class,
+                () -> assertTimeoutPreemptively(Duration.ofSeconds(3), () ->sedApplication.run(new String[]{"s|abc|def|"}
+                        , System.in, output)));
+        assertTrue(expectedException.getMessage().contains("No input provided even after long time"));
     }
 
 }
