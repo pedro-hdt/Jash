@@ -6,27 +6,13 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CdException;
-import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.exception.RmException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
-import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
-import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
-import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
-import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
+import sg.edu.nus.comp.cs4218.impl.app.*;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -186,6 +172,237 @@ public class TeamTBugs {
             assertEquals("       5 hella.txt -        6 hellz.txt" + StringUtils.STRING_NEWLINE, output.toString());
         } catch (Exception e) {
             fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Wc command should not recognize stdin as a null argument
+     */
+    @Test
+    @DisplayName("Bug #8")
+    public void testWcOfStdin() {
+        try {
+            String WC_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "WcTestFolder";
+            String WC1_FILE = "wc1.txt";
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
+            WcApplication wcApp = new WcApplication();
+            wcApp.run(null, inputStream, output);
+            assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, output.toString()); // filename is empty for standard input
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.1")
+    public void testNRFFlagsMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-nrf", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals( "G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.2")
+    public void testNFlagMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-n", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "f", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.3")
+    public void testNFFlagsMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-nf", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "G", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.4")
+    public void testNRFlagsMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-nr", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("f" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required when stdin is read with some flags
+     */
+    @Test
+    @DisplayName("Bug #9.5")
+    public void testStdinSort() {
+        SortApplication sortApp = new SortApplication();
+        String stdInString = "&" + StringUtils.STRING_NEWLINE +
+                "*" + StringUtils.STRING_NEWLINE +
+                "$" + StringUtils.STRING_NEWLINE +
+                "#" + StringUtils.STRING_NEWLINE +
+                "A" + StringUtils.STRING_NEWLINE +
+                "b" + StringUtils.STRING_NEWLINE +
+                "C" + StringUtils.STRING_NEWLINE +
+                "d" + StringUtils.STRING_NEWLINE +
+                "E" + StringUtils.STRING_NEWLINE +
+                "f" + StringUtils.STRING_NEWLINE +
+                "G" + StringUtils.STRING_NEWLINE +
+                "4" + StringUtils.STRING_NEWLINE +
+                "6" + StringUtils.STRING_NEWLINE +
+                "8" + StringUtils.STRING_NEWLINE +
+                "1";
+
+        InputStream stdin = new ByteArrayInputStream(stdInString.getBytes());
+        String[] args = new String[]{"-nrf"};
+
+        try {
+            sortApp.run(args, stdin, output);
+            assertEquals("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required when > 1 file is read with some flags
+     */
+    @Test
+    @DisplayName("Bug #9.5")
+    public void testMoreThanOneFileSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        SortApplication sortApp = new SortApplication();
+        String[] args = new String[]{"-nrf", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt", SORT_TEST_DIR + StringUtils.fileSeparator() + "numbersOnly.txt"};
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "5" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "3" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
         }
     }
 
@@ -529,7 +746,7 @@ public class TeamTBugs {
 
     }
 
-    
+
     /**
      * Grep doesn't throw an error when no file is provided and stdin
      *  @throws AbstractApplicationException
