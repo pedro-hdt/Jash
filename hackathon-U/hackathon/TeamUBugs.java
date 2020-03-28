@@ -6,26 +6,15 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.exception.RmException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
-import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
-import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
-import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
+import sg.edu.nus.comp.cs4218.impl.app.*;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.IORedirectionHandler;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,12 +22,8 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.MULTIPLE_FILES;
-import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.WRONG_FLAG_SUFFIX;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ISTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.app.CutApplicationTest.ERR_OUT_OF_RANGE;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class TeamUBugs {
@@ -477,6 +462,7 @@ public class TeamUBugs {
     }
 
     /**
+<<<<<<< HEAD
      * Try find command with multiple flags
      * The command works if last flag is -name. If any other flag is last, wrong message is displayed.
      */
@@ -486,19 +472,203 @@ public class TeamUBugs {
         FindApplication findApplication = new FindApplication();
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[]{"A",
             "-name", "-i", "test"}, System.in, output));
-        assertTrue(expectedException.getMessage().contains(WRONG_FLAG_SUFFIX));
+        assertTrue(expectedException.getMessage().contains("Wrong flag provided"));
     }
 
     /**
      * Try find command with multiple file names
-     * The command displays a wrong error message 
+     * The command displays a wrong error message
      */
     @Test
     @DisplayName("Bug #18")
     public void testFindWithMultipleFileNames() {
         FindApplication findApplication = new FindApplication();
-        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[]{"Test-folder-2", "-name", "Test-folder-2-2", "textfile.txt"}, System.in, output));
-        assertTrue(expectedException.getMessage().contains(MULTIPLE_FILES));
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[] {"Test-folder-2", "-name", "Test-folder-2-2", "textfile.txt"}, System.in, output));
+        assertTrue(expectedException.getMessage().contains("Multiple file names provided"));
+    }
+
+     /**
+     * Diff command didn’t check for invalid flag
+     */
+    @Test
+    @DisplayName("Bug #19")
+    public void testFailsInvalidFlag() {
+        DiffApplication diffApp = new DiffApplication();
+
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.run(new String[]{"one", "two", "-inv"}, System.in, System.out));
+        assertEquals(expectedException.getMessage(), ERR_INVALID_FLAG);
+    }
+
+    /**
+     * Diff command didn’t follow output format specified by pdf
+     */
+    @Test
+    @DisplayName("Bug #20")
+    public void testDiffFilesWithDifferentContentUsingFlagQ() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF2_FILE = "diff2.txt";
+
+        try {
+            String expected = diffApp.diffTwoFiles(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE, false, false, true);
+            assertEquals(expected, "Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " " + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE + "] differ"); // NOPMD
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command should not output anything for different directories with files of same content
+     */
+    @Test
+    @DisplayName("Bug #21")
+    public void testDiffDirContainFilesWithSameContent() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFFDIR1 = "diffDir1";
+        String DIFFDIR1_IDENTICAL = "diffDir1-identical"; // NOPMD
+
+        try {
+            String expected = diffApp.diffTwoDir(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFFDIR1, DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFFDIR1_IDENTICAL, false, false, false);
+            assertEquals(expected, ""); // No message represents a successful diff
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command doesn’t read stdin as ‘-’ when displaying in the output
+     */
+    @Test
+    @DisplayName("Bug #22")
+    public void testDiffFileAndStdinWithSameContentUsingFlagS() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE)); //NOPMD
+            String expected = diffApp.diffFileAndStdin(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, inputStream, true, false, false);
+            assertEquals(expected, "Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " -] are identical");
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cut command doesn’t detect out of range
+     */
+    @Test
+    @DisplayName("Bug #23")
+    public void testOutOfRange() {
+        CutApplication cutApp = new CutApplication();
+        String CUT1_FILE = "cut1.txt";
+
+        String[] args = new String[]{"-c", "0,4", CUT1_FILE}; // NOPMD
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, output));
+        assertEquals(expectedException.getMessage(), ERR_OUT_OF_RANGE);
+    }
+
+    /**
+     * Cut command doesn’t detect invalid range
+     */
+    @Test
+    @DisplayName("Bug #24")
+    public void testInvalidRange() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String CUT1_FILE = "cut1.txt";
+
+        String[] args = new String[]{"-c", "5,1", CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE}; // NOPMD
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, output));
+        assertTrue(expectedException.getMessage().contains(ERR_INVALID_RANGE));
+    }
+
+    /**
+     * Cut command doesn’t detect illegal flag
+     */
+    @Test
+    @DisplayName("Bug #25")
+    public void testIllegalFlag() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String CUT1_FILE = "cut1.txt";
+
+        String[] args = new String[]{"-f", "1,4", CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE}; // NOPMD
+        Exception expectedException = assertThrows(CutException.class, () -> cutApp.run(args, System.in, output));
+        assertEquals(expectedException.getMessage(), ERR_INVALID_FLAG);
+    }
+
+    /**
+     * Extra '/' when running wc command then find command
+     */
+    @Test
+    @DisplayName("Bug #26")
+    public void testWcThenFind() throws ShellException, AbstractApplicationException {
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder" +
+                StringUtils.fileSeparator() + "WcIntegrationFolder";
+
+        String expected = "       2 wctest.txt" + STRING_NEWLINE +
+                "../WcIntegrationFolder/wctest.txt" + STRING_NEWLINE;
+        String cmdline = "wc -l wctest.txt; find ../ -name wctest.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Extra unexpected output when running wc command then cut command
+     */
+    @Test
+    @DisplayName("Bug #27")
+    public void testWcThenCut() throws ShellException, AbstractApplicationException {
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder" +
+                StringUtils.fileSeparator() + "WcIntegrationFolder";
+
+        String expected = "       2 wctest.txt" + STRING_NEWLINE +
+                "1" + STRING_NEWLINE;
+        String cmdline = "wc -l wctest.txt; cut -b 2 wctest.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Unexpected output when running sort command and then piping output to cut command
+     */
+    @Test
+    @DisplayName("Bug #28")
+    public void testSortThenCut() throws ShellException, AbstractApplicationException {
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder" +
+                StringUtils.fileSeparator() + "SortIntegrationFolder";
+
+        String expected = "G" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt | cut -b 1 -";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Unexpected flags printed in the error message
+     */
+    @Test
+    @DisplayName("Bug #29")
+    public void testSortThenEchoNegative() throws ShellException, AbstractApplicationException {
+        Environment.currentDirectory += StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder" +
+                StringUtils.fileSeparator() + "SortIntegrationFolder";
+
+        String expected = "sort: No such file or directory" + STRING_NEWLINE +
+                "sorttest.txt" + STRING_NEWLINE;
+        String cmdline = "sort -nrfe sorttest.txt; echo sorttest.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
     }
 
     /**
@@ -556,7 +726,7 @@ public class TeamUBugs {
         FindApplication findApplication = new FindApplication();
         Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[]{"A",
             "-i", "test"}, System.in, output));
-        assertTrue(expectedException.getMessage().contains(WRONG_FLAG_SUFFIX));
+        assertTrue(expectedException.getMessage().contains("Wrong flag provided"));
     }
 
 }
