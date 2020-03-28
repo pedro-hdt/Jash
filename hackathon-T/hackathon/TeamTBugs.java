@@ -6,27 +6,13 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CdException;
-import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.exception.PasteException;
-import sg.edu.nus.comp.cs4218.exception.RmException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
-import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
-import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
-import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
-import sg.edu.nus.comp.cs4218.impl.app.PasteApplication;
-import sg.edu.nus.comp.cs4218.impl.app.RmApplication;
+import sg.edu.nus.comp.cs4218.impl.app.*;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -188,6 +174,400 @@ public class TeamTBugs {
             fail(e.getMessage());
         }
     }
+
+    /**
+     * Wc command should not recognize stdin as a null argument
+     */
+    @Test
+    @DisplayName("Bug #8")
+    public void testWcOfStdin() {
+        try {
+            String WC_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "WcTestFolder";
+            String WC1_FILE = "wc1.txt";
+            InputStream inputStream = new FileInputStream(new File(WC_TEST_DIR + StringUtils.fileSeparator() + WC1_FILE)); //NOPMD
+            WcApplication wcApp = new WcApplication();
+            wcApp.run(null, inputStream, output);
+            assertEquals("       1       2      14" + StringUtils.STRING_NEWLINE, output.toString()); // filename is empty for standard input
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.1")
+    public void testNRFFlagsMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-nrf", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals( "G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.2")
+    public void testNFlagMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-n", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "f", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.3")
+    public void testNFFlagsMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-nf", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("#" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "G", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required for some flags
+     */
+    @Test
+    @DisplayName("Bug #9.4")
+    public void testNRFlagsMixedSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        String[] args = new String[]{"-nr", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt"};
+        SortApplication sortApp = new SortApplication();
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("f" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "G" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required when stdin is read with some flags
+     */
+    @Test
+    @DisplayName("Bug #9.5")
+    public void testStdinSort() {
+        SortApplication sortApp = new SortApplication();
+        String stdInString = "&" + StringUtils.STRING_NEWLINE +
+                "*" + StringUtils.STRING_NEWLINE +
+                "$" + StringUtils.STRING_NEWLINE +
+                "#" + StringUtils.STRING_NEWLINE +
+                "A" + StringUtils.STRING_NEWLINE +
+                "b" + StringUtils.STRING_NEWLINE +
+                "C" + StringUtils.STRING_NEWLINE +
+                "d" + StringUtils.STRING_NEWLINE +
+                "E" + StringUtils.STRING_NEWLINE +
+                "f" + StringUtils.STRING_NEWLINE +
+                "G" + StringUtils.STRING_NEWLINE +
+                "4" + StringUtils.STRING_NEWLINE +
+                "6" + StringUtils.STRING_NEWLINE +
+                "8" + StringUtils.STRING_NEWLINE +
+                "1";
+
+        InputStream stdin = new ByteArrayInputStream(stdInString.getBytes());
+        String[] args = new String[]{"-nrf"};
+
+        try {
+            sortApp.run(args, stdin, output);
+            assertEquals("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sort command implementation output differs from what is required when > 1 file is read with some flags
+     */
+    @Test
+    @DisplayName("Bug #9.6")
+    public void testMoreThanOneFileSort() {
+        String SORT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "SortTestFolder";
+        SortApplication sortApp = new SortApplication();
+        String[] args = new String[]{"-nrf", SORT_TEST_DIR + StringUtils.fileSeparator() + "mixed.txt", SORT_TEST_DIR + StringUtils.fileSeparator() + "numbersOnly.txt"};
+
+        try {
+            sortApp.run(args, System.in, output);
+            assertEquals("G" + StringUtils.STRING_NEWLINE +
+                    "f" + StringUtils.STRING_NEWLINE +
+                    "E" + StringUtils.STRING_NEWLINE +
+                    "d" + StringUtils.STRING_NEWLINE +
+                    "C" + StringUtils.STRING_NEWLINE +
+                    "b" + StringUtils.STRING_NEWLINE +
+                    "A" + StringUtils.STRING_NEWLINE +
+                    "8" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "6" + StringUtils.STRING_NEWLINE +
+                    "5" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "4" + StringUtils.STRING_NEWLINE +
+                    "3" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "1" + StringUtils.STRING_NEWLINE +
+                    "*" + StringUtils.STRING_NEWLINE +
+                    "&" + StringUtils.STRING_NEWLINE +
+                    "$" + StringUtils.STRING_NEWLINE +
+                    "#", output.toString());
+        } catch (SortException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command show different output format than what is expected
+     */
+    @Test
+    @DisplayName("Bug #10.1")
+    public void testDiffFilesWithDifferentContentUsingFlagQ() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF2_FILE = "diff2.txt";
+
+        try {
+            String actual = diffApp.diffTwoFiles(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE, false, false, true);
+            assertEquals("Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " " + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE + "] differ", actual); // NOPMD
+        } catch (DiffException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command show different output format than what is expected
+     */
+    @Test
+    @DisplayName("Bug #10.2")
+    public void testDiffFileAndStdinWithSameContentUsingFlagS() throws FileNotFoundException {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE)); //NOPMD
+
+        try {
+            String actual = diffApp.diffFileAndStdin(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, inputStream, true, false, true);
+            assertEquals("Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " -] are identical", actual);
+        } catch (DiffException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command show different output format than what is expected
+     */
+    @Test
+    @DisplayName("Bug #10.3")
+    public void testDiffFilesWithSameContentUsingFlagSB() {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF1_BLANK_LINES_FILE = "diff1-blank-lines.txt";
+
+        try {
+            String actual = diffApp.diffTwoFiles(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE, true, true, true);
+            assertEquals("Files [" + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE + " " + DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_BLANK_LINES_FILE + "] are identical", actual); // NOPMD
+        } catch (DiffException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Diff command has implementation error that differ from expectations
+     */
+    @Test
+    @DisplayName("Bug #10.4")
+    public void testDiffFileAndStdinWithDifferentContent() throws DiffException {
+        String DIFF_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "DiffTestFolder";
+        DiffApplication diffApp = new DiffApplication();
+        String DIFF1_FILE = "diff1.txt";
+        String DIFF2_FILE = "diff2.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF2_FILE)); //NOPMD
+            String actual = diffApp.diffFileAndStdin(DIFF_TEST_DIR + StringUtils.fileSeparator() + DIFF1_FILE, inputStream, false, false, false);
+            assertEquals("< test A" + StringUtils.STRING_NEWLINE +
+                    "< test B" + StringUtils.STRING_NEWLINE +
+                    "< test C" + StringUtils.STRING_NEWLINE +
+                    "> test D" + StringUtils.STRING_NEWLINE +
+                    "> test E" + StringUtils.STRING_NEWLINE +
+                    "> test F" + StringUtils.STRING_NEWLINE, actual);
+        } catch (IOException e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.1")
+    public void testCutOnStdinWithSingleNumberUsingFlagB() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-b", "5", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("y" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.2")
+    public void testCutOnStdinWithSingleNumberUsingFlagC() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-c", "5", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("y" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage()); // NOPMD
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.3")
+    public void testCutOnStdinWithCommaSeparatedNumbersUsingFlagB() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-b", "5,10", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cut command output has an extra carriage return
+     */
+    @Test
+    @DisplayName("Bug #11.4")
+    public void testCutOnStdinWithCommaSeparatedNumbersUsingFlagC() {
+        String CUT_TEST_DIR = ORIGINAL_DIR + StringUtils.fileSeparator() + "dummyTestFolder" + StringUtils.fileSeparator() + "CutTestFolder";
+        CutApplication cutApp = new CutApplication();
+        String[] args = new String[]{"-c", "5,10", "-"};
+        String CUT1_FILE = "cut1.txt";
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(CUT_TEST_DIR + StringUtils.fileSeparator() + CUT1_FILE)); //NOPMD
+            cutApp.run(args, inputStream, output);
+            assertEquals("yT" + StringUtils.STRING_NEWLINE, output.toString());
+        } catch (Exception e) {
+            fail("should not fail: " + e.getMessage());
+        }
+    }
+
 
     /**
      * cp copies a file to the same directory it is in, overwriting itself unnecessarily
@@ -408,6 +788,164 @@ public class TeamTBugs {
     }
 
     /**
+     * Extra unexpected output when running wc command then cut command
+     */
+    @Test
+    @DisplayName("Bug #20")
+    public void testWcThenCut() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "WcIntegrationFolder");
+
+        String expected = "       2 wctest.txt" + STRING_NEWLINE +
+                "1" + STRING_NEWLINE;
+        String cmdline = "wc -l wctest.txt; cut -b 2 wctest.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Unexpected output when running sort command and then piping output to cut command
+     */
+    @Test
+    @DisplayName("Bug #21")
+    public void testSortThenCut() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+
+        String expected = "G" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt | cut -b 1 -";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+
+    /**
+     * Unexpected amount of carriage returns when running sort command and then piping output to cut command
+     */
+    @Test
+    @DisplayName("Bug #22")
+    public void testSortThenCutNegative() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+
+        String expected = "" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt | cut -b 2 -";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Wrong order of sort command output
+     */
+    @Test
+    @DisplayName("Bug #23")
+    public void testSortThenFindNegative() throws ShellException, AbstractApplicationException {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "SortIntegrationFolder");
+
+        String expected = "G" + STRING_NEWLINE +
+                "f" + STRING_NEWLINE +
+                "E" + STRING_NEWLINE +
+                "d" + STRING_NEWLINE +
+                "C" + STRING_NEWLINE +
+                "b" + STRING_NEWLINE +
+                "A" + STRING_NEWLINE +
+                "8" + STRING_NEWLINE +
+                "6" + STRING_NEWLINE +
+                "4" + STRING_NEWLINE +
+                "1" + STRING_NEWLINE +
+                "*" + STRING_NEWLINE +
+                "&" + STRING_NEWLINE +
+                "$" + STRING_NEWLINE +
+                "#" + STRING_NEWLINE;
+        String cmdline = "sort -nrf sorttest.txt; find ../ -name wcteste.txt";
+
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Stdin should be printed as ‘-’
+     */
+    @Test
+    @DisplayName("Bug #24.1")
+    public void testEchoThenDiff() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String expected = "Files [- difftest.txt] differ" + STRING_NEWLINE;
+        String argument = "echo difftestdifftest | diff -q - difftest.txt";
+        shell.parseAndEvaluate(argument, output);
+
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Stdin should be printed as ‘-’
+     */
+    @Test
+    @DisplayName("Bug #24.2")
+    public void testEchoThenDiff2() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String expected = "Files [- difftest.txt] are identical" + STRING_NEWLINE;
+        String argument = "echo 'difftest!!!!!!!' | diff -s - difftest.txt";
+        shell.parseAndEvaluate(argument, output);
+
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Stdin should be printed as ‘-’
+     */
+    @Test
+    @DisplayName("Bug #24.3")
+    public void testPasteThenDiff2() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String cmdline = "paste difftest.txt | diff -s difftest.txt - ";
+        String expected = "Files [difftest.txt -] are identical" + STRING_NEWLINE;
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
+     * Extra carriage return in diff command
+     */
+    @Test
+    @DisplayName("Bug #25")
+    public void testPasteThenDiff() throws Exception {
+        Environment.setCurrentDirectory(ORIGINAL_DIR
+                + StringUtils.fileSeparator() + "dummyTestFolder"
+                + StringUtils.fileSeparator() + "IntegrationTestFolder"
+                + StringUtils.fileSeparator() + "DiffIntegrationFolder");
+
+        String cmdline = "paste difftest.txt | diff difftest.txt - ";
+        String expected = "";
+        shell.parseAndEvaluate(cmdline, output);
+        assertEquals(expected, output.toString());
+    }
+
+    /**
      * SubCommands with nested substitution with same commands
      * Multiple command Subs produces extra empty line at the end
      */
@@ -528,7 +1066,6 @@ public class TeamTBugs {
         }
 
     }
-
 
     /**
      * Grep doesn't throw an error when no file is provided and stdin
