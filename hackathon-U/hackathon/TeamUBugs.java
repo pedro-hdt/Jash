@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.app.CutApplicationTest.ERR_OUT_OF_RANGE;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -32,6 +31,10 @@ public class TeamUBugs {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     ByteArrayInputStream input;
     static String ORIGINAL_DIR;
+
+    public static void assertMsgContains(Exception exception, String text) {
+        assertTrue(exception.getMessage().contains(text));
+    }
 
     @BeforeAll
     static void setupAll() {

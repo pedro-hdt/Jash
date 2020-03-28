@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_OSTREAM;
@@ -36,6 +35,10 @@ public class TeamTBugs {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     ByteArrayInputStream input;
     static String ORIGINAL_DIR;
+
+    public static void assertMsgContains(Exception exception, String text) {
+        assertTrue(exception.getMessage().contains(text));
+    }
 
     @BeforeAll
     static void setupAll() {
