@@ -23,8 +23,10 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.app.CutApplicationTest.ERR_OUT_OF_RANGE;
+import static sg.edu.nus.comp.cs4218.impl.app.FindApplication.NO_FOLDER;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.fileSeparator;
 
 public class TeamUBugs {
 
@@ -467,7 +469,6 @@ public class TeamUBugs {
     }
 
     /**
-<<<<<<< HEAD
      * Try find command with multiple flags
      * The command works if last flag is -name. If any other flag is last, wrong message is displayed.
      */
@@ -747,6 +748,68 @@ public class TeamUBugs {
                 () -> assertTimeoutPreemptively(Duration.ofSeconds(3), () ->sedApplication.run(new String[]{"s|abc|def|"}
                         , System.in, output)));
         assertTrue(expectedException.getMessage().contains("No input provided even after long time"));
+    }
+
+    /**
+     * Grep doesn't throw an error when no file is provided and stdin
+     *  @throws AbstractApplicationException
+     */
+    @Test
+    @DisplayName("Bug #34")
+    public void testGrepWhenNoFileIsProvided() throws AbstractApplicationException {
+        GrepApplication grepApplication = new GrepApplication();
+        Exception expectedException = assertThrows(GrepException.class,
+            () -> assertTimeoutPreemptively(Duration.ofSeconds(3), () ->grepApplication.run(new String[]{"ff"}
+                , System.in, output)));
+        assertTrue(expectedException.getMessage().contains("No input provided even after long time"));
+    }
+
+    /**
+     * Changing directory to a non-readable directory should throw an error
+     */
+    @Test
+    @DisplayName("Bug #35")
+    public void testChangeToDirectoryWithNoReadPermission() {
+        CdApplication cdApp = new CdApplication();
+        String cdpath = Environment.currentDirectory + StringUtils.CHAR_FILE_SEP + "cd_test" + StringUtils.CHAR_FILE_SEP;
+
+        File testDir = new File(cdpath);
+        testDir.mkdir();
+        testDir.setExecutable(false);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            cdApp.changeToDirectory(cdpath);
+        });
+        assertEquals("cd: " + cdpath + ": " + ERR_NO_PERM, exception.getMessage());
+    }
+
+    /**
+     * Try find command with no specified folder name
+     * Exception should be thrown that no folder present
+     */
+    @Test
+    @DisplayName("Bug #36")
+    public void testFindWithNoFolderSpecified() throws AbstractApplicationException{
+        FindApplication findApplication = new FindApplication();
+        Exception expectedException = assertThrows(FindException.class, () -> findApplication.run(new String[]{
+            "-name", "test.txt"}, System.in, output));
+        assertTrue(expectedException.getMessage().contains(NO_FOLDER));
+    }
+
+    /**
+     * Try find command with relative folder path specified
+     * Exception should be thrown that no folder present
+     */
+    @Test
+    @DisplayName("Bug #37")
+    public void testFindWithRelativePathSpecified() throws AbstractApplicationException{
+        Environment.currentDirectory = ORIGINAL_DIR
+            + StringUtils.fileSeparator() + "dummyTestFolder"
+            + StringUtils.fileSeparator() + "FindTestFolder"
+            + StringUtils.fileSeparator() + "Test-folder-1";
+        FindApplication findApplication = new FindApplication();
+        findApplication.run(new String[]{"." + StringUtils.CHAR_FILE_SEP , "-name", "textfile.txt"}, System.in, output);
+        assertEquals("." + StringUtils.CHAR_FILE_SEP + "textfile.txt", output.toString());
     }
 
 }
