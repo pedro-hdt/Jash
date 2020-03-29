@@ -1,0 +1,5 @@
+__mkdir c
+__mkdir d
+echo > c/c.txt
+echo > d/d.txt
+ls */*

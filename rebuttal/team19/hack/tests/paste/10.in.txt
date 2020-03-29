@@ -1,0 +1,4 @@
+__touch a.txt
+__touch b.txt
+__touch c.txt
+ls | paste - -

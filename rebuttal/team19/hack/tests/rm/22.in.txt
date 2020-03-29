@@ -1,0 +1,4 @@
+__mkdir folder
+__touch folder/file
+cd folder
+rm file

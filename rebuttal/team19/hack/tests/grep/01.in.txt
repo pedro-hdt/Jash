@@ -1,0 +1,3 @@
+# if input is not specified, stdin is used
+# this command should stop immediately after reaching EOF
+grep a

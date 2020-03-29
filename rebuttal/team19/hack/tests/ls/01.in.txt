@@ -1,0 +1,11 @@
+ls random
+echo ---
+
+__mkdir d
+ls d > a.txt
+__touch c.txt
+__append_realpath d
+
+# c.txt contains the absolute path of the directory d
+ls "`paste c.txt`" > b.txt
+diff a.txt b.txt

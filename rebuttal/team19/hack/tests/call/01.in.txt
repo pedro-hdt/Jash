@@ -1,0 +1,4 @@
+echo "1 2 3" > a.txt
+paste a.txt a.txt > a.txt
+echo "----"
+paste a.txt

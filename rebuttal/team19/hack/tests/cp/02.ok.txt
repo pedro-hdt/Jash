@@ -1,0 +1,6 @@
+---
+error: 3.txt is not a directory
+---
+a
+b
+c

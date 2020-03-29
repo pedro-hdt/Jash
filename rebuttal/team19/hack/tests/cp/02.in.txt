@@ -1,0 +1,9 @@
+echo "a" > 1.txt
+echo "b" > 2.txt
+echo "c" > 3.txt
+echo ---
+cp 1.txt 2.txt 3.txt
+echo ---
+paste 1.txt
+paste 2.txt
+paste 3.txt

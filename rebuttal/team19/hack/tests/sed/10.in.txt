@@ -1,0 +1,10 @@
+__touch a.txt
+__append Line1
+__append Line2
+__touch copy_a.txt
+__append Line1
+__append Line2
+
+sed "s/^/> /" a.txt
+
+diff -q a.txt copy_a.txt

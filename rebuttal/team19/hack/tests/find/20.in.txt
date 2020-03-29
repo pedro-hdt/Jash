@@ -1,0 +1,3 @@
+__mkdir folder
+__touch folder\file
+find folder -name file

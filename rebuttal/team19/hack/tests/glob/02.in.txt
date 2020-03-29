@@ -1,0 +1,2 @@
+__touch a/b/c
+ls a/*/c

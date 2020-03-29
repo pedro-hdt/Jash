@@ -1,0 +1,3 @@
+echo > 1.txt
+echo > 2.txt
+ls `ls *`

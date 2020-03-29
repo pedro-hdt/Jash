@@ -1,0 +1,6 @@
+__mkdir folder
+__touch a.txt
+__touch b.txt
+__touch c.txt
+cp *.txt folder
+ls folder

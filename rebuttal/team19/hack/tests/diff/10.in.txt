@@ -1,0 +1,3 @@
+__touch a.txt
+__append Hello world
+diff -q a.txt a.txt

@@ -1,0 +1,6 @@
+__touch a.txt
+__append Hello world
+__touch b.txt
+__append Hello world
+
+sed "s/^/> /" a.txt b.txt

@@ -1,0 +1,4 @@
+__mkdir folder
+cd folder
+rm -d ../folder
+ls

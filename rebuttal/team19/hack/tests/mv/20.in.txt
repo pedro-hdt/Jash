@@ -1,0 +1,5 @@
+__mkdir folder
+__touch folder\folder2
+cd folder
+mv ../folder2 ../../folder3
+ls

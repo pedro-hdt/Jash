@@ -1,0 +1,7 @@
+__touch a.txt
+__append Hello
+__append Hi
+__touch b.txt
+__append world
+__append friends
+paste a.txt b.txt

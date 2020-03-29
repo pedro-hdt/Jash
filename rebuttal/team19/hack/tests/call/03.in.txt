@@ -1,0 +1,9 @@
+echo > 1.txt
+echo > 2.txt
+
+# create a.txt with content "1.txt\n2.txt\n"
+__touch a.txt
+__append 1.txt
+__append 2.txt
+
+ls `paste a.txt`

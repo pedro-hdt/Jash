@@ -1,0 +1,4 @@
+__mkdir *
+__mkdir **
+__mkdir ***
+ls "*"*"*"
