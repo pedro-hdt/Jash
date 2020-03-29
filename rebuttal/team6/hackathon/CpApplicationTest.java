@@ -9,8 +9,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
 public class CpApplicationTest {
 
-    private static final String FOLDER =    "test" + CHAR_FILE_SEP +
-                                            "hackathon" + CHAR_FILE_SEP +
+    private static final String FOLDER =    "rebuttal" + CHAR_FILE_SEP +
+                                            "team6" + CHAR_FILE_SEP +
             "hackathon/files" + CHAR_FILE_SEP +
                                             "cp" + CHAR_FILE_SEP;
     private static final String TEMPT_FILE = FOLDER + "tempt.txt";

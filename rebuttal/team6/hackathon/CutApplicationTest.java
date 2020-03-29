@@ -12,8 +12,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class CutApplicationTest {
-    private static String folderName = "test" + CHAR_FILE_SEP +
-                                        "hackathon" + CHAR_FILE_SEP +
+    private static String folderName = "rebuttal" + CHAR_FILE_SEP +
+                                        "team6" + CHAR_FILE_SEP +
             "hackathon/files" + CHAR_FILE_SEP +
                                         "cut";
     private static String TEST_FILE = "test.txt";
