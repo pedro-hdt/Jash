@@ -60,7 +60,7 @@ public class CpApplication implements CpInterface {
     
                 return null;
             } else if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length > 1) {
-                throw new Exception("'" + srcPath + "' is not a directory.");
+                throw new Exception("'" + destFolder + "' is not a directory.");
             }
             
             try {
