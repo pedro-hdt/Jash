@@ -5,10 +5,12 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
@@ -74,6 +76,10 @@ public class IORedirectionHandler {
                 throw new ShellException(ERR_SYNTAX);
             }
             file = fileSegment.get(0);
+    
+            if (Files.isDirectory(IOUtils.resolveFilePath(file))) {
+                throw new ShellException(file + ": " + ERR_IS_DIR);
+            }
     
             // replace existing inputStream / outputStream
             if (arg.equals(String.valueOf(CHAR_REDIR_INPUT))) {
