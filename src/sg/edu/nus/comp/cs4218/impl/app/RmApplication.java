@@ -19,7 +19,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class RmApplication implements RmInterface {
     
-    public static final String ERR_DOT_DIR = "refusing to remove '.' or '..' directory";
     
     @Override
     public void remove(Boolean isEmptyFolder, Boolean isRecursive, String... fileName) throws RmException { //NOPMD
@@ -57,7 +56,7 @@ public class RmApplication implements RmInterface {
                 if (file.toPath().toRealPath().equals(IOUtils.resolveFilePath(Environment.getCurrentDirectory()))) {
                     sb.append(f);
                     sb.append(" skipped: ");
-                    sb.append("refusing to remove current directory");
+                    sb.append(ERR_CURR_DIR);
                     sb.append(STRING_NEWLINE);
                     hasFailedFiles = true;
                     continue;
@@ -80,14 +79,15 @@ public class RmApplication implements RmInterface {
                 } else {
                     
                     String[] contents = file.list();
-                    
+    
                     if (isRecursive) { // if recursive and not empty go ahead
                         Environment.currentDirectory = file.getAbsolutePath(); // go into the directory
                         remove(isEmptyFolder, true, contents); // remove recursively
                         Environment.currentDirectory = file.getParent(); // come out
+                    } else if (isEmptyFolder) {
+                        throw new RmException(String.format("cannot remove %s: %s", file.getName(), ERR_DIR_NOT_EMPTY));
                     } else {
-                        // if not recursive, then rm fails
-                        throw new RmException(String.format("cannot remove %s: %s", file.toString(), ERR_IS_DIR));
+                        throw new RmException(String.format("cannot remove %s: %s", file.getName(), ERR_IS_DIR));
                     }
                     
                 }
