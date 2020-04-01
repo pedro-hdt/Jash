@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import sg.edu.nus.comp.cs4218.app.CpInterface;
 import sg.edu.nus.comp.cs4218.exception.CpException;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -30,7 +31,14 @@ public class CpApplication implements CpInterface {
             throw new CpException("'" + srcFile + "': " + ERR_FILE_NOT_FOUND);
         }
         IOUtils.resolveFilePath(destFile).toFile().getParentFile().mkdirs(); // create all needed parent dirs
-        Files.copy(source, source.resolveSibling(destFile), StandardCopyOption.REPLACE_EXISTING);
+        if (Files.isDirectory(source) && source.toFile().list().length != 0) {
+            for (String file : source.toFile().list()) {
+                cpSrcFileToDestFile(srcFile + StringUtils.fileSeparator() + file,
+                        destFile + StringUtils.fileSeparator() + file);
+            }
+        } else {
+            Files.copy(source, IOUtils.resolveFilePath(destFile), StandardCopyOption.REPLACE_EXISTING);
+        }
         
         return null;
     }
@@ -52,7 +60,6 @@ public class CpApplication implements CpInterface {
                 continue;
             }
             
-            // Can avoid this with assumption that target operand is always a directory
             if (Files.exists(IOUtils.resolveFilePath(destFolder))) {
                 if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length == 1) {
                     FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(destFolder).toFile());//NOPMD
