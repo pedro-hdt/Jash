@@ -165,7 +165,7 @@ public class SequenceIntegrationCommandTest {
     @Test
     public void testSequencingWithExitInMiddle() {
         assertThrows(ExitException.class, () -> shell.parseAndEvaluate("echo hi; exit; echo bye", stdout));
-        assertEquals("hi" + StringUtils.STRING_NEWLINE + "bye" + StringUtils.STRING_NEWLINE, stdout.toString());
+        assertEquals("hi" + StringUtils.STRING_NEWLINE, stdout.toString());
     }
     
     /**
