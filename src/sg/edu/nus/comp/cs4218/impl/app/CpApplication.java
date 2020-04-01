@@ -29,6 +29,7 @@ public class CpApplication implements CpInterface {
         if (!Files.exists(source)) {
             throw new CpException("'" + srcFile + "': " + ERR_FILE_NOT_FOUND);
         }
+        IOUtils.resolveFilePath(destFile).toFile().getParentFile().mkdirs(); // create all needed parent dirs
         Files.copy(source, source.resolveSibling(destFile), StandardCopyOption.REPLACE_EXISTING);
         
         return null;
@@ -52,19 +53,23 @@ public class CpApplication implements CpInterface {
             }
             
             // Can avoid this with assumption that target operand is always a directory
-            if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length == 1) {
-                FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(destFolder).toFile());//NOPMD
-                byte[] strToBytes = Files.readAllBytes(IOUtils.resolveFilePath(srcPath));
-                outputStream.write(strToBytes);
-                outputStream.close();
-    
-                return null;
-            } else if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length > 1) {
-                throw new Exception("'" + destFolder + "' is not a directory.");
+            if (Files.exists(IOUtils.resolveFilePath(destFolder))) {
+                if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length == 1) {
+                    FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(destFolder).toFile());//NOPMD
+                    byte[] strToBytes = Files.readAllBytes(IOUtils.resolveFilePath(srcPath));
+                    outputStream.write(strToBytes);
+                    outputStream.close();
+
+                    return null;
+                } else if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length > 1) {
+                    throw new Exception("'" + destFolder + "' is not a directory.");
+                }
             }
             
             try {
-                // Assumption: Replacement doesn't work when a directory is being copied and target directory is non-empty and same name
+                Path dest = Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
+                        IOUtils.resolveFilePath(srcPath).getFileName().toString());
+                dest.toFile().getParentFile().mkdirs();
                 Files.copy(IOUtils.resolveFilePath(srcPath),
                   Paths.get(IOUtils.resolveFilePath(destFolder).toString(),
                     IOUtils.resolveFilePath(srcPath).getFileName().toString()),
@@ -119,7 +124,9 @@ public class CpApplication implements CpInterface {
         String targetOperand = args[args.length - 1];
         
         try {
-            if (Files.exists(IOUtils.resolveFilePath(targetOperand))) {
+            if (Files.exists(IOUtils.resolveFilePath(targetOperand))
+                    || Files.isDirectory(IOUtils.resolveFilePath(targetOperand))
+                    || sourceOperands.size() > 1) {
                 cpFilesToFolder(targetOperand, sourceOperands.toArray(new String[0]));
             } else {
                 cpSrcFileToDestFile(sourceOperands.get(0), targetOperand);
