@@ -18,9 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 /**
@@ -303,7 +301,7 @@ public class IORedirectionHandlerTest {
      * @throws ShellException
      */
     @Test
-    public void testFailsRedirOutputNoDest() throws AbstractApplicationException, ShellException {
+    public void testFailsRedirOutputNoDest() {
 
         IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
           Arrays.asList("echo", "hello", ">"),
@@ -318,6 +316,32 @@ public class IORedirectionHandlerTest {
 
         assertMsgContains(shellException, ERR_SYNTAX);
     }
+
+
+    /**
+     * Attempts to call "echo > /" redirecting output to a directory
+     * This should cause an exception
+     *
+     * @throws AbstractApplicationException
+     * @throws ShellException
+     */
+    @Test
+    public void testFailsRedirOutputToDir() {
+
+        IORedirectionHandler ioRedirHandler = new IORedirectionHandler(
+                Arrays.asList("echo", ">", "/"),
+                System.in,
+                System.out,
+                new ArgumentResolver()
+        );
+
+
+        ShellException shellException =
+                assertThrows(ShellException.class, () -> ioRedirHandler.extractRedirOptions());
+
+        assertMsgContains(shellException, ERR_IS_DIR);
+    }
+
 
     /**
      * Attempts to call "echo hello > outfile1.txt > outfile2.txt" (with multiple outputs)
