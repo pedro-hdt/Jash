@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 
 public class SystemTestRunner {
@@ -74,10 +75,10 @@ public class SystemTestRunner {
 
     public static void run(String inputPath, String outputPath) throws IOException {
         Path root = Paths.get("rebuttal", "team19", "hack", "tests");
-        String inputText = readFileContent(root.resolve(inputPath));
+        String inputText = String.join(StringUtils.fileSeparator(), readFileContent(root.resolve(inputPath)).split("\\\\"));
         String outputText = simplifyErrors(readFileContent(root.resolve(outputPath)));
         String actualText = simplifyErrors(SystemTestRunner.getOutputText(inputText));
-        assertEquals(outputText, actualText);
+        assertEquals(outputText + STRING_NEWLINE, actualText);
     }
 
     public static void run(String testID) throws IOException {
