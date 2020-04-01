@@ -41,6 +41,11 @@ public class ErrorConstants {
     public static final String ERR_INVALID_RANGE = "Invalid range";
     public static final String ERR_OUT_OF_RANGE = "Out of range";
     
+    // `rm` related
+    public static final String ERR_DOT_DIR = "Refusing to remove '.' or '..' directory";
+    public static final String ERR_CURR_DIR = "Refusing to remove current directory";
+    public static final String ERR_DIR_NOT_EMPTY = "Directory not empty";
+    
     // General constants
     public static final String ERR_INVALID_APP = "Invalid app";
     public static final String ERR_SYNTAX = "Invalid syntax";

@@ -18,11 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
-import static sg.edu.nus.comp.cs4218.impl.app.RmApplication.ERR_DOT_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_IS_DIR;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_FILE_ARGS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 /**
  * Provides unit tests for the RmApplication class
@@ -258,7 +254,7 @@ public class RmApplicationTest {
         RmException exception = assertThrows(RmException.class, () -> {
             rmApp.run(args, System.in, System.out);
         });
-        assertMsgContains(exception, ERR_IS_DIR); // verify the correct exceptions is thrown
+        assertMsgContains(exception, ERR_DIR_NOT_EMPTY); // verify the correct exceptions is thrown
     
         // make sure directory AND file still exist afterwards
         assertTrue(Files.exists(testFile));
@@ -356,6 +352,26 @@ public class RmApplicationTest {
         });
         assertMsgContains(exception, ERR_DOT_DIR); // verify the correct exceptions is thrown
     
+    }
+
+    /**
+     * Attempt to call rm with null args
+     */
+    @Test
+    public void failsCurrDir() throws IOException {
+
+        Path folder = mkEmptyDir();
+        String ORIGINAL_DIR = Environment.getCurrentDirectory();
+        Environment.setCurrentDirectory(folder.toString());
+
+        RmException exception = assertThrows(RmException.class, () -> {
+            rmApp.run(new String[]{"../"+folder.getFileName()}, System.in, System.out);
+        });
+        assertMsgContains(exception, ERR_CURR_DIR); // verify the correct exceptions is thrown
+
+        Files.deleteIfExists(folder);
+        Environment.setCurrentDirectory(ORIGINAL_DIR);
+
     }
     
     /**
