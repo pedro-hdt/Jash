@@ -17,9 +17,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.TestUtils.assertMsgContains;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -198,6 +196,21 @@ public class PasteApplicationTest {
           stdout.toString());
     
     }
+
+    /**
+     * Call paste with a single line file as arg
+     * Should print the file followed by a new line
+     * added due to StringBuilder error identified
+     */
+    @Test
+    public void testSingleFileSingleLineArg() throws PasteException, IOException {
+
+        paste.run(new String[]{"singleLine.txt"}, System.in, stdout);
+
+        assertEquals(new String(Files.readAllBytes(IOUtils.resolveFilePath("singleLine.txt"))) + STRING_NEWLINE,
+                stdout.toString());
+
+    }
     
     /**
      * Call paste with two file args
@@ -277,7 +290,7 @@ public class PasteApplicationTest {
      * Call paste with an empty file as arg
      */
     @Test
-    public void testEmptyFile() throws PasteException, IOException {
+    public void testEmptyFile() throws PasteException {
     
         paste.run(new String[]{EMPTY_FILE}, System.in, stdout);
     
