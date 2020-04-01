@@ -73,7 +73,7 @@ public class PasteApplication implements PasteInterface {
                     sb.append(STRING_NEWLINE);
                 }
             } while (notDone);
-            if (sb.length() != 0) {
+            if (sb.length() - fileReaders.size() >= 0) {
                 sb.delete(sb.length() - fileReaders.size(), sb.length()); // remove extra tab chars
             }
             
