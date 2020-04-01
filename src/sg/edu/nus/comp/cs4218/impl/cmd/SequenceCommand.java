@@ -43,12 +43,13 @@ public class SequenceCommand implements Command {
                 }
             } catch (ExitException e) {
                 exitException = e;
+                break;
                 
             } catch (AbstractApplicationException | ShellException e) {
                 outputLines.add(e.getMessage() + STRING_NEWLINE);
             }
         }
-        
+
         for (String outputLine : outputLines) {
             try {
                 stdout.write(outputLine.getBytes());
@@ -56,7 +57,7 @@ public class SequenceCommand implements Command {
                 throw (ShellException) new ShellException(e.getMessage()).initCause(e);
             }
         }
-        
+
         if (exitException != null) {
             throw exitException;
         }
