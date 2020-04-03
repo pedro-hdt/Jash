@@ -211,7 +211,7 @@ public class LsApplication implements LsInterface {
      * @param directories
      * @return List of java.nio.Path objects
      */
-    private List<Path> resolvePaths(String... directories) {
+    private List<Path> resolvePaths(String... directories) throws LsException {
         List<Path> paths = new ArrayList<>();
         for (int i = 0; i < directories.length; i++) {
             paths.add(resolvePath(directories[i]));
@@ -227,9 +227,12 @@ public class LsApplication implements LsInterface {
      * @param directory
      * @return
      */
-    private Path resolvePath(String directory) {
+    private Path resolvePath(String directory) throws LsException {
+        if (directory.isEmpty()) {
+            throw new LsException("No such file or directory");
+        }
         //Is this a bug since it checks only for Unix based and not Windows etc?
-        if (directory.charAt(0) == '/') {
+        if (Paths.get(directory).isAbsolute()) {
             // This is an absolute path
             return Paths.get(directory).normalize();
         }

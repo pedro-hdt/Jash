@@ -77,31 +77,6 @@ public class SedApplicationTest {
     @AfterAll
     static void reset() throws IOException {
         
-        // Reset file content after replaced
-        FileOutputStream outputStream = new FileOutputStream(IOUtils.resolveFilePath(REPLACING_FILE).toFile()); //NOPMD
-        byte[] strToBytes = "before".getBytes();
-        outputStream.write(strToBytes);
-        outputStream.close();
-        
-        
-        // Reset after updating content of multiple files
-        outputStream = new FileOutputStream(IOUtils.resolveFilePath(FILE1_TXT).toFile());
-        strToBytes = "1file content".getBytes();
-        outputStream.write(strToBytes);
-        outputStream.close();
-        
-        outputStream = new FileOutputStream(IOUtils.resolveFilePath(FILE2_TXT).toFile());
-        strToBytes = "2file content".getBytes();
-        outputStream.write(strToBytes);
-        outputStream.close();
-        
-        
-        // Reset for multipleLines.txt
-        outputStream = new FileOutputStream(IOUtils.resolveFilePath(MULTIPLE_LINES).toFile());
-        strToBytes = ("hello boy" + StringUtils.STRING_NEWLINE + "girl hello hello").getBytes();
-        outputStream.write(strToBytes);
-        outputStream.close();
-        
         
         Environment.setCurrentDirectory(ORIGINAL_DIR);
     }
@@ -332,15 +307,14 @@ public class SedApplicationTest {
      * @throws Exception
      */
     @Test
-    public void testSuccessfulReplaceInFileContent() throws Exception {
+    public void testSuccessfulReplaceWithFile() throws Exception {
         String[] args = new String[]{"s/before/after/", REPLACING_FILE};
     
         String str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
         assertTrue(str.contains("before"));
     
         sed.run(args, stdin, stdout);
-        str = new String(Files.readAllBytes(IOUtils.resolveFilePath(REPLACING_FILE)));
-        assertTrue(str.contains("after"));
+        assertTrue(stdout.toString().contains("after"));
     }
     
     /**
@@ -488,11 +462,9 @@ public class SedApplicationTest {
             assertTrue(str.contains("2file content"));
         
             sed.run(args, stdin, stdout);
-            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE1_TXT)));
-            assertTrue(str.contains("1updatedFile content"));
+            assertTrue(stdout.toString().contains("1updatedFile content"));
         
-            str = new String(Files.readAllBytes(IOUtils.resolveFilePath(FILE2_TXT)));
-            assertTrue(str.contains("2updatedFile content"));
+            assertTrue(stdout.toString().contains("2updatedFile content"));
         } catch (SedException e) {
             fail("should not fail: " + e.getMessage());
         }

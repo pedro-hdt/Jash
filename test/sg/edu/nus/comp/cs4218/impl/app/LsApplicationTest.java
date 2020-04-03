@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.TestUtils;
@@ -220,6 +221,18 @@ class LsApplicationTest {
     
         assertTrue(result.contains("folderRecursive/innerFolder:" + StringUtils.STRING_NEWLINE + "innerFile.txt"));
     }
-    
-    
+
+    /**
+     * Unable to test for Windows since on one has in our team
+     */
+    @Test
+    @Disabled
+    public void runWithValidArgsForWindows() {
+        String[] args = {"-R", "-d"};
+        assertDoesNotThrow(() -> {
+            lsApp.run(args, System.in, stdout);
+        });
+    }
+
+
 }

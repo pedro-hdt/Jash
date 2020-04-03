@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
 @SuppressWarnings("PMD.AvoidStringBufferField")
 public final class RegexArgument {

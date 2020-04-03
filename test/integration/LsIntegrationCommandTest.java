@@ -148,6 +148,20 @@ public class LsIntegrationCommandTest {
             fail();
         }
     }
+
+    /**
+     * Ls With quotes
+     */
+    @Test
+    @DisplayName("LS with EF1 quote")
+    public void testLsWithEmptyQuote() {
+        try {
+            shell.parseAndEvaluate("ls ''", stdout);
+            fail();
+        } catch (Exception e) {
+            assertEquals("ls: No such file or directory", e.getMessage());
+        }
+    }
     
     
 }
