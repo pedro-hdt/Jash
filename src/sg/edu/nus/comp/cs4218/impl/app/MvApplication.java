@@ -52,7 +52,7 @@ public class MvApplication implements MvInterface {
                     }
                     return null;
                 } else if (!Files.isDirectory(IOUtils.resolveFilePath(destFolder)) && fileName.length > 1) {
-                    throw new Exception("'" + srcPath + "' is not a directory.");
+                    throw new Exception("'" + destFolder + "' is not a directory.");
                 }
                 try {
                     // Assumption: Replacement doesn't work when a directory is being moved and target directory is non-empty and same name
