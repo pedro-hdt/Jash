@@ -23,7 +23,6 @@ public class RmTest {
     // careful, if you run this test, likely the whole project will be delete
     @Test
     void test21() throws IOException {
-        fail();
         // SystemTestRunner.run("rm/21");
     }
 

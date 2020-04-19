@@ -3,6 +3,8 @@ package hack.tests.call;
 // passed tests are commented
 
 import hack.util.SystemTestRunner;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,11 +31,13 @@ public class CallTest {
 //    }
 
     @Test
+    @Disabled("Invalid")
     void test05() throws IOException {
         SystemTestRunner.run("call/05");
     }
 
     @Test
+    @Disabled("Invalid")
     void test06() throws IOException {
         SystemTestRunner.run("call/06");
     }
@@ -49,6 +53,7 @@ public class CallTest {
     }
 
     @Test
+    @Disabled("Invalid")
     void test09() throws IOException {
         SystemTestRunner.run("call/09");
     }

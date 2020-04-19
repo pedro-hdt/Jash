@@ -3,6 +3,8 @@ package hack.tests.ls;
 // passed tests are commented
 
 import hack.util.SystemTestRunner;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class LsTest {
 //    }
 
     @Test
+    @Disabled("Invalid")
     void test05() throws IOException {
         SystemTestRunner.run("ls/05");
     }
@@ -41,6 +44,7 @@ public class LsTest {
     // ls -d */
     // groupX
     @Test
+    @Disabled("Invalid")
     void test21() throws IOException {
         SystemTestRunner.run("ls/21");
     }

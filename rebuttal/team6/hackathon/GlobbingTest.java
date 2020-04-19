@@ -43,7 +43,7 @@ public class GlobbingTest {
     @Test
     void testGlobbing(){
         String commandString = "ls " + RELATIVE_PATH + CHAR_FILE_SEP + "test*";
-        String expectResult = "test1.txt" + STRING_NEWLINE + "test2.txt" + STRING_NEWLINE;
+        String expectResult = "rebuttal/team6/hackathon/files/globbing/" + "test1.txt" + STRING_NEWLINE + "rebuttal/team6/hackathon/files/globbing/" + "test2.txt" + STRING_NEWLINE;
         assertDoesNotThrow(()->{
             shell.parseAndEvaluate(commandString, outputStream);
             assertEquals(expectResult, outputStream.toString());

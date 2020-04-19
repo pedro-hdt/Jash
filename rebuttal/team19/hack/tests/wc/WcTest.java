@@ -1,6 +1,8 @@
 package hack.tests.wc;
 
 import hack.util.SystemTestRunner;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ public class WcTest {
     }
 
     @Test
+    @Disabled("Invalid duplicate")
     void test01() throws IOException {
         assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
                     SystemTestRunner.run("wc/01");
