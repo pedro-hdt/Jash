@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.Permission;
 
+@SuppressWarnings("PMD")
 public class SaferShellImpl {
 
     public static final String TEMP_DIR_PREFIX = "CS4218";

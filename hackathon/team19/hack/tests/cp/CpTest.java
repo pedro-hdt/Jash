@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+@SuppressWarnings("PMD")
 public class CpTest {
     // cp non-empty-folder non-existing-folder
     // groupX

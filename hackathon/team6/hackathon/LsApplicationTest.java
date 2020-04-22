@@ -10,6 +10,7 @@ import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("PMD")
 public class LsApplicationTest {
     private final LsInterface lsApplication = new LsApplication();
     private OutputStream outputStream;

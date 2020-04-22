@@ -110,7 +110,7 @@ public class DiffApplicationTest { // NOPMD
 
     @Test
     public void testFailsWithInvalidFile() {
-        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidFile.txt", "invalidFile.txt", false, false, false));
+        Exception expectedException = assertThrows(DiffException.class, () -> diffApp.diffTwoFiles("invalidFile.txt", "invalidFile.txt", false, false, false));//NOPMD
         assertTrue(expectedException.getMessage().contains(ERR_FILE_NOT_FOUND));
     }
 

@@ -33,7 +33,7 @@ public class RmApplication implements RmInterface {
               || (f.length() > 1 && f.substring(f.length() - 2).equals(StringUtils.fileSeparator() + "."))
               || (f.length() > 2 && f.substring(f.length() - 3).equals(StringUtils.fileSeparator() + ".."))) {
                 sb.append(f);
-                sb.append(" skipped: ");
+                sb.append(" skipped: ");//NOPMD
                 sb.append(ERR_DOT_DIR);
                 sb.append(STRING_NEWLINE);
                 hasFailedFiles = true;

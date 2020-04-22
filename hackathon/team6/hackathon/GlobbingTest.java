@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD")
 public class GlobbingTest {
     private static final String RELATIVE_PATH = "hackathon" + CHAR_FILE_SEP +
                                                 "team6" + CHAR_FILE_SEP +

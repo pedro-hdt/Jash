@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+@SuppressWarnings("PMD")
 public class GlobTest {
 //    @Test
 //    void test01() throws IOException {

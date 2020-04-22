@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
+@SuppressWarnings("PMD")
 public class DiffApplicationTest {
     private static final String TEST_FOLDER =   "hackathon" + CHAR_FILE_SEP +
                                                 "team6" + CHAR_FILE_SEP +

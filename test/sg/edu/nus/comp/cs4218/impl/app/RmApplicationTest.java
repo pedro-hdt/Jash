@@ -363,7 +363,7 @@ public class RmApplicationTest {
     public void failsCurrDir() throws IOException {
 
         Path folder = mkEmptyDir();
-        String ORIGINAL_DIR = Environment.getCurrentDirectory();
+        String ORIGINAL_DIR = Environment.getCurrentDirectory();//NOPMD
         Environment.setCurrentDirectory(folder.toString());
 
         RmException exception = assertThrows(RmException.class, () -> {

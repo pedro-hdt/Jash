@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
+@SuppressWarnings("PMD")
 public class CpApplicationTest {
 
     private static final String FOLDER =    "hackathon" + CHAR_FILE_SEP +

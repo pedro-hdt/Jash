@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@SuppressWarnings("PMD")
 public class RmTest {
 
     // rm

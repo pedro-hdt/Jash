@@ -8,6 +8,7 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("PMD")
 public class GrepTest {
 //    @Test
 //    void test01() throws IOException {

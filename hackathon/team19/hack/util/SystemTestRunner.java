@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-
+@SuppressWarnings("PMD")
 public class SystemTestRunner {
 
     public static String getOutputText(String inputText) {
