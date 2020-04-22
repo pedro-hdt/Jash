@@ -289,7 +289,6 @@ public class RmApplicationTest {
     }
     
     @Test
-    @Disabled
     public void testRemove_emptyFolderOption_nonEmptyDir_shouldPrintErrorMsg() {
         
         expected = new String[]{
