@@ -1,4 +1,0 @@
-	Triple	A
-	triple	B
-	3ple	C
-		D

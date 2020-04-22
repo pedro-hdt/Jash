@@ -1,3 +1,0 @@
-abc abc abc abc
-def abf abc def
-hi nothing abhere

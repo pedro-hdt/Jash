@@ -1,4 +1,0 @@
-PF1 Line 1	PF1 Line 2	PF2 Line 1
-PF1 Line 3	PF1 Line 4	PF2 Line 2
-		PF2 Line 3
-		PF2 Line 4

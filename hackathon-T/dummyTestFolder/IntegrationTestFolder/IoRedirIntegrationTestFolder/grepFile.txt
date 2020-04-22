@@ -1,5 +1,0 @@
-match
-also match
-nope
-CAP MATCH
-yes match
