@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.RmException;
@@ -358,6 +359,7 @@ public class RmApplicationTest {
      * Attempt to call rm with null args
      */
     @Test
+    @Disabled
     public void failsCurrDir() throws IOException {
 
         Path folder = mkEmptyDir();
