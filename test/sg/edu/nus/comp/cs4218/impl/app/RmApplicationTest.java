@@ -356,7 +356,7 @@ public class RmApplicationTest {
     }
 
     /**
-     * Attempt to call rm with null args
+     * Attempt to call rm with current directory by removing ../foo while inside foo
      */
     @Test
     @Disabled

@@ -309,7 +309,7 @@ public class RmApplicationTest {
         Arrays.sort(actual);
         
         assertArrayEquals(expected, actual);
-        assertMsgContains(rmException, ERR_IS_DIR);
+        assertMsgContains(rmException, ERR_DIR_NOT_EMPTY);
     }
     
     @Test
