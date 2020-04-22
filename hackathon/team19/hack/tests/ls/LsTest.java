@@ -25,11 +25,11 @@ public class LsTest {
 //        SystemTestRunner.run("ls/04");
 //    }
 
-    @Test
-    @Disabled("Invalid")
-    void test05() throws IOException {
-        SystemTestRunner.run("ls/05");
-    }
+//    @Test
+//    @Disabled("Invalid")
+//    void test05() throws IOException {
+//        SystemTestRunner.run("ls/05");
+//    }
 
     // this test was tested in Windows
     // ls -R
@@ -43,9 +43,9 @@ public class LsTest {
     // this test was tested in Windows
     // ls -d */
     // groupX
-    @Test
-    @Disabled("Invalid")
-    void test21() throws IOException {
-        SystemTestRunner.run("ls/21");
-    }
+//    @Test
+//    @Disabled("Invalid")
+//    void test21() throws IOException {
+//        SystemTestRunner.run("ls/21");
+//    }
 }

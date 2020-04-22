@@ -34,7 +34,7 @@ public class PasteApplicationTest {
     public void testMergeStdin_multipleLine() throws Exception {
         // Newline
         try (InputStream inStream = new FileInputStream(FILE_NEW_PATH)) {
-            String expected = STRING_NEWLINE+STRING_NEWLINE+STRING_NEWLINE;
+            String expected = "";
             assertEquals(expected, pasteApp.mergeStdin(inStream));
         }
     }
@@ -49,7 +49,7 @@ public class PasteApplicationTest {
     @Test
     @DisplayName("Should display nothing while paste 2 empty files")
     void testMergeTwoEmptyFiles() { //TODO: Unhandle empty files
-        String expectResult = "";
+        String expectResult = "\t";
         assertDoesNotThrow(() -> { // Should not throw exception, but StringIndexOutOfBoundsException was thrown
             String realResult = pasteApp.mergeFile(FILE_EMPTY_1, FILE_EMPTY_2);
             assertEquals(expectResult, realResult);

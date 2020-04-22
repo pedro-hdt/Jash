@@ -20,12 +20,12 @@ public class WcTest {
         SystemTestRunner.run("wc/20");
     }
 
-    @Test
-    @Disabled("Invalid duplicate")
-    void test01() throws IOException {
-        assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-                    SystemTestRunner.run("wc/01");
-                }
-        );
-    }
+//    @Test
+//    @Disabled("Invalid duplicate")
+//    void test01() throws IOException {
+//        assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
+//                    SystemTestRunner.run("wc/01");
+//                }
+//        );
+//    }
 }

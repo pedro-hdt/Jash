@@ -30,17 +30,17 @@ public class CallTest {
 //        SystemTestRunner.run("call/04");
 //    }
 
-    @Test
-    @Disabled("Invalid")
-    void test05() throws IOException {
-        SystemTestRunner.run("call/05");
-    }
-
-    @Test
-    @Disabled("Invalid")
-    void test06() throws IOException {
-        SystemTestRunner.run("call/06");
-    }
+//    @Test
+//    @Disabled("Invalid")
+//    void test05() throws IOException {
+//        SystemTestRunner.run("call/05");
+//    }
+//
+//    @Test
+//    @Disabled("Invalid")
+//    void test06() throws IOException {
+//        SystemTestRunner.run("call/06");
+//    }
 
 //    @Test
 //    void test07() throws IOException {
@@ -52,9 +52,9 @@ public class CallTest {
         SystemTestRunner.run("call/08");
     }
 
-    @Test
-    @Disabled("Invalid")
-    void test09() throws IOException {
-        SystemTestRunner.run("call/09");
-    }
+//    @Test
+//    @Disabled("Invalid")
+//    void test09() throws IOException {
+//        SystemTestRunner.run("call/09");
+//    }
 }

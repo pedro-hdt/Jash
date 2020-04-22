@@ -31,21 +31,21 @@ public class DiffApplicationTest {
      *
      * When diff between two files using `-B` flag like `diff -B FILE1 FILE2`, it works correctly.
      */
-    @Test
-    @DisplayName("using -B flag should ignore the new line and space characters so nothing should output")
-    void testRunWithStdinAndFlag() {
-        String[] args = {"-B", TEST_FILE, "-"};
-        InputStream inputStream = new ByteArrayInputStream(("test" + STRING_NEWLINE + "     ").getBytes());
-        OutputStream outputStream = new ByteArrayOutputStream();
-        assertDoesNotThrow(() -> diffApplication.run(args, inputStream, outputStream));
-        assertEquals("", outputStream.toString());
-        try {
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+//    @Test
+//    @DisplayName("using -B flag should ignore the new line and space characters so nothing should output")
+//    void testRunWithStdinAndFlag() {
+//        String[] args = {"-B", TEST_FILE, "-"};
+//        InputStream inputStream = new ByteArrayInputStream(("test" + STRING_NEWLINE + "     ").getBytes());
+//        OutputStream outputStream = new ByteArrayOutputStream();
+//        assertDoesNotThrow(() -> diffApplication.run(args, inputStream, outputStream));
+//        assertEquals("", outputStream.toString());
+//        try {
+//            outputStream.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
     /**
      * The bug is just a miss in output display requirement when diff two directories.
      * Ref. spec page 15, Section 9.6, No assumption mentioned.
