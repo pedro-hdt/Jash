@@ -14,7 +14,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class PasteApplicationTest {
     private static PasteApplication pasteApp = new PasteApplication();
-    private static final String TEST_FOLDER =   "rebuttal" + CHAR_FILE_SEP +
+    private static final String TEST_FOLDER =   "hackathon" + CHAR_FILE_SEP +
                                                 "team6" + CHAR_FILE_SEP +
             "hackathon/files" + CHAR_FILE_SEP +
                                                 "paste" + CHAR_FILE_SEP;

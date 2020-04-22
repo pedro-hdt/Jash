@@ -74,7 +74,7 @@ public class SystemTestRunner {
     }
 
     public static void run(String inputPath, String outputPath) throws IOException {
-        Path root = Paths.get("rebuttal", "team19", "hack", "tests");
+        Path root = Paths.get("hackathon", "team19", "hack", "tests");
         String inputText = String.join(StringUtils.fileSeparator(), readFileContent(root.resolve(inputPath)).split("\\\\"));
         String outputText = simplifyErrors(readFileContent(root.resolve(outputPath)));
         String actualText = simplifyErrors(SystemTestRunner.getOutputText(inputText));

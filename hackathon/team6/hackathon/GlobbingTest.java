@@ -12,7 +12,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class GlobbingTest {
-    private static final String RELATIVE_PATH = "rebuttal" + CHAR_FILE_SEP +
+    private static final String RELATIVE_PATH = "hackathon" + CHAR_FILE_SEP +
                                                 "team6" + CHAR_FILE_SEP +
             "hackathon/files" + CHAR_FILE_SEP +
                                                 "globbing";
@@ -43,7 +43,7 @@ public class GlobbingTest {
     @Test
     void testGlobbing(){
         String commandString = "ls " + RELATIVE_PATH + CHAR_FILE_SEP + "test*";
-        String expectResult = "rebuttal/team6/hackathon/files/globbing/" + "test1.txt" + STRING_NEWLINE + "rebuttal/team6/hackathon/files/globbing/" + "test2.txt" + STRING_NEWLINE;
+        String expectResult = "hackathon/team6/hackathon/files/globbing/" + "test1.txt" + STRING_NEWLINE + "hackathon/team6/hackathon/files/globbing/" + "test2.txt" + STRING_NEWLINE;
         assertDoesNotThrow(()->{
             shell.parseAndEvaluate(commandString, outputStream);
             assertEquals(expectResult, outputStream.toString());

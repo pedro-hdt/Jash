@@ -12,7 +12,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class CutApplicationTest {
-    private static String folderName = "rebuttal" + CHAR_FILE_SEP +
+    private static String folderName = "hackathon" + CHAR_FILE_SEP +
                                         "team6" + CHAR_FILE_SEP +
             "hackathon/files" + CHAR_FILE_SEP +
                                         "cut";
@@ -32,14 +32,14 @@ public class CutApplicationTest {
      *
      * The implementation fails to cut file with multiple lines
      */
-//    @Test
-//    void testRunWithTwoFile() {
-//        String expectResult = "Today is" + STRING_NEWLINE + "Cristina" + STRING_NEWLINE + "Software" + STRING_NEWLINE;
-//        String[] args = {"-c", "1-8", folderName + CHAR_FILE_SEP + TEST_FILE, folderName + CHAR_FILE_SEP + fileNameNames};
-//        outputStream = new ByteArrayOutputStream();
-//        assertDoesNotThrow(() -> {
-//            app.run(args, System.in, outputStream);
-//            assertEquals(expectResult, outputStream.toString());
-//        });
-//    }
+    @Test
+    void testRunWithTwoFile() {
+        String expectResult = "Today is" + STRING_NEWLINE + "Cristina" + STRING_NEWLINE + "Software" + STRING_NEWLINE;
+        String[] args = {"-c", "1-8", folderName + CHAR_FILE_SEP + TEST_FILE, folderName + CHAR_FILE_SEP + fileNameNames};
+        outputStream = new ByteArrayOutputStream();
+        assertDoesNotThrow(() -> {
+            app.run(args, System.in, outputStream);
+            assertEquals(expectResult, outputStream.toString());
+        });
+    }
 }
